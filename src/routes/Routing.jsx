@@ -13,6 +13,7 @@ import WithdrawalRequests from '../pages/WithdrawalRequests';
 import Customers from '../pages/Customers';
 import Rules from "../pages/Rules.jsx";
 import VerifyPayment from "../pages/VerifyPayment.jsx";
+import AddMoney from '../pages/AddMoney.jsx';
 
 
 const Routing = () => {
@@ -30,6 +31,7 @@ const Routing = () => {
                     <Route path="/game" element={<Game />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/withdrawal-requests" element={<WithdrawalRequests />} />
+                    <Route path="/add-money" element={<AddMoney />} />
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/Rules" element={<Rules />} />
                     <Route path="/qr-code" element={<QrCodes />} />

@@ -190,11 +190,11 @@ const Customer = () => {
                         type="number"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        style={{ marginRight: 16 }}
+                        style={{ marginLeft: 16 }}
                     />
-                    <Button variant="contained" color="primary" onClick={fetchCustomers}>
+                    {/* <Button variant="contained" color="primary" onClick={fetchCustomers}>
                         Search
-                    </Button>
+                    </Button> */}
                 </Box>
                 <Box style={{ height: 450, width: '100%', overflow: 'auto' }} p={2}>
                     <DataGrid

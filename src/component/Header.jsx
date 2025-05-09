@@ -25,6 +25,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import "../index.css"
 import axios from 'axios';
 import Lottie from 'lottie-react';
+import AddCardIcon from '@mui/icons-material/AddCard';
 import Arrow from "../assets/lottie/Arrow.json"
 import { BASE_URL } from '../costants';
 import { Avatar } from '@mui/material';
@@ -191,6 +192,12 @@ export default function Header() {
                         <AttachMoneyIcon sx={{color:"#9ed100"}}/>
                     </ListItemIcon>
                     <ListItemText primary="Withdrawal Requests" />
+                </ListItemButton>
+                 <ListItemButton className='listItem' onClick={() => navigate("/add-money")}>
+                    <ListItemIcon>
+                        <AddCardIcon sx={{color:"#9ed100"}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Add Money" />
                 </ListItemButton>
                 <ListItemButton className='listItem' onClick={() => navigate("/customers")}>
                     <ListItemIcon>
