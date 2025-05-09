@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation16.MuiDrawer-paper.MuiDrawer-paperAnchorLeft {
+    padding: 10px !important;
+    height: 97vh !important;
+    margin: 10px !important;
+    overflow: hidden !important;
+    /* background: linear-gradient(#e5e4f1, #aecae5) !important; */
+    /* background: linear-gradient(135deg, #00416A, #E4E5E6); */
+    background: linear-gradient(135deg, black, #E4E5E6);
+    border-radius: 10px !important;
+    color: white !important
+}
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation16.MuiDrawer-paper>div {
+
+    /* margin-left: 10px; */
+    /* height: 800vh; */
+}
+
+.listItem {
+    border-radius: 20px !important;
+    /* background: #000 !important; */
+    overflow: hidden;
+    transition: all ease 0.;
+}
+
+.listItem:hover {
+    border-radius: 20px;
+}
+
+/* body{
+        background: linear-gradient(135deg, #00416A, #E4E5E6)
+} */
