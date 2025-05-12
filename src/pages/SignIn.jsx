@@ -20,7 +20,7 @@ import { Person } from '@mui/icons-material'; // Example icon
 import { Container } from '@mui/material';
 
 // Define the theme with colors matching the dashboard
-const theme = createTheme({
+const theme = createTheme({ 
   palette: {
     primary: {
       main: '#000000',

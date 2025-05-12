@@ -170,11 +170,17 @@ const AddMoney = () => {
       field: "amount_screenshot",
       headerName: "Screenshot",
       width: 200,
-      renderCell: (params) => (
-        <a href={params.value} target="_blank" rel="noopener noreferrer">
-          View
-        </a>
-      ),
+      renderCell: ({value}) => {
+        return(
+        <img
+        style={{
+          width:100,
+          height:100,
+          objectFit:'contain'
+        }}
+        src={value}
+        />
+      )},
     },
     {
       field: "status",
@@ -218,6 +224,9 @@ const AddMoney = () => {
   ];
 
   const rows = requests?.map((request) => {
+    console.log(request.screenshot,'re------')
+    console.log(`${BASE_URL}/img/payments/${request.screenshot}`)
+    // console.log(first)
     let accountDetails = "";
     if (request.accountDetails) {
       try {
@@ -239,7 +248,7 @@ const AddMoney = () => {
       customerName: request.Customer?.name || 'N/A',
       mobile: request.Customer?.mobile || 'N/A',
       amount: request.amount,
-      amount_screenshot: request.screenshot,
+      amount_screenshot:`${BASE_URL}/img/payments/${request.screenshot}`,
       status: request.status,
       // accountDetails,
       accountDetails:request.upi,
