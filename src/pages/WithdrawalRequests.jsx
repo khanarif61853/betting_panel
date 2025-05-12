@@ -199,7 +199,7 @@ const WithdrawalRequest = () => {
     if (request.accountDetails) {
       try {
         const parsedDetails = JSON.parse(request.accountDetails);
-        accountDetails = `Account Holder Name: ${parsedDetails.accountHolderName || ''}\nAccount Number: ${parsedDetails.accountNumber || ''}\nIFSC Code: ${parsedDetails.ifscCode || ''}`;
+        accountDetails = `Account Holder Name: ${parsedDetails?.accountHolderName || ''}\nAccount Number: ${parsedDetails?.accountNumber || ''}\nIFSC Code: ${parsedDetails?.ifscCode || ''}`;
       } catch (error) {
         console.error('Error parsing account details:', error);
         accountDetails = 'Invalid account details';
@@ -209,10 +209,10 @@ const WithdrawalRequest = () => {
     }
     return {
       id: request.id,
-      customerName: request.Customer.name,
-      mobile: request.Customer.mobile,
-      amount: request.amount,
-      status: request.status,
+      customerName: request?.Customer?.name,
+      mobile: request?.Customer?.mobile,
+      amount: request?.amount,
+      status: request?.status,
       createdAt: moment(request.createdAt).format('YYYY-MM-DD HH:mm:ss'),
       accountDetails,
     };
