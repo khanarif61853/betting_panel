@@ -72,15 +72,31 @@ const Home = () => {
       setLoading(false); // Data is loaded, set loading to false
     };
     fetchData();
+     const lastWinner = async () => {
+      const {
+        data: { data },
+      } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
+        // headers: localStorage.getItem("token"),
+        headers:{
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        params: { page: page + 1, limit },
+      });
+      // setDashboardData(data);
+      console.log(data,'last-winner')
+      setLoading(false); // Data is loaded, set loading to false
+    };
+    lastWinner();
   }, []);
 
   // winning user table --------------
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "customerName", headerName: "CUSTOMER NAME", width: 250 },
-    { field: "game", headerName: "GAME", width: 250 },
-    { field: "total", headerName: "TOTAL", width: 240 },
+    { field: "customerName", headerName: "CUSTOMER NAME", width: 200 },
+    { field: "game", headerName: "GAME", width: 200 },
+    { field: "total", headerName: "TOTAL", width: 200 },
+    { field: "createdAt", headerName: "Created At", width: 200 },
   ];
 
   const rows = requests?.map((request) => {
@@ -89,6 +105,8 @@ const Home = () => {
       customerName: request.Customer.name,
       amount: request.game,
       total: request.total,
+      createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+
     };
   });
 
