@@ -152,6 +152,7 @@ const AddMoney = () => {
     { field: 'customerName', headerName: 'Customer Name', width: 150 },
     { field: 'mobile', headerName: 'Mobile', width: 110 },
     { field: 'amount', headerName: 'Amount', width: 120 },
+    { field: 'amount_screenshot', headerName: 'Amount_ScreenShot', width: 220 },
     {
       field: 'status',
       headerName: 'Status',
