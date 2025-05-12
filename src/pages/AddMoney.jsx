@@ -103,7 +103,7 @@ const AddMoney = () => {
 
   const handleAction = async (action) => {
     try {
-      await axios.post(`${BASE_URL}/api/web/create/withdrawal-request-action`, {
+      await axios.post(`${BASE_URL}/api/web/create/add-money-action`, {
         requestId: selectedRequest.id,
         action,
         bankDetails: values.bankDetails,
@@ -241,9 +241,9 @@ const AddMoney = () => {
       amount: request.amount,
       amount_screenshot: request.screenshot,
       status: request.status,
+      // accountDetails,
       accountDetails:request.upi,
       createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-      // accountDetails,
     };
   });
 
