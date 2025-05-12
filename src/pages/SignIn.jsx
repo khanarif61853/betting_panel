@@ -99,7 +99,6 @@ export default function SignIn() {
           navigate("/home");
         }
       } catch (error) {
-        console.log(error,'error-----')
         setSnackbarSeverity('error');
         setSnackbarMessage('Sign in failed. Please try again.');
         setSnackbarOpen(true);
