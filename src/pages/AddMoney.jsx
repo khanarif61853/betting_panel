@@ -1,42 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
-import { usePagination } from '../hooks/usePagination';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { DataGrid } from "@mui/x-data-grid";
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
+import { usePagination } from "../hooks/usePagination";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import moment from 'moment';
-import CustomSnackbar from '../component/CustomSnackbar'; // Import the Snackbar component
-import { BASE_URL } from '../costants';
+import moment from "moment";
+import CustomSnackbar from "../component/CustomSnackbar"; // Import the Snackbar component
+import { BASE_URL } from "../costants";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#5a508b',
+      main: "#5a508b",
     },
     secondary: {
-      main: '#d32f2f',
+      main: "#d32f2f",
     },
     success: {
-      main: '#2e7d32',
+      main: "#2e7d32",
     },
   },
   typography: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
   },
   components: {
     MuiDataGrid: {
       styleOverrides: {
         root: {
-          backgroundColor: '#f4f6f8',
-          '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#1976d2',
-            fontSize: '1.1rem',
+          backgroundColor: "#f4f6f8",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#1976d2",
+            fontSize: "1.1rem",
           },
-          '& .MuiDataGrid-cell': {
-            display: 'flex',
-            alignItems: 'center',
-            whiteSpace: 'pre-line', // Maintain line breaks in text
+          "& .MuiDataGrid-cell": {
+            display: "flex",
+            alignItems: "center",
+            whiteSpace: "pre-line", // Maintain line breaks in text
           },
         },
       },
@@ -49,14 +59,15 @@ const AddMoney = () => {
   const [open, setOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [values, setValues] = useState({ bankDetails: '' });
+  const [values, setValues] = useState({ bankDetails: "" });
   const [errors, setErrors] = useState({});
-  const { page, limit, total, changePage, changeLimit, changeTotal } = usePagination();
+  const { page, limit, total, changePage, changeLimit, changeTotal } =
+    usePagination();
 
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     fetchRequests();
@@ -65,25 +76,28 @@ const AddMoney = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${BASE_URL}/api/web/retrieve/withdrawal-requests`, {
-        params: { limit, page },
-        headers:{
-          "Authorization":localStorage.getItem("token")
+      const response = await axios.get(
+        `${BASE_URL}/api/web/retrieve/add-money`,
+        {
+          params: { limit, page },
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
         }
-      });
-      setRequests(response.data.data.requests);
+      );
+      console.log(response.data.data);
+      setRequests(response.data.data.payment);
       changeTotal(response.data.data.count);
-      setSnackbarSeverity('success');
+      setSnackbarSeverity("success");
       setSnackbarMessage(`Retrieved successfully`);
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Error fetching requests:', error);
-      setSnackbarSeverity('error');
+      console.error("Error fetching requests:", error);
+      setSnackbarSeverity("error");
       setSnackbarMessage("Error fetching requests");
       setSnackbarOpen(true);
     } finally {
       setLoading(false);
-
     }
   };
 
@@ -92,20 +106,20 @@ const AddMoney = () => {
       await axios.post(`${BASE_URL}/api/web/create/withdrawal-request-action`, {
         requestId: selectedRequest.id,
         action,
-        bankDetails: values.bankDetails
+        bankDetails: values.bankDetails,
       });
       setOpen(false);
       fetchRequests();
 
       // Show Snackbar
-      setSnackbarSeverity('success');
+      setSnackbarSeverity("success");
       setSnackbarMessage(`Request ${action}ed successfully`);
       setSnackbarOpen(true);
     } catch (error) {
       console.error(`Error ${action} request:`, error);
 
       // Show Snackbar
-      setSnackbarSeverity('error');
+      setSnackbarSeverity("error");
       setSnackbarMessage(`Failed to ${action} request`);
       setSnackbarOpen(true);
     }
@@ -114,8 +128,8 @@ const AddMoney = () => {
   const handleClickOpen = (request) => {
     setSelectedRequest(request);
     console.log(selectedRequest);
-    setValues((value)=>{
-      return {...value, bankDetails: request.accountDetails };
+    setValues((value) => {
+      return { ...value, bankDetails: request.accountDetails };
     });
     setOpen(true);
   };
@@ -126,16 +140,16 @@ const AddMoney = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues(prevValues => ({
+    setValues((prevValues) => ({
       ...prevValues,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleBlur = () => {
     const newErrors = {};
     if (!values.bankDetails) {
-      newErrors.bankDetails = 'Required';
+      newErrors.bankDetails = "Required";
     }
     setErrors(newErrors);
   };
@@ -144,42 +158,51 @@ const AddMoney = () => {
     event.preventDefault();
     handleBlur(); // Validate fields
     if (Object.keys(errors).length === 0) {
-      handleAction('approve');
+      handleAction("approve");
     }
   };
 
   const columns = [
-    { field: 'customerName', headerName: 'Customer Name', width: 150 },
-    { field: 'mobile', headerName: 'Mobile', width: 110 },
-    { field: 'amount', headerName: 'Amount', width: 120 },
-    { field: 'amount_screenshot', headerName: 'Amount_ScreenShot', width: 220 },
+    { field: "customerName", headerName: "Customer Name", width: 150 },
+    { field: "mobile", headerName: "Mobile", width: 110 },
+    { field: "amount", headerName: "Amount", width: 120 },
     {
-      field: 'status',
-      headerName: 'Status',
-      width: 120,
+      field: "amount_screenshot",
+      headerName: "Screenshot",
+      width: 200,
       renderCell: (params) => (
-        params.row.status === 'Pending' && (
-          <Chip label="Pending" sx={{ background: "#d9512c", color: "white" }} />
-        )
+        <a href={params.value} target="_blank" rel="noopener noreferrer">
+          View
+        </a>
       ),
     },
     {
-      field: 'accountDetails',
-      headerName: 'Account details',
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      renderCell: (params) =>
+        params.row.status === "Pending" && (
+          <Chip
+            label="Pending"
+            sx={{ background: "#d9512c", color: "white" }}
+          />
+        ),
+    },
+    {
+      field: "accountDetails",
+      headerName: "Account details",
       width: 300,
       renderCell: (params) => (
-        <div style={{ whiteSpace: 'pre-line' }}>
-          {params.value}
-        </div>
+        <div style={{ whiteSpace: "pre-line" }}>{params.value}</div>
       ),
     },
-    { field: 'createdAt', headerName: 'Created At', width: 200 },
+    { field: "createdAt", headerName: "Created At", width: 200 },
     {
-      field: 'actions',
-      headerName: 'Actions',
+      field: "actions",
+      headerName: "Actions",
       width: 120,
-      renderCell: (params) => (
-        params.row.status === 'Pending' && (
+      renderCell: (params) =>
+        params.row.status === "Pending" && (
           <Button
             variant="contained"
             color="primary"
@@ -190,39 +213,51 @@ const AddMoney = () => {
           >
             Approve
           </Button>
-        )
-      ),
+        ),
     },
   ];
 
   const rows = requests?.map((request) => {
-    let accountDetails = '';
+    let accountDetails = "";
     if (request.accountDetails) {
       try {
         const parsedDetails = JSON.parse(request.accountDetails);
-        accountDetails = `Account Holder Name: ${parsedDetails.accountHolderName || ''}\nAccount Number: ${parsedDetails.accountNumber || ''}\nIFSC Code: ${parsedDetails.ifscCode || ''}`;
+        accountDetails = `Account Holder Name: ${
+          parsedDetails.accountHolderName || ""
+        }\nAccount Number: ${parsedDetails.accountNumber || ""}\nIFSC Code: ${
+          parsedDetails.ifscCode || ""
+        }`;
       } catch (error) {
-        console.error('Error parsing account details:', error);
-        accountDetails = 'Invalid account details';
+        console.error("Error parsing account details:", error);
+        accountDetails = "Invalid account details";
       }
     } else if (request.upiId) {
       accountDetails = `UPI ID: ${request.upiId}`;
     }
     return {
       id: request.id,
-      customerName: request.Customer.name,
-      mobile: request.Customer.mobile,
+      customerName: request.Customer?.name || 'N/A',
+      mobile: request.Customer?.mobile || 'N/A',
       amount: request.amount,
+      amount_screenshot: request.screenshot,
       status: request.status,
-      createdAt: moment(request.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-      accountDetails,
+      accountDetails:request.upi,
+      createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+      // accountDetails,
     };
   });
 
   return (
     <ThemeProvider theme={theme}>
-      <Typography variant={"h4"} my={2} textAlign={"center"} fontWeight={"bold"}>Add Money</Typography>
-      <Box style={{ height: 450, width: '100%' }} p={2}>
+      <Typography
+        variant={"h4"}
+        my={2}
+        textAlign={"center"}
+        fontWeight={"bold"}
+      >
+        Add Money
+      </Typography>
+      <Box style={{ height: 450, width: "100%" }} p={2}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -236,7 +271,7 @@ const AddMoney = () => {
           pageSize={limit}
           checkboxSelection
           disableSelectionOnClick
-          onRowSelectionModelChange={() => { }}  // No-op to prevent default selection behavior
+          onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
           onPaginationModelChange={(value) => {
             if (value.pageSize !== limit) {
               changeLimit(value.pageSize);
@@ -246,7 +281,7 @@ const AddMoney = () => {
             changeLimit(value.pageSize);
           }}
           loading={loading}
-          getRowHeight={() => 'auto'}  // Adjust row height based on content
+          getRowHeight={() => "auto"} // Adjust row height based on content
         />
       </Box>
 
@@ -271,16 +306,25 @@ const AddMoney = () => {
               helperText={errors.bankDetails}
             /> */}
             <div>
-              <Typography variant="body1" style={{ whiteSpace: 'pre-line', marginTop: '16px' }}>
+              <Typography
+                variant="body1"
+                style={{ whiteSpace: "pre-line", marginTop: "16px" }}
+              >
                 {values.bankDetails}
               </Typography>
             </div>
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="secondary">Cancel</Button>
-          <Button onClick={() => handleAction('approve')} color="primary">Approve</Button>
-          <Button onClick={() => handleAction('reject')} color="primary">Reject</Button>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={() => handleAction("approve")} color="primary">
+            Approve
+          </Button>
+          <Button onClick={() => handleAction("reject")} color="primary">
+            Reject
+          </Button>
         </DialogActions>
       </Dialog>
 

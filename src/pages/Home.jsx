@@ -56,10 +56,6 @@ const Home = () => {
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   const [requests, setRequests] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [values, setValues] = useState({ bankDetails: "" });
-  const [errors, setErrors] = useState({});
 
   const [loading, setLoading] = useState(true); // Loading state for skeleton
 
