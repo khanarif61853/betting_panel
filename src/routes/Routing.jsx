@@ -35,7 +35,7 @@ const Routing = () => {
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/Rules" element={<Rules />} />
                     <Route path="/qr-code" element={<QrCodes />} />
-                    <Route path="/verify-payments" element={<VerifyPayment />} />
+                    {/* <Route path="/verify-payments" element={<VerifyPayment />} /> */}
                     <Route path="*" element={<PageNotFound />} >
                     </Route>
                 </Route>

@@ -217,12 +217,12 @@ export default function Header() {
                     </ListItemIcon>
                     <ListItemText primary="Qr Codes" />
                 </ListItemButton>
-                <ListItemButton className='listItem' onClick={() => navigate("/verify-payments")}>
+                {/* <ListItemButton className='listItem' onClick={() => navigate("/verify-payments")}>
                     <ListItemIcon>
                         <LocalAtmIcon sx={{color:"#9ed100"}}/>
                     </ListItemIcon>
                     <ListItemText primary="Verify Payments" />
-                </ListItemButton>
+                </ListItemButton> */}
                 {/* <ListItemButton onClick={(e) => {
                     e.stopPropagation()
                     handleClick()
