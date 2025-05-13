@@ -95,7 +95,8 @@ const Home = () => {
     { field: "id", headerName: "ID", width: 70 },
     { field: "customerName", headerName: "CUSTOMER NAME", width: 200 },
     { field: "game", headerName: "GAME", width: 200 },
-    { field: "total", headerName: "TOTAL", width: 200 },
+    { field: "winningAmount", headerName: "WINNING AMOUNT", width: 200 },
+    { field: "gameName", headerName: "GAME NAME", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
 
@@ -213,7 +214,7 @@ const Home = () => {
 
         {/* table of winners ------------------------------------------------------------------------ */}
 
-        <Box style={{ height: 450, width: "50%" }} p={2}>
+        <Box style={{ height: 450, width: "100%" }} p={2}>
           <DataGrid
             rows={rows}
             columns={columns}
