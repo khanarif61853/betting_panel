@@ -21,6 +21,7 @@ import { BASE_URL } from "../costants";
 import { DataGrid } from "@mui/x-data-grid";
 import usePagination from "@mui/material/usePagination/usePagination";
 import CustomSnackbar from "../component/CustomSnackbar";
+import moment from "moment";
 
 const theme = createTheme({
   palette: {
@@ -59,7 +60,6 @@ const Home = () => {
 
   const [loading, setLoading] = useState(true); // Loading state for skeleton
 
-
   useEffect(() => {
     const fetchData = async () => {
       const {
@@ -72,18 +72,27 @@ const Home = () => {
       setLoading(false); // Data is loaded, set loading to false
     };
     fetchData();
-     const lastWinner = async () => {
+
+    const lastWinner = async () => {
       const {
         data: { data },
       } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
         // headers: localStorage.getItem("token"),
-        headers:{
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         params: { page: page + 1, limit },
       });
-      // setDashboardData(data);
-      console.log(data,'last-winner')
+
+      const combinedData = [
+        ...(data.jantri || []),
+        ...(data.cross || []),
+        ...(data.openPlay || []),
+      ];
+
+      setRequests(combinedData);
+      console.log(data, "-----data");
+      console.log(requests, "-----requests");
       setLoading(false); // Data is loaded, set loading to false
     };
     lastWinner();
@@ -100,16 +109,16 @@ const Home = () => {
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
 
-  const rows = requests?.map((request) => {
-    return {
-      id: request.id,
-      customerName: request.Customer.name,
-      amount: request.game,
-      total: request.total,
-      createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-
-    };
-  });
+  const rows = (requests || []).map((request, i) => ({
+    id: i + 1,
+    customerName: request?.customer?.name || "N/A",
+    game: request?.gameId || "N/A",
+    winningAmount: request?.winningAmount || "0",
+    gameName: request?.Game?.name || "N/A",
+    createdAt: request?.createdAt
+      ? moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss")
+      : "N/A",
+  }));
 
   return (
     <>
@@ -242,7 +251,6 @@ const Home = () => {
         </Box>
 
         {/* Render Snackbar */}
-
       </ThemeProvider>
     </>
   );
