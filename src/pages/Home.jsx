@@ -58,6 +58,8 @@ const Home = () => {
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   const [requests, setRequests] = useState([]);
+  const [selectedDate, setSelectDate] = useState("");
+  console.log(selectedDate);
 
   const [loading, setLoading] = useState(true); // Loading state for skeleton
 
@@ -75,14 +77,14 @@ const Home = () => {
     fetchData();
 
     const lastWinner = async () => {
+      setLoading(true);
       const {
         data: { data },
       } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
-        // headers: localStorage.getItem("token"),
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        params: { page: page + 1, limit, date: "2025-05-13" },
+        params: { page: page + 1, limit, date: selectedDate || undefined },
       });
 
       const jantriData = (data.jantri || []).map((item) => ({
@@ -107,7 +109,7 @@ const Home = () => {
       setLoading(false); // Data is loaded, set loading to false
     };
     lastWinner();
-  }, []);
+  }, [page, limit, selectedDate]);
 
   // winning user table --------------
 
@@ -256,7 +258,7 @@ const Home = () => {
                 shrink: true,
               }}
               onChange={(e) => {
-                console.log("Selected date:", selectedDate);
+                setSelectDate(e.target.value);
               }}
             />
           </Box>
