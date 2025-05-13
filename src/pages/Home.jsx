@@ -243,6 +243,9 @@ const Home = () => {
               mb: 1,
             }}
           >
+            <Typography sx={{ textAlign: "center" }} variant="h5">
+              Winning Users
+            </Typography>
             <TextField
               label="Filter by Date"
               type="date"
@@ -254,9 +257,6 @@ const Home = () => {
                 console.log("Selected date:", selectedDate);
               }}
             />
-            <Typography sx={{ textAlign: "center" }} variant="h5">
-              Winning Users
-            </Typography>
           </Box>
           <DataGrid
             rows={rows}
