@@ -58,6 +58,7 @@ const Home = () => {
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   const [requests, setRequests] = useState([]);
+  const [dataRequest, setDataRequest] = useState([]);
   const [selectedDate, setSelectDate] = useState("");
   console.log(selectedDate);
 
@@ -75,7 +76,6 @@ const Home = () => {
       setLoading(false); // Data is loaded, set loading to false
     };
     fetchData();
-
 
     const lastWinner = async () => {
       setLoading(true);
@@ -111,8 +111,6 @@ const Home = () => {
     };
     lastWinner();
 
-
-    
     const allbids = async () => {
       setLoading(true);
       const {
@@ -123,35 +121,32 @@ const Home = () => {
         },
         // params: { page: page + 1, limit, date: selectedDate || undefined },
       });
+      console.log(data, "----allbidsssdata");
 
-      // const jantriData = (data.jantri || []).map((item) => ({
-      //   ...item,
-      //   remark: "Jantri",
-      // }));
+      const jantriTotal = data?.jantri?.totalAmount || 0;
+      const crossTotal = data?.cross?.totalAmount || 0;
+      const openPlayTotal = data?.openplay?.totalAmount || 0;
 
-      // const crossData = (data.cross || []).map((item) => ({
-      //   ...item,
-      //   remark: "Cross",
-      // }));
+      const total = jantriTotal + crossTotal + openPlayTotal;
 
-      // const openPlayData = (data.openPlay || []).map((item) => ({
-      //   ...item,
-      //   remark: "Open Play",
-      // }));
-
-      // const combinedData = [...jantriData, ...crossData, ...openPlayData];
-
-      // setRequests(combinedData);
-      console.log(data, "----allbidsss");
-      setLoading(false); // Data is loaded, set loading to false
+      const dataRequestRow = {
+        id: 1,
+        game: "All Games",
+        jantri: jantriTotal,
+        cross: crossTotal,
+        openPlay: openPlayTotal,
+        total,
+      };
+      setDataRequest([dataRequestRow]);
+      console.log(dataRequest);
+      setLoading(false);
     };
     lastWinner();
     allbids();
-
   }, [page, limit, selectedDate]);
 
-  // total bidding row column 
- const bidcolumns = [
+  // total bidding row column
+  const bidcolumns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "GAME", width: 200 },
     { field: "jantri", headerName: "JANTRI", width: 200 },
@@ -161,18 +156,17 @@ const Home = () => {
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
 
-  const bidrows = ([]).map((request, i) => ({
+  const bidrows = (dataRequest || []).map((item, i) => ({
     id: i + 1,
-    customerName: request?.customer?.name || "N/A",
-    game: request?.Game?.name || "N/A",
-    finalBidNumber: request?.Game?.finalBidNumber || "N/A",
-    winningAmount: request?.winningAmount || "0",
-    gameCategory: request?.remark || "N/A",
-    createdAt: request?.createdAt
-      ? moment(request.createdAt).format("YYYY-MM-DD")
+    game: item.game || "N/A",
+    jantri: item.jantri || 0,
+    cross: item.cross || 0,
+    openPlay: item.openPlay || 0,
+    total: item.total || 0,
+    createdAt: item?.createdAt
+      ? moment(item.createdAt).format("YYYY-MM-DD")
       : "N/A",
   }));
-
 
   // winning number row column  -----------------------
   const columns = [
@@ -299,71 +293,71 @@ const Home = () => {
         </Box>
 
         {/* table of winners ------------------------------------------------------------------------ */}
-          <Box style={{width:"100%",display:"flex"}}>
-        <Box style={{ height: 450, width: "50%" }} p={2}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 1,
-            }}
-          >
-            <Typography sx={{ textAlign: "center" }} variant="h5">
-              Winning Users
-            </Typography>
-            <TextField
-              label="Filter by Date"
-              type="date"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
+        <Box style={{ width: "100%", display: "flex" }}>
+          <Box style={{ height: 450, width: "50%" }} p={2}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1,
               }}
-              onChange={(e) => {
-                setSelectDate(e.target.value);
+            >
+              <Typography sx={{ textAlign: "center" }} variant="h5">
+                Winning Users
+              </Typography>
+              <TextField
+                label="Filter by Date"
+                type="date"
+                size="small"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={(e) => {
+                  setSelectDate(e.target.value);
+                }}
+              />
+            </Box>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: limit, page },
+                },
               }}
+              paginationMode="server"
+              rowCount={total}
+              pageSize={limit}
+              disableSelectionOnClick
+              onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
+              onPaginationModelChange={(value) => {
+                if (value.pageSize !== limit) {
+                  changeLimit(value.pageSize);
+                  return changePage(0);
+                }
+                changePage(value.page);
+                changeLimit(value.pageSize);
+              }}
+              loading={loading}
+              getRowHeight={() => "auto"} // Adjust row height based on content
             />
           </Box>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: limit, page },
-              },
-            }}
-            paginationMode="server"
-            rowCount={total}
-            pageSize={limit}
-            disableSelectionOnClick
-            onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
-            onPaginationModelChange={(value) => {
-              if (value.pageSize !== limit) {
-                changeLimit(value.pageSize);
-                return changePage(0);
-              }
-              changePage(value.page);
-              changeLimit(value.pageSize);
-            }}
-            loading={loading}
-            getRowHeight={() => "auto"} // Adjust row height based on content
-          />
-        </Box>
 
-        {/* second table -----------------------------------------------------------------  */}
-        <Box style={{ height: 450, width: "50%" }} p={2}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 1,
-            }}
-          >
-            <Typography sx={{ textAlign: "center" }} variant="h5">
-              Total Bid
-            </Typography>
-            {/* <TextField
+          {/* second table -----------------------------------------------------------------  */}
+          <Box style={{ height: 450, width: "50%" }} p={2}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1,
+              }}
+            >
+              <Typography sx={{ textAlign: "center" }} variant="h5">
+                Total Bid
+              </Typography>
+              {/* <TextField
               label="Filter by Date"
               type="date"
               size="small"
@@ -374,33 +368,33 @@ const Home = () => {
                 setSelectDate(e.target.value);
               }}
             /> */}
-          </Box>
-          <DataGrid
-            // rows={rows}
-            columns={bidcolumns}
-            initialState={{
-              pagination: {
-                paginationModel: { pageSize: limit, page },
-              },
-            }}
-            paginationMode="server"
-            rowCount={total}
-            pageSize={limit}
-            disableSelectionOnClick
-            onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
-            onPaginationModelChange={(value) => {
-              if (value.pageSize !== limit) {
+            </Box>
+            <DataGrid
+              rows={bidrows}
+              columns={bidcolumns}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: limit, page },
+                },
+              }}
+              paginationMode="server"
+              rowCount={total}
+              pageSize={limit}
+              disableSelectionOnClick
+              onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
+              onPaginationModelChange={(value) => {
+                if (value.pageSize !== limit) {
+                  changeLimit(value.pageSize);
+                  return changePage(0);
+                }
+                changePage(value.page);
                 changeLimit(value.pageSize);
-                return changePage(0);
-              }
-              changePage(value.page);
-              changeLimit(value.pageSize);
-            }}
-            loading={loading}
-            getRowHeight={() => "auto"} // Adjust row height based on content
-          />
+              }}
+              loading={loading}
+              getRowHeight={() => "auto"} // Adjust row height based on content
+            />
+          </Box>
         </Box>
-</Box>
         {/* Render Snackbar */}
       </ThemeProvider>
     </>
