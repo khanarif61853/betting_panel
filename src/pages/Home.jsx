@@ -12,6 +12,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  TextField,
 } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
@@ -81,18 +82,28 @@ const Home = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        params: { page: page + 1, limit },
+        params: { page: page + 1, limit, date: "2025-05-13" },
       });
 
-      const combinedData = [
-        ...(data.jantri || []),
-        ...(data.cross || []),
-        ...(data.openPlay || []),
-      ];
+      const jantriData = (data.jantri || []).map((item) => ({
+        ...item,
+        remark: "Jantri",
+      }));
+
+      const crossData = (data.cross || []).map((item) => ({
+        ...item,
+        remark: "Cross",
+      }));
+
+      const openPlayData = (data.openPlay || []).map((item) => ({
+        ...item,
+        remark: "Open Play",
+      }));
+
+      const combinedData = [...jantriData, ...crossData, ...openPlayData];
 
       setRequests(combinedData);
-      console.log(data, "-----data");
-      console.log(requests, "-----requests");
+      console.log(combinedData, "-----combineddata");
       setLoading(false); // Data is loaded, set loading to false
     };
     lastWinner();
@@ -105,7 +116,7 @@ const Home = () => {
     { field: "customerName", headerName: "CUSTOMER NAME", width: 200 },
     { field: "game", headerName: "GAME", width: 200 },
     { field: "winningAmount", headerName: "WINNING AMOUNT", width: 200 },
-    { field: "gameName", headerName: "GAME NAME", width: 200 },
+    { field: "gameCategory", headerName: "GAME CATEGORY", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
 
@@ -114,9 +125,9 @@ const Home = () => {
     customerName: request?.customer?.name || "N/A",
     game: request?.Game?.name || "N/A",
     winningAmount: request?.winningAmount || "0",
-    gameName: request?.gameId || "N/A",
+    gameCategory: request?.remark || "N/A",
     createdAt: request?.createdAt
-      ? moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss")
+      ? moment(request.createdAt).format("YYYY-MM-DD")
       : "N/A",
   }));
 
@@ -224,6 +235,29 @@ const Home = () => {
         {/* table of winners ------------------------------------------------------------------------ */}
 
         <Box style={{ height: 450, width: "60%" }} p={2}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 1,
+            }}
+          >
+            <TextField
+              label="Filter by Date"
+              type="date"
+              size="small"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(e) => {
+                console.log("Selected date:", selectedDate);
+              }}
+            />
+            <Typography sx={{ textAlign: "center" }} variant="h5">
+              Winning Users
+            </Typography>
+          </Box>
           <DataGrid
             rows={rows}
             columns={columns}
