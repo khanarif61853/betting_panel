@@ -115,6 +115,7 @@ const Home = () => {
     { field: "id", headerName: "ID", width: 70 },
     { field: "customerName", headerName: "CUSTOMER NAME", width: 200 },
     { field: "game", headerName: "GAME", width: 200 },
+    { field: "finalBidNumber", headerName: "BID NUMBER", width: 200 },
     { field: "winningAmount", headerName: "WINNING AMOUNT", width: 200 },
     { field: "gameCategory", headerName: "GAME CATEGORY", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
@@ -124,6 +125,7 @@ const Home = () => {
     id: i + 1,
     customerName: request?.customer?.name || "N/A",
     game: request?.Game?.name || "N/A",
+    finalBidNumber: request?.Game?.finalBidNumber || "N/A",
     winningAmount: request?.winningAmount || "0",
     gameCategory: request?.remark || "N/A",
     createdAt: request?.createdAt
