@@ -65,6 +65,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true); // Loading state for skeleton
 
   useEffect(() => {
+    // fetch data ---------------
     const fetchData = async () => {
       const {
         data: { data },
@@ -75,8 +76,8 @@ const Home = () => {
       setDashboardData(data);
       setLoading(false); // Data is loaded, set loading to false
     };
-    fetchData();
 
+    // last winner  ---------------------------------
     const lastWinner = async () => {
       setLoading(true);
       const {
@@ -109,40 +110,61 @@ const Home = () => {
       console.log(combinedData, "-----combineddata");
       setLoading(false); // Data is loaded, set loading to false
     };
-    lastWinner();
 
+    // all bids api fetch -----------------------------------------------------------------------------------
     const allbids = async () => {
       setLoading(true);
-      const {
-        data: { data },
-      } = await axios.get(`${BASE_URL}/api/web/retrieve/all-bids`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        // params: { page: page + 1, limit, date: selectedDate || undefined },
-      });
-      console.log(data, "----allbidsssdata");
+      try {
+        const {
+          data: { data },
+        } = await axios.get(`${BASE_URL}/api/web/retrieve/all-bids`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
-      const jantriTotal = data?.jantri?.totalAmount || 0;
-      const crossTotal = data?.cross?.totalAmount || 0;
-      const openPlayTotal = data?.openplay?.totalAmount || 0;
+        const jantriData = (data.jantri.games || []).map((item) => ({
+          game_name: item.game_name || "N/A",
+          total_bid: item.total_bid,
+          remark: "Jantri",
+        }));
 
-      const total = jantriTotal + crossTotal + openPlayTotal;
+        const crossData = (data.cross.games || []).map((item) => ({
+          game_name: item.game_name || "N/A",
+          total_bid: item.total_bid,
+          remark: "Cross",
+        }));
 
-      const dataRequestRow = {
-        id: 1,
-        game: "All Games",
-        jantri: jantriTotal,
-        cross: crossTotal,
-        openPlay: openPlayTotal,
-        total,
-      };
-      setDataRequest([dataRequestRow]);
-      console.log(dataRequest);
+        const openPlayData = (data.openplay.games || []).map((item) => ({
+          game_name: item.game_name || "N/A",
+          total_bid: item.total_bid,
+          remark: "Open Play",
+        }));
+
+        const combinedData = [...jantriData, ...crossData, ...openPlayData];
+
+        setDataRequest(combinedData);
+      } catch (error) {
+        console.error("Failed to fetch all bids:", error);
+      }
       setLoading(false);
     };
-    lastWinner();
-    allbids();
+
+    // fetch all data -----------------------------
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([allbids(), fetchData(), lastWinner()]);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+
+    // ----------------
   }, [page, limit, selectedDate]);
 
   // total bidding row column
@@ -155,7 +177,6 @@ const Home = () => {
     { field: "total", headerName: "TOTAL", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
-
   const bidrows = (dataRequest || []).map((item, i) => ({
     id: i + 1,
     game: item.game || "N/A",
@@ -352,6 +373,7 @@ const Home = () => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 mb: 1,
+                mt: 1,
               }}
             >
               <Typography sx={{ textAlign: "center" }} variant="h5">
