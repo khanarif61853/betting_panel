@@ -112,9 +112,9 @@ const Home = () => {
   const rows = (requests || []).map((request, i) => ({
     id: i + 1,
     customerName: request?.customer?.name || "N/A",
-    game: request?.gameId || "N/A",
+    game: request?.Game?.name || "N/A",
     winningAmount: request?.winningAmount || "0",
-    gameName: request?.Game?.name || "N/A",
+    gameName: request?.gameId || "N/A",
     createdAt: request?.createdAt
       ? moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss")
       : "N/A",
