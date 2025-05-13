@@ -214,7 +214,7 @@ const Home = () => {
 
         {/* table of winners ------------------------------------------------------------------------ */}
 
-        <Box style={{ height: 450, width: "100%" }} p={2}>
+        <Box style={{ height: 450, width: "80%" }} p={2}>
           <DataGrid
             rows={rows}
             columns={columns}
