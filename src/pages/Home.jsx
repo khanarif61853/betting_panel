@@ -122,41 +122,42 @@ const Home = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
         // console.log(data,'---bidsdata');
-        const jantriData = (data.jantriGame || []).map((item) => ({
-          game_name: item.game_name || "N/A",
-          total_bid: item.total_bid,
-          createdAt: item?.createdAt,
-          remark: "JANTRI",
-        }));
+        // const jantriData = (data.jantriGame || []).map((item) => ({
+        //   game_name: item.game_name || "N/A",
+        //   total_bid: item.total_bid,
+        //   createdAt: item?.createdAt,
+        //   remark: "JANTRI",
+        // }));
 
-        const crossData = (data.crossGame || []).map((item) => ({
-          game_name: item.game_name || "N/A",
-          total_bid: item.total_bid,
-          createdAt: item?.createdAt,
-          remark: "CROSS",
-        }));
+        // const crossData = (data.crossGame || []).map((item) => ({
+        //   game_name: item.game_name || "N/A",
+        //   total_bid: item.total_bid,
+        //   createdAt: item?.createdAt,
+        //   remark: "CROSS",
+        // }));
 
-        const openPlayData = (data.openplayGame || []).map((item) => ({
-          game_name: item.game_name || "N/A",
-          total_bid: item.total_bid,
-          createdAt: item?.createdAt,
-          remark: "OPEN PLAY",
-        }));
+        // const openPlayData = (data.openplayGame || []).map((item) => ({
+        //   game_name: item.game_name || "N/A",
+        //   total_bid: item.total_bid,
+        //   createdAt: item?.createdAt,
+        //   remark: "OPEN PLAY",
+        // }));
 
-        const combinedData = [...jantriData, ...crossData, ...openPlayData];
-        const formattedRows = combinedData.map((item, index) => ({
-          id: index + 1,
-          game: item.game_name,
-          jantri: item.remark === "JANTRI" ? item.total_bid : 0,
-          cross: item.remark === "CROSS" ? item.total_bid : 0,
-          openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
-          total: item?.total_bid,
-          createdAt: item?.createdAt,
-        }));
-        console.log(formattedRows, "--------formatedd rowwss");
+        // const combinedData = [...jantriData, ...crossData, ...openPlayData];
+        // const formattedRows = combinedData.map((item, index) => ({
+        //   id: index + 1,
+        //   game: item.game_name,
+        //   jantri: item.remark === "JANTRI" ? item.total_bid : 0,
+        //   cross: item.remark === "CROSS" ? item.total_bid : 0,
+        //   openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
+        //   total: item?.total_bid,
+        //   createdAt: item?.createdAt,
+        // }));
+        // console.log(formattedRows, "--------formatedd rowwss");
 
-        setDataRequest(formattedRows);
+        setDataRequest(data);
       } catch (error) {
         console.error("Failed to fetch all bids:", error);
       }
@@ -184,19 +185,19 @@ const Home = () => {
   const bidcolumns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "GAME", width: 200 },
-    { field: "jantri", headerName: "JANTRI", width: 200 },
-    { field: "cross", headerName: "CROSS", width: 200 },
-    { field: "openPlay", headerName: "OPEN PLAY", width: 200 },
+    // { field: "jantri", headerName: "JANTRI", width: 200 },
+    // { field: "cross", headerName: "CROSS", width: 200 },
+    // { field: "openPlay", headerName: "OPEN PLAY", width: 200 },
     { field: "total", headerName: "TOTAL", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
   const bidrows = (dataRequest || []).map((item, i) => ({
     id: i + 1,
-    game: item.game || "N/A",
-    jantri: item.jantri || 0,
-    cross: item.cross || 0,
-    openPlay: item.openPlay || 0,
-    total: item.total || 0,
+    game: item.game_name || "N/A",
+    // jantri: item.jantri || 0,
+    // cross: item.cross || 0,
+    // openPlay: item.openPlay || 0,
+    total: item.total_bid || 0,
     createdAt: item?.createdAt
       ? moment(item.createdAt).format("YYYY-MM-DD")
       : "N/A",
