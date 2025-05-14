@@ -107,7 +107,7 @@ const Home = () => {
       const combinedData = [...jantriData, ...crossData, ...openPlayData];
 
       setRequests(combinedData);
-      // console.log(combinedData, "-----combineddata");
+      // console.log(combinedData, "-----combineddatalastwinner");
       setLoading(false); // Data is loaded, set loading to false
     };
 
@@ -126,18 +126,21 @@ const Home = () => {
         const jantriData = (data.jantriGame || []).map((item) => ({
           game_name: item.game_name || "N/A",
           total_bid: item.total_bid,
+          createdAt: item?.createdAt,
           remark: "JANTRI",
         }));
 
         const crossData = (data.crossGame || []).map((item) => ({
           game_name: item.game_name || "N/A",
           total_bid: item.total_bid,
+          createdAt: item?.createdAt,
           remark: "CROSS",
         }));
 
         const openPlayData = (data.openplayGame || []).map((item) => ({
           game_name: item.game_name || "N/A",
           total_bid: item.total_bid,
+          createdAt: item?.createdAt,
           remark: "OPEN PLAY",
         }));
 
@@ -148,8 +151,8 @@ const Home = () => {
           jantri: item.remark === "JANTRI" ? item.total_bid : 0,
           cross: item.remark === "CROSS" ? item.total_bid : 0,
           openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
-          total: item.total_bid,
-          // createdAt: item.createdAt,
+          total: item?.total_bid,
+          createdAt: item?.createdAt,
         }));
         console.log(formattedRows, "--------formatedd rowwss");
 
