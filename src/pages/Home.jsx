@@ -312,7 +312,7 @@ const Home = () => {
                     sx={{ color: theme.palette.primary.main, mr: 1 }}
                   />
                   <Typography variant="h6" color="primary">
-                    Total Collection
+                    Total Add Money Collection
                   </Typography>
                 </Box>
                 {loading ? (
