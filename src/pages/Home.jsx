@@ -107,7 +107,7 @@ const Home = () => {
       const combinedData = [...jantriData, ...crossData, ...openPlayData];
 
       setRequests(combinedData);
-      console.log(combinedData, "-----combineddata");
+      // console.log(combinedData, "-----combineddata");
       setLoading(false); // Data is loaded, set loading to false
     };
 
@@ -122,28 +122,38 @@ const Home = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
-        const jantriData = (data.jantri.games || []).map((item) => ({
+        // console.log(data,'---bidsdata');
+        const jantriData = (data.jantriGame || []).map((item) => ({
           game_name: item.game_name || "N/A",
           total_bid: item.total_bid,
-          remark: "Jantri",
+          remark: "JANTRI",
         }));
 
-        const crossData = (data.cross.games || []).map((item) => ({
+        const crossData = (data.crossGame || []).map((item) => ({
           game_name: item.game_name || "N/A",
           total_bid: item.total_bid,
-          remark: "Cross",
+          remark: "CROSS",
         }));
 
-        const openPlayData = (data.openplay.games || []).map((item) => ({
+        const openPlayData = (data.openplayGame || []).map((item) => ({
           game_name: item.game_name || "N/A",
           total_bid: item.total_bid,
-          remark: "Open Play",
+          remark: "OPEN PLAY",
         }));
 
         const combinedData = [...jantriData, ...crossData, ...openPlayData];
+        const formattedRows = combinedData.map((item, index) => ({
+          id: index + 1,
+          game: item.game_name,
+          jantri: item.remark === "JANTRI" ? item.total_bid : 0,
+          cross: item.remark === "CROSS" ? item.total_bid : 0,
+          openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
+          total: item.total_bid,
+          // createdAt: item.createdAt,
+        }));
+        console.log(formattedRows, "--------formatedd rowwss");
 
-        setDataRequest(combinedData);
+        setDataRequest(formattedRows);
       } catch (error) {
         console.error("Failed to fetch all bids:", error);
       }
