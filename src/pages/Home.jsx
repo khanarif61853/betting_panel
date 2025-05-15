@@ -324,11 +324,51 @@ const Home = () => {
                 )}
               </Paper>
             </Grid>
+
+             <Grid item xs={12} sm={6} md={3}>
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <PublicIcon
+                    sx={{ color: theme.palette.primary.main, mr: 1 }}
+                  />
+                  <Typography variant="h6" color="primary">
+                   Winning Users
+                  </Typography>
+                </Box>
+                {loading ? (
+                  <Skeleton variant="text" width="60%" height={50} />
+                ) : (
+                  <Typography variant="h4">
+                    {-dashboardData.totalCollection}
+                  </Typography>
+                )}
+              </Paper>
+            </Grid>
+
+             <Grid item xs={12} sm={6} md={3}>
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <PublicIcon
+                    sx={{ color: theme.palette.primary.main, mr: 1 }}
+                  />
+                  <Typography variant="h6" color="primary">
+                    Total Bid
+                  </Typography>
+                </Box>
+                {loading ? (
+                  <Skeleton variant="text" width="60%" height={50} />
+                ) : (
+                  <Typography variant="h4">
+                    {-dashboardData.totalCollection}
+                  </Typography>
+                )}
+              </Paper>
+            </Grid>
           </Grid>
         </Box>
 
         {/* table of winners ------------------------------------------------------------------------ */}
-        <Box style={{ width: "100%", display: "flex" }}>
+        {/* <Box style={{ width: "100%", display: "flex" }}>
           <Box style={{ height: 450, width: "50%" }} p={2}>
             <Box
               sx={{
@@ -377,10 +417,10 @@ const Home = () => {
               loading={loading}
               getRowHeight={() => "auto"} // Adjust row height based on content
             />
-          </Box>
+          </Box> */}
 
           {/* second table -----------------------------------------------------------------  */}
-          <Box style={{ height: 450, width: "50%" }} p={2}>
+          {/* <Box style={{ height: 450, width: "50%" }} p={2}>
             <Box
               sx={{
                 display: "flex",
@@ -393,17 +433,6 @@ const Home = () => {
               <Typography sx={{ textAlign: "center" }} variant="h5">
                 Total Bid
               </Typography>
-              {/* <TextField
-              label="Filter by Date"
-              type="date"
-              size="small"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              onChange={(e) => {
-                setSelectDate(e.target.value);
-              }}
-            /> */}
             </Box>
             <DataGrid
               rows={bidrows}
@@ -430,7 +459,7 @@ const Home = () => {
               getRowHeight={() => "auto"} // Adjust row height based on content
             />
           </Box>
-        </Box>
+        </Box> */}
         {/* Render Snackbar */}
       </ThemeProvider>
     </>
