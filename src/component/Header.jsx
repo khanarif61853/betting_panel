@@ -186,7 +186,7 @@ export default function Header() {
                         <SportsEsportsIcon sx={{color:"#9ed100"}} />
                     </ListItemIcon>
                     <ListItemText primary="Games" />
-                </ListItemButton>
+                  </ListItemButton>
                 <ListItemButton className='listItem' onClick={() => navigate("/withdrawal-requests")}>
                     <ListItemIcon>
                         <AttachMoneyIcon sx={{color:"#9ed100"}}/>
