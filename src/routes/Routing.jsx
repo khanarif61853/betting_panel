@@ -14,6 +14,7 @@ import Customers from '../pages/Customers';
 import Rules from "../pages/Rules.jsx";
 import VerifyPayment from "../pages/VerifyPayment.jsx";
 import AddMoney from '../pages/AddMoney.jsx';
+import WinningUsers from '../pages/dashboard/WinningUsers.jsx';
 
 
 const Routing = () => {
@@ -35,6 +36,7 @@ const Routing = () => {
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/Rules" element={<Rules />} />
                     <Route path="/qr-code" element={<QrCodes />} />
+                    <Route path="/winning-users" element={<WinningUsers />} />
                     {/* <Route path="/verify-payments" element={<VerifyPayment />} /> */}
                     <Route path="*" element={<PageNotFound />} >
                     </Route>
