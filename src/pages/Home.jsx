@@ -124,38 +124,38 @@ const Home = () => {
         });
 
         // console.log(data,'---bidsdata');
-        // const jantriData = (data.jantriGame || []).map((item) => ({
-        //   game_name: item.game_name || "N/A",
-        //   total_bid: item.total_bid,
-        //   createdAt: item?.createdAt,
-        //   remark: "JANTRI",
-        // }));
+        const jantriData = (data.jantriGame || []).map((item) => ({
+          game_name: item.game_name || "N/A",
+          total_bid: item.total_bid,
+          createdAt: item?.createdAt,
+          remark: "JANTRI",
+        }));
 
-        // const crossData = (data.crossGame || []).map((item) => ({
-        //   game_name: item.game_name || "N/A",
-        //   total_bid: item.total_bid,
-        //   createdAt: item?.createdAt,
-        //   remark: "CROSS",
-        // }));
+        const crossData = (data.crossGame || []).map((item) => ({
+          game_name: item.game_name || "N/A",
+          total_bid: item.total_bid,
+          createdAt: item?.createdAt,
+          remark: "CROSS",
+        }));
 
-        // const openPlayData = (data.openplayGame || []).map((item) => ({
-        //   game_name: item.game_name || "N/A",
-        //   total_bid: item.total_bid,
-        //   createdAt: item?.createdAt,
-        //   remark: "OPEN PLAY",
-        // }));
+        const openPlayData = (data.openplayGame || []).map((item) => ({
+          game_name: item.game_name || "N/A",
+          total_bid: item.total_bid,
+          createdAt: item?.createdAt,
+          remark: "OPEN PLAY",
+        }));
 
-        // const combinedData = [...jantriData, ...crossData, ...openPlayData];
-        // const formattedRows = combinedData.map((item, index) => ({
-        //   id: index + 1,
-        //   game: item.game_name,
-        //   jantri: item.remark === "JANTRI" ? item.total_bid : 0,
-        //   cross: item.remark === "CROSS" ? item.total_bid : 0,
-        //   openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
-        //   total: item?.total_bid,
-        //   createdAt: item?.createdAt,
-        // }));
-        // console.log(formattedRows, "--------formatedd rowwss");
+        const combinedData = [...jantriData, ...crossData, ...openPlayData];
+        const formattedRows = combinedData.map((item, index) => ({
+          id: index + 1,
+          game: item.game_name,
+          jantri: item.remark === "JANTRI" ? item.total_bid : 0,
+          cross: item.remark === "CROSS" ? item.total_bid : 0,
+          openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
+          total: item?.total_bid,
+          createdAt: item?.createdAt,
+        }));
+        console.log(formattedRows, "--------formatedd rowwss");
 
         setDataRequest(data);
       } catch (error) {
@@ -294,7 +294,7 @@ const Home = () => {
 
             {/*<Grid item xs={12} sm={6} md={3}>*/}
             {/*  <Paper elevation={3}>*/}
-            {/*    <Box sx={{ display: 'flex', alignItems: 'center' }}>*/}
+            {/*    <Box sx={{ display: 'flex', align  Items: 'center' }}>*/}
             {/*      <PublicIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />*/}
             {/*      <Typography variant="h6" color="primary">Total Users</Typography>*/}
             {/*    </Box>*/}
@@ -325,14 +325,15 @@ const Home = () => {
               </Paper>
             </Grid>
 
-             <Grid item xs={12} sm={6} md={3}>
+            {/* winning users ---------------------------------------------------------------- */}
+            <Grid item xs={12} sm={6} md={3}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PublicIcon
                     sx={{ color: theme.palette.primary.main, mr: 1 }}
                   />
                   <Typography variant="h6" color="primary">
-                   Winning Users
+                    Winning Users
                   </Typography>
                 </Box>
                 {loading ? (
@@ -344,8 +345,9 @@ const Home = () => {
                 )}
               </Paper>
             </Grid>
-
-             <Grid item xs={12} sm={6} md={3}>
+            
+            {/* total bid ---------------------------------------------------------------------- */}
+            <Grid item xs={12} sm={6} md={3}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PublicIcon
@@ -419,8 +421,8 @@ const Home = () => {
             />
           </Box> */}
 
-          {/* second table -----------------------------------------------------------------  */}
-          {/* <Box style={{ height: 450, width: "50%" }} p={2}>
+        {/* second table -----------------------------------------------------------------  */}
+        {/* <Box style={{ height: 450, width: "50%" }} p={2}>
             <Box
               sx={{
                 display: "flex",

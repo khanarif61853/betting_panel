@@ -241,7 +241,7 @@ const Games = () => {
         setOpenAddDialog(false);
 
         try {
-            if (editingGame) {
+            if (editingGame){
                 try {
                     await axios.put(`${BASE_URL}/api/web/update/game`, formData, {
                         params: {id: editingGame.id},
