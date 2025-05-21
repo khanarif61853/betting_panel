@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -31,6 +31,7 @@ export default function Header() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [logOut,setLogOut] = useState(false)
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -44,9 +45,17 @@ export default function Header() {
   const handleMobileMenuOpen = (event) =>
     setMobileMoreAnchorEl(event.currentTarget);
 
-  const handleLogout = ()=>{
-     localStorage.removeItem("token");  
+  const handleLogout = async()=>{
+     localStorage.removeItem("token");
+     setLogOut(true)
   }
+
+  useEffect(()=>{
+    if(logOut){
+        navigate("sign-in");
+    }
+  },[logOut])
+
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -81,6 +90,7 @@ export default function Header() {
       transformOrigin={{ vertical: "top", horizontal: "right" }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
+      onClick={handleProfileMenuOpen}
     >
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
@@ -92,7 +102,7 @@ export default function Header() {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p className="">Menu</p>
       </MenuItem>
     </Menu>
   );

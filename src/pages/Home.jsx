@@ -140,7 +140,6 @@ const Home = () => {
         }));
         setDataRequest(data);
         setDashboardTotalBid(totalbids);
-        console.log(dataRequest, "----totoalbids dattt");
       } catch (error) {
         console.error("Failed to fetch all bids:", error);
       }
