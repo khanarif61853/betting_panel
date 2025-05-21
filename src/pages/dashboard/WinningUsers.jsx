@@ -10,7 +10,7 @@ const WinningUsers = () => {
     usePagination();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-   const [selectedDate, setSelectDate] = useState("");
+  const [selectedDate, setSelectDate] = useState("");
   const lastWinner = async () => {
     setLoading(true);
     const {
@@ -69,7 +69,7 @@ const WinningUsers = () => {
 
   useEffect(() => {
     lastWinner();
-  }, []);
+  }, [page, limit, selectedDate]);
 
   return (
     <>

@@ -4,29 +4,29 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "../../costants";
 
 const TotalBid = () => {
   const [dataRequest, setDataRequest] = useState([]);
-   const [loading, setLoading] = useState(true);
-     const { page, limit, total, changePage, changeLimit, changeTotal } =
-       usePagination();
+  const [selectedDate, setSelectDate] = useState("");
+  const [loading, setLoading] = useState(true);
+  const { page, limit, total, changePage, changeLimit, changeTotal } =
+    usePagination();
 
   const allbids = async () => {
     setLoading(true);
     try {
       const {
         data: { data },
-      } = await axios.get(`${BASE_URL}/api/web/retrieve/all-bids`, {
+      } = await axios.get(`${BASE_URLz}/api/web/retrieve/all-bids`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      const totalbids = (data || []).reduce(
-        (sum, item) => sum + (Number(item.total_bid) || 0),
-        0
-      );
+  
+      console.log(data,'--datatotalbid')
 
-      const formattedRows = data.map((item, index) => ({
+      data.map((item, index) => ({
         id: index + 1,
         game: item.game_name,
         total: item?.total_bid,
@@ -55,10 +55,9 @@ const TotalBid = () => {
       : "N/A",
   }));
 
-
-  useEffect(()=>{
-    allbids()
-  },[])
+  useEffect(() => {
+    allbids();
+  }, [page, limit, selectedDate]);
   return (
     <>
       <Box style={{ height: 450, width: "80%" }} p={2}>

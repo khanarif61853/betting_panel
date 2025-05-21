@@ -1,29 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import {
-  Box,
-  Grid,
-  Paper,
-  Typography,
-  Skeleton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  TextField,
-} from "@mui/material";
+import { Box, Grid, Paper, Typography, Skeleton } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import PublicIcon from "@mui/icons-material/Public";
 import axios from "axios";
 import { BASE_URL } from "../costants";
-import { DataGrid } from "@mui/x-data-grid";
 import usePagination from "@mui/material/usePagination/usePagination";
-import CustomSnackbar from "../component/CustomSnackbar";
-import moment from "moment";
-import { Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
@@ -61,11 +44,8 @@ const Home = () => {
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
-  const [requests, setRequests] = useState([]);
-  const [dataRequest, setDataRequest] = useState([]);
   const [selectedDate, setSelectDate] = useState("");
-  const [tableWinningShow, setTableWinningShow] = useState(false);
-  const [tableTotalBidShow, setTableTotalBidShow] = useState(false);
+
   const navigate = useNavigate();
   console.log(selectedDate);
 
@@ -84,43 +64,7 @@ const Home = () => {
       setLoading(false); // Data is loaded, set loading to false
     };
 
-    // last winner  ---------------------------------
-    const lastWinner = async () => {
-      setLoading(true);
-      const {
-        data: { data },
-      } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        params: { page: page + 1, limit, date: selectedDate || undefined },
-      });
-
-
-      const jantriData = (data.jantri || []).map((item) => ({
-        ...item,
-        remark: "Jantri",
-      }));
-
-      const crossData = (data.cross || []).map((item) => ({
-        ...item,
-        remark: "Cross",
-      }));
-
-      const openPlayData = (data.openPlay || []).map((item) => ({
-        ...item,
-        remark: "Open Play",
-      }));
-
-      const combinedData = [...jantriData, ...crossData, ...openPlayData];
-
-      setRequests(combinedData);
-
-      // console.log(combinedData, "-----combineddatalastwinner");
-      setLoading(false); // Data is loaded, set loading to false
-    };
-
-    // all bids api fetch -----------------------------------------------------------------------------------
+    //  give dashboard totalbid -------------------
     const allbids = async () => {
       setLoading(true);
       try {
@@ -135,14 +79,6 @@ const Home = () => {
           (sum, item) => sum + (Number(item.total_bid) || 0),
           0
         );
-
-        const formattedRows = data.map((item, index) => ({
-          id: index + 1,
-          game: item.game_name,
-          total: item?.total_bid,
-          createdAt: item?.createdAt,
-        }));
-        setDataRequest(data);
         setDashboardTotalBid(totalbids);
       } catch (error) {
         console.error("Failed to fetch all bids:", error);
@@ -154,7 +90,7 @@ const Home = () => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        await Promise.all([allbids(), fetchData(), lastWinner()]);
+        await Promise.all([allbids(), fetchData()]);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -163,49 +99,7 @@ const Home = () => {
     };
 
     fetchAllData();
-
-    // ----------------
-  }, [page, limit, selectedDate, dashboardTotalBid, dashboardWinningUsers]);
-
-  // total bidding row column
-  const bidcolumns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "game", headerName: "GAME", width: 200 },
-
-    { field: "total", headerName: "TOTAL", width: 200 },
-    { field: "createdAt", headerName: "Created At", width: 200 },
-  ];
-  const bidrows = (dataRequest || []).map((item, i) => ({
-    id: i + 1,
-    game: item.game_name || "N/A",
-    total: item.total_bid || 0,
-    createdAt: item?.createdAt
-      ? moment(item.createdAt).format("YYYY-MM-DD")
-      : "N/A",
-  }));
-
-  // winning number row column  -----------------------
-  const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "customerName", headerName: "CUSTOMER NAME", width: 200 },
-    { field: "game", headerName: "GAME", width: 200 },
-    { field: "finalBidNumber", headerName: "BID NUMBER", width: 200 },
-    { field: "winningAmount", headerName: "WINNING AMOUNT", width: 200 },
-    { field: "gameCategory", headerName: "GAME CATEGORY", width: 200 },
-    { field: "createdAt", headerName: "Created At", width: 200 },
-  ];
-
-  const rows = (requests || []).map((request, i) => ({
-    id: i + 1,
-    customerName: request?.customer?.name || "N/A",
-    game: request?.Game?.name || "N/A",
-    finalBidNumber: request?.Game?.finalBidNumber || "N/A",
-    winningAmount: request?.winningAmount || "0",
-    gameCategory: request?.remark || "N/A",
-    createdAt: request?.createdAt
-      ? moment(request.createdAt).format("YYYY-MM-DD")
-      : "N/A",
-  }));
+  }, [page, limit, selectedDate]);
 
   return (
     <>
@@ -299,8 +193,7 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              // onClick={() => setTableWinningShow(!tableWinningShow)}
-              onClick={()=> navigate("/winning-users")}
+              onClick={() => navigate("/winning-users")}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -325,7 +218,6 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              // onClick={() => setTableTotalBidShow(!tableTotalBidShow)}
               onClick={() => navigate("/totalbid")}
             >
               <Paper elevation={3}>
@@ -345,108 +237,6 @@ const Home = () => {
               </Paper>
             </Grid>
           </Grid>
-        </Box>
-
-        {/* table of winners ------------------------------------------------------------------------ */}
-        <Box style={{ width: "100%", display: "flex" }}>
-          <Box
-            style={{ height: 450, width: "50%" }}
-            sx={{ display: tableWinningShow ? "block" : "none" }}
-            p={2}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 1,
-              }}
-            >
-              <Typography sx={{ textAlign: "center" }} variant="h5">
-                Winning Users
-              </Typography>
-              <TextField
-                label="Filter by Date"
-                type="date"
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={(e) => {
-                  setSelectDate(e.target.value);
-                }}
-              />
-            </Box>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: limit, page },
-                },
-              }}
-              paginationMode="server"
-              rowCount={total}
-              pageSize={limit}
-              disableSelectionOnClick
-              onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
-              onPaginationModelChange={(value) => {
-                if (value.pageSize !== limit) {
-                  changeLimit(value.pageSize);
-                  return changePage(0);
-                }
-                changePage(value.page);
-                changeLimit(value.pageSize);
-              }}
-              loading={loading}
-              getRowHeight={() => "auto"} // Adjust row height based on content
-            />
-          </Box>
-
-          {/* second table -----------------------------------------------------------------  */}
-          <Box
-            style={{ height: 450, width: "50%" }}
-            sx={{ display: tableTotalBidShow ? "block" : "none" }}
-            p={2}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 1,
-                mt: 1,
-              }}
-            >
-              <Typography sx={{ textAlign: "center" }} variant="h5">
-                Total Bid
-              </Typography>
-            </Box>
-            <DataGrid
-              rows={bidrows}
-              columns={bidcolumns}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: limit, page },
-                },
-              }}
-              paginationMode="server"
-              rowCount={total}
-              pageSize={limit}
-              disableSelectionOnClick
-              onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
-              onPaginationModelChange={(value) => {
-                if (value.pageSize !== limit) {
-                  changeLimit(value.pageSize);
-                  return changePage(0);
-                }
-                changePage(value.page);
-                changeLimit(value.pageSize);
-              }}
-              loading={loading}
-              getRowHeight={() => "auto"} // Adjust row height based on content
-            />
-          </Box>
         </Box>
         {/* Render Snackbar */}
       </ThemeProvider>

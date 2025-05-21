@@ -27,6 +27,7 @@ const Routing = () => {
         </Route>
         <Route path="/" element={<ProtectedRoute />}>
           <Route element={<Header />}>
+            <Route path="*" element={<PageNotFound />} />
             <Route path="/home" element={<Home />} />
             <Route path="/games" element={<Games />} />
             <Route path="/game" element={<Game />} />
@@ -42,7 +43,6 @@ const Routing = () => {
             {/* dashboard cards routes ------------------ */}
             <Route path="/winning-users" element={<WinningUsers />} />
             <Route path="/totalbid" element={<TotalBid />} />
-            <Route path="*" element={<PageNotFound />} />
           </Route>
         </Route>
       </Routes>
