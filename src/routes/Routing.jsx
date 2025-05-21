@@ -14,30 +14,40 @@ import Customers from "../pages/Customers";
 import Rules from "../pages/Rules.jsx";
 import VerifyPayment from "../pages/VerifyPayment.jsx";
 import AddMoney from "../pages/AddMoney.jsx";
+import WinningUsers from "../pages/dashboard/WinningUsers.jsx";
+import TotalBid from "../pages/dashboard/TotalBid.jsx";
 
 const Routing = () => {
   return (
-    <Routes>
-      <Route path="/" element={<PublicRoute />}>
-        <Route path="/" element={<Navigate replace to="/sign-in" />} />
-        <Route path="/sign-in" element={<SignIn />} />
-      </Route>
-      <Route path="/" element={<ProtectedRoute />}>
-        <Route element={<Header />}>    
-          <Route path="/home" element={<Home />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/withdrawal-requests" element={<WithdrawalRequests />} />
-          <Route path="/add-money" element={<AddMoney />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/Rules" element={<Rules />} />
-          <Route path="/qr-code" element={<QrCodes />} />
-          {/* <Route path="/verify-payments" element={<VerifyPayment />} /> */}
-          <Route path="*" element={<PageNotFound />} />
+    <>
+      <Routes>
+        <Route path="/" element={<PublicRoute />}>
+          <Route path="/" element={<Navigate replace to="/sign-in" />} />
+          <Route path="/sign-in" element={<SignIn />} />
         </Route>
-      </Route>
-    </Routes>
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route element={<Header />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/withdrawal-requests"
+              element={<WithdrawalRequests />}
+            />
+            <Route path="/add-money" element={<AddMoney />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/Rules" element={<Rules />} />
+            <Route path="/qr-code" element={<QrCodes />} />
+            {/* dashboard cards routes ------------------ */}
+            <Route path="/winning-users" element={<WinningUsers />} />
+            <Route path="/totalbid" element={<TotalBid />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Route>
+        </Route>
+      </Routes>
+      {/* <Route path="/verify-payments" element={<VerifyPayment />} /> */}
+    </>
   );
 };
 

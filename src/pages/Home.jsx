@@ -24,6 +24,7 @@ import usePagination from "@mui/material/usePagination/usePagination";
 import CustomSnackbar from "../component/CustomSnackbar";
 import moment from "moment";
 import { Visibility } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -65,6 +66,7 @@ const Home = () => {
   const [selectedDate, setSelectDate] = useState("");
   const [tableWinningShow, setTableWinningShow] = useState(false);
   const [tableTotalBidShow, setTableTotalBidShow] = useState(false);
+  const navigate = useNavigate();
   console.log(selectedDate);
 
   const [loading, setLoading] = useState(true); // Loading state for skeleton
@@ -94,6 +96,7 @@ const Home = () => {
         params: { page: page + 1, limit, date: selectedDate || undefined },
       });
 
+
       const jantriData = (data.jantri || []).map((item) => ({
         ...item,
         remark: "Jantri",
@@ -112,6 +115,7 @@ const Home = () => {
       const combinedData = [...jantriData, ...crossData, ...openPlayData];
 
       setRequests(combinedData);
+
       // console.log(combinedData, "-----combineddatalastwinner");
       setLoading(false); // Data is loaded, set loading to false
     };
@@ -295,7 +299,8 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              onClick={() => setTableWinningShow(!tableWinningShow)}
+              // onClick={() => setTableWinningShow(!tableWinningShow)}
+              onClick={()=> navigate("/winning-users")}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -320,7 +325,8 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              onClick={() => setTableTotalBidShow(!tableTotalBidShow)}
+              // onClick={() => setTableTotalBidShow(!tableTotalBidShow)}
+              onClick={() => navigate("/totalbid")}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
