@@ -1,6 +1,6 @@
 import { Box, TextField, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { BASE_URL } from "../../costants";
+import { BASE_URL } from "../costants";
 import { useEffect, useState } from "react";
 import usePagination from "@mui/material/usePagination/usePagination";
 import axios from "axios";

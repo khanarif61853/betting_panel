@@ -8,6 +8,14 @@ import axios from "axios";
 import { BASE_URL } from "../costants";
 import usePagination from "@mui/material/usePagination/usePagination";
 import { useNavigate } from "react-router-dom";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import AddCardIcon from "@mui/icons-material/AddCard";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupIcon from '@mui/icons-material/Group';
+import EqualizerIcon from '@mui/icons-material/Equalizer';
+
+
+
 
 const theme = createTheme({
   palette: {
@@ -107,7 +115,13 @@ const Home = () => {
         <Box sx={{ flexGrow: 1, p: 2 }}>
           <Grid container spacing={2} my={2}>
             {/* Key Metrics */}
-            <Grid item xs={12} sm={6} md={3}  onClick={()=> navigate("/customers")}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => navigate("/customers")}
+            >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PeopleIcon
@@ -127,7 +141,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} onClick={()=> navigate("/games")}>
+            <Grid item xs={12} sm={6} md={3} onClick={() => navigate("/games")}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
@@ -147,7 +161,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} >
+            <Grid item xs={12} sm={6} md={3}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
@@ -167,10 +181,16 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} onClick={()=> navigate("/add-money")}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => navigate("/add-money")}
+            >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <PublicIcon
+                  <AddCardIcon
                     sx={{ color: theme.palette.primary.main, mr: 1 }}
                   />
                   <Typography variant="h6" color="primary">
@@ -187,7 +207,6 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            {/* winning users ---------------------------------------------------------------- */}
             <Grid
               item
               xs={12}
@@ -197,7 +216,7 @@ const Home = () => {
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <PublicIcon
+                  <GroupIcon
                     sx={{ color: theme.palette.primary.main, mr: 1 }}
                   />
                   <Typography variant="h6" color="primary">
@@ -212,7 +231,6 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            {/* total bid ---------------------------------------------------------------------- */}
             <Grid
               item
               xs={12}
@@ -222,7 +240,7 @@ const Home = () => {
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <PublicIcon
+                  <EqualizerIcon
                     sx={{ color: theme.palette.primary.main, mr: 1 }}
                   />
                   <Typography variant="h6" color="primary">
@@ -236,6 +254,71 @@ const Home = () => {
                 )}
               </Paper>
             </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={6}
+              onClick={() => navigate("/withdrawal-requests")}
+            >
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <AttachMoneyIcon
+                    sx={{ color: theme.palette.primary.main, mr: 1 }}
+                  />
+                  <Typography variant="h6" color="primary">
+                    Withdrawal Requests
+                  </Typography>
+                </Box>
+                {loading ? (
+                  <Skeleton variant="text" width="60%" height={50} />
+                ) : (
+                  <Typography variant="h4">
+                    {-dashboardData.totalCollection}
+                  </Typography>
+                )}
+              </Paper>
+            </Grid>
+            
+             <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => navigate("/qr-code")}
+            >
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <PersonIcon
+                    sx={{ color: theme.palette.primary.main, mr: 1 }}
+                  />
+                  <Typography variant="h6" color="primary">
+                    Qr Code
+                  </Typography>
+                </Box>
+              </Paper>
+            </Grid>
+
+             <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => navigate("/rules")}
+            >
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <PersonIcon
+                    sx={{ color: theme.palette.primary.main, mr: 1 }}
+                  />
+                  <Typography variant="h6" color="primary">
+                    Rules
+                  </Typography>
+                </Box>
+              </Paper>
+            </Grid>
+
+
           </Grid>
         </Box>
         {/* Render Snackbar */}

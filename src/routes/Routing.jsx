@@ -12,8 +12,8 @@ import WithdrawalRequests from "../pages/WithdrawalRequests";
 import Customers from "../pages/Customers";
 import Rules from "../pages/Rules.jsx";
 import AddMoney from "../pages/AddMoney.jsx";
-import WinningUsers from "../pages/dashboard/WinningUsers.jsx";
-import TotalBid from "../pages/dashboard/TotalBid.jsx";
+import WinningUsers from "../pages/WinningUsers.jsx";
+import TotalBid from "../pages/TotalBid.jsx";
 
 const Routing = () => {
   return (

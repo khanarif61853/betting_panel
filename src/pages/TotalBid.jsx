@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../../costants";
+import { BASE_URL } from "../costants";
 
 const TotalBid = () => {
   const [dataRequest, setDataRequest] = useState([]);
@@ -60,7 +60,7 @@ const TotalBid = () => {
   }, [page, limit, selectedDate]);
   return (
     <>
-      <Box style={{ height: 450, width: "80%" }} p={2}>
+      <Box style={{ height: 450, width: "100%" }} p={2}>
         <Box
           sx={{
             display: "flex",

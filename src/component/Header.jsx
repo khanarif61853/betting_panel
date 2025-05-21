@@ -107,82 +107,82 @@ export default function Header() {
     </Menu>
   );
 
-  const DrawerList = (
-    <Box sx={{ width: "100%",marginTop:"90px" }}>
-      <List
-        sx={{
-          width: "100%",
-          maxWidth: 360,
-          borderRadius: "50px",
-        }}
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-        subheader={
-          <ListSubheader
-            sx={{ background: "transparent", display: "flex" }}
-            component="div"
-            id="nested-list-subheader"
-          >
-            {/* Logo or Arrow here if needed */}
-          </ListSubheader>
-        }
-      >
-        <ListItemButton onClick={() => navigate("/home")}>
-          <ListItemIcon>
-            <DashboardIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItemButton>
-        <ListItemButton onClick={() => navigate("/games")}>
-          <ListItemIcon>
-            <SportsEsportsIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Games" />
-        </ListItemButton>
-        <ListItemButton onClick={() => navigate("/withdrawal-requests")}>
-          <ListItemIcon>
-            <AttachMoneyIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Withdrawal Requests" />
-        </ListItemButton>
-        <ListItemButton onClick={() => navigate("/add-money")}>
-          <ListItemIcon>
-            <AddCardIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Add Money" />
-        </ListItemButton>
-        <ListItemButton onClick={() => navigate("/customers")}>
-          <ListItemIcon>
-            <PersonIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Customers" />
-        </ListItemButton>
-        <ListItemButton className="listItem" onClick={() => navigate("/rules")}>
-          <ListItemIcon>
-            <PersonIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Rules" />
-        </ListItemButton>
-        <ListItemButton
-          className="listItem"
-          onClick={() => navigate("/qr-code")}
-        >
-          <ListItemIcon>
-            <PersonIcon sx={{ color: "#9ed100" }} />
-          </ListItemIcon>
-          <ListItemText primary="Qr Codes" />
-        </ListItemButton>
-        {/* Add more items as needed */}
-      </List>
-    </Box>
-  );
+//   const DrawerList = (
+//     <Box sx={{ width: "100%",marginTop:"90px" }}>
+//       <List
+//         sx={{
+//           width: "100%",
+//           maxWidth: 360,
+//           borderRadius: "50px",
+//         }}
+//         component="nav"
+//         aria-labelledby="nested-list-subheader"
+//         subheader={
+//           <ListSubheader
+//             sx={{ background: "transparent", display: "flex" }}
+//             component="div"
+//             id="nested-list-subheader"
+//           >
+//             {/* Logo or Arrow here if needed */}
+//           </ListSubheader>
+//         }
+//       >
+//         <ListItemButton onClick={() => navigate("/home")}>
+//           <ListItemIcon>
+//             <DashboardIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Dashboard" />
+//         </ListItemButton>
+//         <ListItemButton onClick={() => navigate("/games")}>
+//           <ListItemIcon>
+//             <SportsEsportsIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Games" />
+//         </ListItemButton>
+//         <ListItemButton onClick={() => navigate("/withdrawal-requests")}>
+//           <ListItemIcon>
+//             <AttachMoneyIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Withdrawal Requests" />
+//         </ListItemButton>
+//         <ListItemButton onClick={() => navigate("/add-money")}>
+//           <ListItemIcon>
+//             <AddCardIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Add Money" />
+//         </ListItemButton>
+//         <ListItemButton onClick={() => navigate("/customers")}>
+//           <ListItemIcon>
+//             <PersonIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Customers" />
+//         </ListItemButton>
+//         <ListItemButton className="listItem" onClick={() => navigate("/rules")}>
+//           <ListItemIcon>
+//             <PersonIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Rules" />
+//         </ListItemButton>
+//         <ListItemButton
+//           className="listItem"
+//           onClick={() => navigate("/qr-code")}
+//         >
+//           <ListItemIcon>
+//             <PersonIcon sx={{ color: "#9ed100" }} />
+//           </ListItemIcon>
+//           <ListItemText primary="Qr Codes" />
+//         </ListItemButton>
+//         {/* Add more items as needed */}
+//       </List>
+//     </Box>
+//   );
 
   return (
     <>
       {/* Permanent Drawer */}
 
       {/* Main content area */}
-      <Box>
+
         {/* AppBar */}
         <AppBar
           position="fixed"
@@ -234,9 +234,9 @@ export default function Header() {
         {renderMobileMenu}
         {renderMenu}
         {/* Main page content */}
-        <Box sx={{ display: "flex" }}>
+        {/* <Box sx={{ display: "flex" }}> */}
           {/* drawer  */}
-          <Drawer
+          {/* <Drawer
             variant="permanent"
             sx={{
               width: drawerWidth,
@@ -248,14 +248,14 @@ export default function Header() {
             }}
           >
             {DrawerList}
-          </Drawer>
+          </Drawer> */}
 
           {/* end Drawer  */}
-          <Box sx={{ p: 3, width: "80%",mt:10 }}>
+          <Box sx={{ p: 3, width: "100%",mt:10 }}>
             <Outlet />
-          </Box>
         </Box>
-      </Box>
+          {/* </Box> */}
+
     </>
   );
 }
