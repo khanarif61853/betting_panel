@@ -18,7 +18,7 @@ const TotalBid = () => {
     try {
       const {
         data: { data },
-      } = await axios.get(`${BASE_URLz}/api/web/retrieve/all-bids`, {
+      } = await axios.get(`${BASE_URL}/api/web/retrieve/all-bids`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

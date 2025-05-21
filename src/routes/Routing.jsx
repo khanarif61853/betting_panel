@@ -26,8 +26,8 @@ const Routing = () => {
           <Route path="/sign-in" element={<SignIn />} />
         </Route>
         <Route path="/" element={<ProtectedRoute />}>
+          <Route path="*" element={<PageNotFound />} />
           <Route element={<Header />}>
-            <Route path="*" element={<PageNotFound />} />
             <Route path="/home" element={<Home />} />
             <Route path="/games" element={<Games />} />
             <Route path="/game" element={<Game />} />
