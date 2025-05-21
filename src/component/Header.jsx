@@ -44,6 +44,10 @@ export default function Header() {
   const handleMobileMenuOpen = (event) =>
     setMobileMoreAnchorEl(event.currentTarget);
 
+  const handleLogout = ()=>{
+     localStorage.removeItem("token");  
+  }
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -63,7 +67,7 @@ export default function Header() {
       >
         Profile
       </MenuItem>
-      <MenuItem /* onClick={handleLogout} */>Logout</MenuItem>
+      <MenuItem onClick={handleLogout} >Logout</MenuItem>
     </Menu>
   );
 
@@ -94,7 +98,7 @@ export default function Header() {
   );
 
   const DrawerList = (
-    <Box sx={{ width: "100%",marginTop:"82px" }}>
+    <Box sx={{ width: "100%",marginTop:"90px" }}>
       <List
         sx={{
           width: "100%",

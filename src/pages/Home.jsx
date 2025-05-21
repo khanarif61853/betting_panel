@@ -158,8 +158,7 @@ const Home = () => {
           total: item?.total_bid,
           createdAt: item?.createdAt,
         }));
-        console.log(formattedRows, "--------formatedd rowwss");
-
+  
         setDataRequest(data);
       } catch (error) {
         console.error("Failed to fetch all bids:", error);
@@ -188,18 +187,13 @@ const Home = () => {
   const bidcolumns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "GAME", width: 200 },
-    // { field: "jantri", headerName: "JANTRI", width: 200 },
-    // { field: "cross", headerName: "CROSS", width: 200 },
-    // { field: "openPlay", headerName: "OPEN PLAY", width: 200 },
+
     { field: "total", headerName: "TOTAL", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
   const bidrows = (dataRequest || []).map((item, i) => ({
     id: i + 1,
     game: item.game_name || "N/A",
-    // jantri: item.jantri || 0,
-    // cross: item.cross || 0,
-    // openPlay: item.openPlay || 0,
     total: item.total_bid || 0,
     createdAt: item?.createdAt
       ? moment(item.createdAt).format("YYYY-MM-DD")
@@ -295,19 +289,6 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            {/*<Grid item xs={12} sm={6} md={3}>*/}
-            {/*  <Paper elevation={3}>*/}
-            {/*    <Box sx={{ display: 'flex', align  Items: 'center' }}>*/}
-            {/*      <PublicIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />*/}
-            {/*      <Typography variant="h6" color="primary">Total Users</Typography>*/}
-            {/*    </Box>*/}
-            {/*    {loading ? (*/}
-            {/*        <Skeleton variant="text" width="60%" height={50} />*/}
-            {/*    ) : (*/}
-            {/*        <Typography variant="h4">{dashboardData.totalUsers}</Typography>*/}
-            {/*    )}*/}
-            {/*  </Paper>*/}
-            {/*</Grid>*/}
             <Grid item xs={12} sm={6} md={3}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -343,7 +324,7 @@ const Home = () => {
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
                   <Typography variant="h4">
-                    {-dashboardData.totalCollection}
+                    {-dashboardData?.totalCollection}
                   </Typography>
                 )}
               </Paper>
@@ -364,7 +345,7 @@ const Home = () => {
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
                   <Typography variant="h4">
-                    {-dashboardData.totalCollection}
+                    {-dashboardData?.totalCollection}
                   </Typography>
                 )}
               </Paper>
