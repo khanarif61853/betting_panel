@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { PublicRoute } from "../helpers/PublicRoute";
 import { ProtectedRoute } from "../helpers/ProtectedRoute";
@@ -12,7 +11,6 @@ import QrCodes from "../pages/QrCodes";
 import WithdrawalRequests from "../pages/WithdrawalRequests";
 import Customers from "../pages/Customers";
 import Rules from "../pages/Rules.jsx";
-import VerifyPayment from "../pages/VerifyPayment.jsx";
 import AddMoney from "../pages/AddMoney.jsx";
 import WinningUsers from "../pages/dashboard/WinningUsers.jsx";
 import TotalBid from "../pages/dashboard/TotalBid.jsx";

@@ -107,7 +107,7 @@ const Home = () => {
         <Box sx={{ flexGrow: 1, p: 2 }}>
           <Grid container spacing={2} my={2}>
             {/* Key Metrics */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3}  onClick={()=> navigate("/customers")}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PeopleIcon
@@ -127,7 +127,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3} onClick={()=> navigate("/games")}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
@@ -147,7 +147,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3} >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
@@ -167,7 +167,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3} onClick={()=> navigate("/add-money")}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PublicIcon
