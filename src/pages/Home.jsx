@@ -56,13 +56,15 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
+  const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
+  const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   const [requests, setRequests] = useState([]);
   const [dataRequest, setDataRequest] = useState([]);
   const [selectedDate, setSelectDate] = useState("");
-  const [tableWinningShow,setTableWinningShow] = useState(false);
-  const [tableTotalBidShow,setTableTotalBidShow] = useState(false);
+  const [tableWinningShow, setTableWinningShow] = useState(false);
+  const [tableTotalBidShow, setTableTotalBidShow] = useState(false);
   console.log(selectedDate);
 
   const [loading, setLoading] = useState(true); // Loading state for skeleton
@@ -125,41 +127,20 @@ const Home = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+        const totalbids = (data || []).reduce(
+          (sum, item) => sum + (Number(item.total_bid) || 0),
+          0
+        );
 
-        // console.log(data,'---bidsdata');
-        const jantriData = (data.jantriGame || []).map((item) => ({
-          game_name: item.game_name || "N/A",
-          total_bid: item.total_bid,
-          createdAt: item?.createdAt,
-          remark: "JANTRI",
-        }));
-
-        const crossData = (data.crossGame || []).map((item) => ({
-          game_name: item.game_name || "N/A",
-          total_bid: item.total_bid,
-          createdAt: item?.createdAt,
-          remark: "CROSS",
-        }));
-
-        const openPlayData = (data.openplayGame || []).map((item) => ({
-          game_name: item.game_name || "N/A",
-          total_bid: item.total_bid,
-          createdAt: item?.createdAt,
-          remark: "OPEN PLAY",
-        }));
-
-        const combinedData = [...jantriData, ...crossData, ...openPlayData];
-        const formattedRows = combinedData.map((item, index) => ({
+        const formattedRows = data.map((item, index) => ({
           id: index + 1,
           game: item.game_name,
-          jantri: item.remark === "JANTRI" ? item.total_bid : 0,
-          cross: item.remark === "CROSS" ? item.total_bid : 0,
-          openPlay: item.remark === "OPEN PLAY" ? item.total_bid : 0,
           total: item?.total_bid,
           createdAt: item?.createdAt,
         }));
-  
         setDataRequest(data);
+        setDashboardTotalBid(totalbids);
+        console.log(dataRequest, "----totoalbids dattt");
       } catch (error) {
         console.error("Failed to fetch all bids:", error);
       }
@@ -181,7 +162,7 @@ const Home = () => {
     fetchAllData();
 
     // ----------------
-  }, [page, limit, selectedDate]);
+  }, [page, limit, selectedDate, dashboardTotalBid, dashboardWinningUsers]);
 
   // total bidding row column
   const bidcolumns = [
@@ -296,7 +277,7 @@ const Home = () => {
                     sx={{ color: theme.palette.primary.main, mr: 1 }}
                   />
                   <Typography variant="h6" color="primary">
-                    Total Add Money 
+                    Total Add Money
                   </Typography>
                 </Box>
                 {loading ? (
@@ -310,7 +291,13 @@ const Home = () => {
             </Grid>
 
             {/* winning users ---------------------------------------------------------------- */}
-            <Grid item xs={12} sm={6} md={3} onClick={()=>setTableWinningShow(!tableWinningShow)}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => setTableWinningShow(!tableWinningShow)}
+            >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PublicIcon
@@ -323,15 +310,19 @@ const Home = () => {
                 {loading ? (
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
-                  <Typography variant="h4">
-                    {-dashboardData?.totalCollection}
-                  </Typography>
+                  <Typography variant="h4">{dashboardWinningUsers}</Typography>
                 )}
               </Paper>
             </Grid>
 
             {/* total bid ---------------------------------------------------------------------- */}
-            <Grid item xs={12} sm={6} md={3} onClick={()=>setTableTotalBidShow(!tableTotalBidShow)}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => setTableTotalBidShow(!tableTotalBidShow)}
+            >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PublicIcon
@@ -344,9 +335,7 @@ const Home = () => {
                 {loading ? (
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
-                  <Typography variant="h4">
-                    {-dashboardData?.totalCollection}
-                  </Typography>
+                  <Typography variant="h4">{dashboardTotalBid}</Typography>
                 )}
               </Paper>
             </Grid>
@@ -354,8 +343,12 @@ const Home = () => {
         </Box>
 
         {/* table of winners ------------------------------------------------------------------------ */}
-        <Box style={{ width: "100%", display: "flex"}}>
-          <Box style={{ height: 450, width: "50%",}} sx={{display: tableWinningShow ? "block": "none"}} p={2}>
+        <Box style={{ width: "100%", display: "flex" }}>
+          <Box
+            style={{ height: 450, width: "50%" }}
+            sx={{ display: tableWinningShow ? "block" : "none" }}
+            p={2}
+          >
             <Box
               sx={{
                 display: "flex",
@@ -405,8 +398,12 @@ const Home = () => {
             />
           </Box>
 
-        {/* second table -----------------------------------------------------------------  */}
-        <Box style={{ height: 450, width: "50%"}} sx={{display: tableTotalBidShow ? "block": "none"}} p={2}>
+          {/* second table -----------------------------------------------------------------  */}
+          <Box
+            style={{ height: 450, width: "50%" }}
+            sx={{ display: tableTotalBidShow ? "block" : "none" }}
+            p={2}
+          >
             <Box
               sx={{
                 display: "flex",
