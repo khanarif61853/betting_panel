@@ -378,7 +378,7 @@ const Games = () => {
             textAlign: "center",
             renderCell: ({row}) => ( 
             <div>
-                <Chip label={"Click"} sx={{textAlign:"center",marginLeft:2,cursor:"pointer"}} color="primary" onClick={()=> navigate("/final-jantri")}/>
+                <Chip label={"Open"} sx={{textAlign:"center",marginLeft:2,cursor:"pointer"}} color="primary" onClick={()=> navigate(`/final-jantri/?id=${row.id}`)}/>
             </div>
             )
         },
