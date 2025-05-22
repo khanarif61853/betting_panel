@@ -1,9 +1,11 @@
-import React from 'react'
+import ContextProvider from './context/ContextProvider'
 import Routing from './routes/Routing'
 
 const App = () => {
   return (
+    <ContextProvider>
     <Routing/>
+    </ContextProvider>
   )
 }
 

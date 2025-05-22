@@ -2,8 +2,10 @@ import { Box, TextField, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { BASE_URL } from "../costants";
 import { useEffect, useState } from "react";
-import usePagination from "@mui/material/usePagination/usePagination";
+import { usePagination } from "../hooks/usePagination";
 import axios from "axios";
+import moment from "moment";
+import { useContextProvider } from "../context/ContextProvider";
 
 const WinningUsers = () => {
   const { page, limit, total, changePage, changeLimit, changeTotal } =
@@ -16,6 +18,7 @@ const WinningUsers = () => {
     const {
       data: { data },
     } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
+      params: { limit, page },
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -38,10 +41,9 @@ const WinningUsers = () => {
     }));
 
     const combinedData = [...jantriData, ...crossData, ...openPlayData];
-
     setRequests(combinedData);
+    changeTotal(combinedData?.length || 0);
 
-    // console.log(combinedData, "-----combineddatalastwinner");
     setLoading(false); // Data is loaded, set loading to false
   };
 

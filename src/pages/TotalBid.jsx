@@ -1,38 +1,29 @@
-import { Box, Typography } from "@mui/material";
-import usePagination from "@mui/material/usePagination/usePagination";
+import { Box, TextField, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import axios from "axios";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { BASE_URL } from "../costants";
+import { useContextProvider } from "../context/ContextProvider";
 
 const TotalBid = () => {
-  const [dataRequest, setDataRequest] = useState([]);
-  const [selectedDate, setSelectDate] = useState("");
-  const [loading, setLoading] = useState(true);
-  const { page, limit, total, changePage, changeLimit, changeTotal } =
-    usePagination();
+  const {
+    loading,
+    setLoading,
+    dataRequest,
+    setDataRequest,
+    setSelectDate,
+    dashboardTotalBid,
+  } = useContextProvider();
 
   const allbids = async () => {
     setLoading(true);
     try {
-      const {
-        data: { data },
-      } = await axios.get(`${BASE_URL}/api/web/retrieve/all-bids`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-  
-      console.log(data,'--datatotalbid')
-
-      data.map((item, index) => ({
+      dataRequest.map((item, index) => ({
         id: index + 1,
         game: item.game_name,
         total: item?.total_bid,
         createdAt: item?.createdAt,
       }));
-      setDataRequest(data);
+      setDataRequest(dataRequest);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch all bids:", error);
     }
@@ -55,9 +46,7 @@ const TotalBid = () => {
       : "N/A",
   }));
 
-  useEffect(() => {
-    allbids();
-  }, [page, limit, selectedDate]);
+
   return (
     <>
       <Box style={{ height: 450, width: "100%" }} p={2}>
@@ -71,29 +60,27 @@ const TotalBid = () => {
           }}
         >
           <Typography sx={{ textAlign: "center" }} variant="h5">
-            Total Bid
+            Total Bid : {dashboardTotalBid}
           </Typography>
+          <TextField
+            label="Filter by Date"
+            type="date"
+            size="small"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) => {
+              setSelectDate(e.target.value);
+            }}
+          />
         </Box>
         <DataGrid
           rows={bidrows}
           columns={bidcolumns}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: limit, page },
+          sx={{
+            "& .MuiToolbar-root > div.MuiInputBase-root > svg": {
+              display: "none !important",
             },
-          }}
-          paginationMode="server"
-          rowCount={total}
-          pageSize={limit}
-          disableSelectionOnClick
-          onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
-          onPaginationModelChange={(value) => {
-            if (value.pageSize !== limit) {
-              changeLimit(value.pageSize);
-              return changePage(0);
-            }
-            changePage(value.page);
-            changeLimit(value.pageSize);
           }}
           loading={loading}
           getRowHeight={() => "auto"} // Adjust row height based on content

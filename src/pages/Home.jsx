@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, Grid, Paper, Typography, Skeleton } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
@@ -11,11 +11,9 @@ import { useNavigate } from "react-router-dom";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import PersonIcon from "@mui/icons-material/Person";
-import GroupIcon from '@mui/icons-material/Group';
-import EqualizerIcon from '@mui/icons-material/Equalizer';
-
-
-
+import GroupIcon from "@mui/icons-material/Group";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
+import { useContextProvider } from "../context/ContextProvider";
 
 const theme = createTheme({
   palette: {
@@ -48,11 +46,11 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
-  const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
+  const {dashboardTotalBid,dashboardWinningUsers} = useContextProvider();
+
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
-  const [selectedDate, setSelectDate] = useState("");
+    let [selectedDate, setSelectedDate] = useState("");
 
   const navigate = useNavigate();
   console.log(selectedDate);
@@ -72,38 +70,16 @@ const Home = () => {
       setLoading(false); // Data is loaded, set loading to false
     };
 
-    //  give dashboard totalbid -------------------
-    const allbids = async () => {
-      setLoading(true);
-      try {
-        const {
-          data: { data },
-        } = await axios.get(`${BASE_URL}/api/web/retrieve/all-bids`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const totalbids = (data || []).reduce(
-          (sum, item) => sum + (Number(item.total_bid) || 0),
-          0
-        );
-        setDashboardTotalBid(totalbids);
-      } catch (error) {
-        console.error("Failed to fetch all bids:", error);
-      }
-      setLoading(false);
-    };
-
     // fetch all data -----------------------------
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        await Promise.all([allbids(), fetchData()]);
+        await Promise.all([ fetchData()]);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
         setLoading(false);
-      }
+      } 
     };
 
     fetchAllData();
@@ -236,7 +212,9 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              onClick={() => navigate("/totalbid")}
+              onClick={() =>
+                navigate("/totalbid")
+              }
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -279,8 +257,8 @@ const Home = () => {
                 )}
               </Paper>
             </Grid>
-            
-             <Grid
+
+            <Grid
               item
               xs={12}
               sm={6}
@@ -299,13 +277,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-             <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/rules")}
-            >
+            <Grid item xs={12} sm={6} md={3} onClick={() => navigate("/rules")}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PersonIcon
@@ -317,8 +289,6 @@ const Home = () => {
                 </Box>
               </Paper>
             </Grid>
-
-
           </Grid>
         </Box>
         {/* Render Snackbar */}
