@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   useTheme,
   useMediaQuery,
-  Dialog,
   Grid,
   Select,
   MenuItem,
-  Tooltip,
   TextField,
 } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -16,15 +14,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../costants";
 import { useFormik } from "formik";
-import Button from "@mui/joy/Button";
-import Divider from "@mui/joy/Divider";
-import DialogTitle from "@mui/joy/DialogTitle";
-import DialogContent from "@mui/joy/DialogContent";
-import DialogActions from "@mui/joy/DialogActions";
-import Modal from "@mui/joy/Modal";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ModalDialog from "@mui/joy/ModalDialog";
-import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import CustomSnackbar from "../component/CustomSnackbar";
 
 const FinalJantri = () => {
@@ -41,7 +31,6 @@ const FinalJantri = () => {
   const [bidDeclared, setBidDeclared] = useState(false); // New state for declaration status
   const [collectedAmount, setCollectedAmount] = useState();
   const [games, setGames] = useState([]);
-  const [selectedName, setSelectedName] = useState("");
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -212,40 +201,7 @@ const FinalJantri = () => {
     setSelectedBid({ number, amount: bidMap[number] || 0 });
   };
 
-  const handleConfirm = async () => {
-    try {
-      const response = await axios.put(
-        `${BASE_URL}/api/web/update/gameResult`,
-        {
-          bidNumber: formik.values.bidNumber.number,
-          bidAmount: formik.values.bidNumber.amount,
-        },
-        {
-          params: { id: searchParams.get("id"), gameName: games },
-          headers: {
-            Authorization: localStorage.getItem("token"),
-            "ngrok-skip-browser-warning": true,
-          },
-        }
-      );
-      if (response.data.type == "error") {
-        setError(response.data.message);
-      } else {
-        setBidDeclared(response.data.data.finalBidNumber); // Set bidDeclared to true on successful declaration
-        setSuccess("Bid declared successfully");
-      }
-      // Close the dialog and reset form or handle success
-      setOpenConfirmDialog(false);
-      formik.resetForm();
-    } catch (error) {
-      console.error("Error declaring bid:", error);
-    }
-  };
-
-  const handleCancel = () => {
-    setOpenConfirmDialog(false);
-  };
-
+ 
   return (
     <Box padding={3}>
       {" "}
@@ -433,7 +389,7 @@ const FinalJantri = () => {
                   ? bidMap[number] !== undefined
                     ? `₹${bidMap[number]}`
                     : ""
-                  : ""}
+                  : ""} 
               </Typography>
             </Box>
           </Box>

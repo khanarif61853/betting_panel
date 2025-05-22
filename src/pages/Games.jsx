@@ -33,7 +33,7 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, } from '@mui/x-date-pickers';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
-import { render } from 'react-dom';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const theme = createTheme({
     palette: {
@@ -419,6 +419,12 @@ const Games = () => {
         return (
             <>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
+                     <ArrowBackIcon
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              navigate("/home");
+                            }}
+                          />
                     <Grid container alignItems={"center"} mb={2} justifyContent={"flex-between"}>
                         <Grid item  xs={5} display={"flex"} alignItems={"center"}>
                             <Typography variant="h6" paddingX={1}>
