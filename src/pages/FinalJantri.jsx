@@ -23,7 +23,6 @@ const FinalJantri = () => {
   const [insideNumbers, setInsideNumbers] = useState([]);
   const [outsideNumbers, setOutsideNumbers] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [selectedBid, setSelectedBid] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -338,28 +337,13 @@ const FinalJantri = () => {
               border: "1px solid #ddd",
               borderRadius: 1,
               cursor: bidDeclared ? "not-allowed" : "pointer", // Change cursor if bid is declared
-              boxShadow:
-                formik.values.bidNumber.number === number
-                  ? "0px 4px 10px rgba(0, 0, 0, 1)"
-                  : "none",
-              backgroundColor: bidDeclared ? "#BEB8D1" : "inherit", // Change background color if bid is declared
             }}
           >
             <Box
               sx={{
                 width: "100%",
                 padding: 0.5,
-                backgroundColor: bidDeclared
-                  ? "gray"
-                  : bidMap
-                  ? bidMap[number] === minBidAmount
-                    ? "#ffa500"
-                    : bidMap[number] === maxBidAmount
-                    ? "red"
-                    : formik.values.bidNumber.number === number
-                    ? "green"
-                    : "#6f6bb7"
-                  : "#6f6bb7",
+                backgroundColor:"#6f6bb7",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
