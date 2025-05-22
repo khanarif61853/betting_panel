@@ -88,7 +88,6 @@ const FinalJantri = () => {
             finalBidNumber = "0";
           }
           setCollectedAmount(amountCollection);
-          console.log(collectedAmount);
           if (finalBidNumber) {
             setBidDeclared(finalBidNumber);
             clearInterval(intervalId);
@@ -591,7 +590,7 @@ const FinalJantri = () => {
           ))}
         </Box>
       </Box> */}
-      <Tooltip
+      {/* <Tooltip
         title={
           formik.values.bidNumber.number
             ? ""
@@ -638,10 +637,10 @@ const FinalJantri = () => {
         >
           Declare Bid
         </Button>
-      </Tooltip>
+      </Tooltip> */}
 
       {/* Confirmation Dialog */}
-      <Modal
+      {/* <Modal
         open={openConfirmDialog}
         onClose={() => setOpenConfirmDialog(false)}
       >
@@ -667,7 +666,7 @@ const FinalJantri = () => {
             </Button>
           </DialogActions>
         </ModalDialog>
-      </Modal>
+      </Modal> */}
 
       <CustomSnackbar
         open={!!error || !!success}
