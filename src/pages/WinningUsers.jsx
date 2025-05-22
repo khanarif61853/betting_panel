@@ -10,42 +10,7 @@ import { useContextProvider } from "../context/ContextProvider";
 const WinningUsers = () => {
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectDate] = useState("");
-  const lastWinner = async () => {
-    setLoading(true);
-    const {
-      data: { data },
-    } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
-      params: { limit, page },
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      params: { page: page + 1, limit, date: selectedDate || undefined },
-    });
-
-    const jantriData = (data.jantri || []).map((item) => ({
-      ...item,
-      remark: "Jantri",
-    }));
-
-    const crossData = (data.cross || []).map((item) => ({
-      ...item,
-      remark: "Cross",
-    }));
-
-    const openPlayData = (data.openPlay || []).map((item) => ({
-      ...item,
-      remark: "Open Play",
-    }));
-
-    const combinedData = [...jantriData, ...crossData, ...openPlayData];
-    setRequests(combinedData);
-    changeTotal(combinedData?.length || 0);
-
-    setLoading(false); // Data is loaded, set loading to false
-  };
+    const {requests,loading,setSelectedDateWinningUsers,dashboardWinningUsers} = useContextProvider();
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -69,10 +34,6 @@ const WinningUsers = () => {
       : "N/A",
   }));
 
-  useEffect(() => {
-    lastWinner();
-  }, [page, limit, selectedDate]);
-
   return (
     <>
       <Box style={{ width: "100%", display: "flex" }}>
@@ -86,7 +47,7 @@ const WinningUsers = () => {
             }}
           >
             <Typography sx={{ textAlign: "center" }} variant="h5">
-              Winning Users
+              Winning Users : {dashboardWinningUsers}
             </Typography>
             <TextField
               label="Filter by Date"
@@ -96,7 +57,7 @@ const WinningUsers = () => {
                 shrink: true,
               }}
               onChange={(e) => {
-                setSelectDate(e.target.value);
+                setSelectedDateWinningUsers(e.target.value);
               }}
             />
           </Box>
