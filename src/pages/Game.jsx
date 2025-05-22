@@ -277,9 +277,6 @@ const Game = () => {
             {/*        ))}*/}
             {/*    </Box>*/}
             {/*</Box>*/}
-            <ArrowBackIcon style={{cursor:"pointer"}} onClick={()=>{
-                navigate("/games")
-            }}/>
 
             <Grid container alignItems={"center"} spacing={2} justifyContent={"space-between"}>
                 <Grid item>

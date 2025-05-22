@@ -46,11 +46,11 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const {dashboardTotalBid,dashboardWinningUsers} = useContextProvider();
+  const { dashboardTotalBid, dashboardWinningUsers } = useContextProvider();
 
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
-    let [selectedDate, setSelectedDate] = useState("");
+  let [selectedDate, setSelectedDate] = useState("");
 
   const navigate = useNavigate();
   console.log(selectedDate);
@@ -74,12 +74,12 @@ const Home = () => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        await Promise.all([ fetchData()]);
+        await Promise.all([fetchData()]);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
         setLoading(false);
-      } 
+      }
     };
 
     fetchAllData();
@@ -97,6 +97,7 @@ const Home = () => {
               sm={6}
               md={3}
               onClick={() => navigate("/customers")}
+              sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -117,7 +118,14 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} onClick={() => navigate("/games")}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => navigate("/games")}
+              sx={{ cursor: "pointer" }}
+            >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
@@ -137,7 +145,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={3} sx={{ cursor: "pointer" }}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
@@ -163,6 +171,7 @@ const Home = () => {
               sm={6}
               md={3}
               onClick={() => navigate("/add-money")}
+              sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -189,6 +198,7 @@ const Home = () => {
               sm={6}
               md={3}
               onClick={() => navigate("/winning-users")}
+              sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -212,9 +222,8 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              onClick={() =>
-                navigate("/totalbid")
-              }
+              onClick={() => navigate("/totalbid")}
+              sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -238,6 +247,7 @@ const Home = () => {
               sm={6}
               md={6}
               onClick={() => navigate("/withdrawal-requests")}
+              sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -264,6 +274,7 @@ const Home = () => {
               sm={6}
               md={3}
               onClick={() => navigate("/qr-code")}
+              sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -277,7 +288,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} onClick={() => navigate("/rules")}>
+            <Grid item xs={12} sm={6} md={3} onClick={() => navigate("/rules")}  sx={{cursor: "pointer"}}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PersonIcon

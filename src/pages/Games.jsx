@@ -33,6 +33,7 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, } from '@mui/x-date-pickers';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
+import { render } from 'react-dom';
 
 const theme = createTheme({
     palette: {
@@ -371,6 +372,17 @@ const Games = () => {
             ),
         },
         {
+            field: 'finaljantri',
+            headerName: 'Final Jantri',
+            width: 150,
+            textAlign: "center",
+            renderCell: ({row}) => ( 
+            <div>
+                <Chip label={"Click"} sx={{textAlign:"center",marginLeft:2,cursor:"pointer"}} color="primary" onClick={()=> navigate("/final-jantri")}/>
+            </div>
+            )
+        },
+         {
             field: 'result',
             headerName: 'Result',
             width: 150,
