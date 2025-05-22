@@ -248,6 +248,13 @@ const FinalJantri = () => {
 
   return (
     <Box padding={3}>
+      {" "}
+      <ArrowBackIcon
+        style={{ cursor: "pointer" }}
+        onClick={() => {
+          navigate("/games");
+        }}
+      />
       <Grid
         container
         alignItems={"center"}
@@ -432,7 +439,6 @@ const FinalJantri = () => {
           </Box>
         ))}
       </Box>
-
       {/* Display Inside Numbers */}
       {/* <Box mt={4}>
         <Typography
@@ -511,7 +517,6 @@ const FinalJantri = () => {
           ))}
         </Box>
       </Box> */}
-
       {/* Display Outside Numbers */}
       {/* <Box mt={4}>
         <Typography
@@ -638,7 +643,6 @@ const FinalJantri = () => {
           Declare Bid
         </Button>
       </Tooltip> */}
-
       {/* Confirmation Dialog */}
       {/* <Modal
         open={openConfirmDialog}
@@ -667,7 +671,6 @@ const FinalJantri = () => {
           </DialogActions>
         </ModalDialog>
       </Modal> */}
-
       <CustomSnackbar
         open={!!error || !!success}
         handleClose={handleCloseSnackbar}

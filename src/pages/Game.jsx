@@ -222,61 +222,9 @@ const Game = () => {
 
     return (
         <Box padding={3}>
-            {/*<Box mt={6}>*/}
-            {/*    <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>*/}
-            {/*        Top 10 Maximum Bid Amounts*/}
-            {/*    </Typography>*/}
-            {/*    <Box sx={{*/}
-            {/*        display: 'grid',*/}
-            {/*        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',*/}
-            {/*        gap: 2,*/}
-            {/*        mt: 2*/}
-            {/*    }}>*/}
-            {/*        {topMaxBids.map((bid) => (*/}
-            {/*            <Box key={bid.number} sx={{*/}
-            {/*                backgroundColor: '#f9f9f9',*/}
-            {/*                padding: 2,*/}
-            {/*                borderRadius: 2,*/}
-            {/*                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',*/}
-            {/*                display: 'flex',*/}
-            {/*                flexDirection: 'column',*/}
-            {/*                alignItems: 'center'*/}
-            {/*            }}>*/}
-            {/*                <Typography variant="h6" fontWeight="bold">{bid.number}</Typography>*/}
-            {/*                <Typography variant="body1" color="primary">₹{bid.amount}</Typography>*/}
-            {/*                <Typography variant="body2" color="secondary">₹{bid.amountMultiplied}</Typography>*/}
-            {/*            </Box>*/}
-            {/*        ))}*/}
-            {/*    </Box>*/}
-            {/*</Box>*/}
-
-            {/*<Box mt={6}>*/}
-            {/*    <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>*/}
-            {/*        Top 10 Minimum Bid Amounts*/}
-            {/*    </Typography>*/}
-            {/*    <Box sx={{*/}
-            {/*        display: 'grid',*/}
-            {/*        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',*/}
-            {/*        gap: 2,*/}
-            {/*        mt: 2*/}
-            {/*    }}>*/}
-            {/*        {topMinBids.map((bid) => (*/}
-            {/*            <Box key={bid.number} sx={{*/}
-            {/*                backgroundColor: '#f9f9f9',*/}
-            {/*                padding: 2,*/}
-            {/*                borderRadius: 2,*/}
-            {/*                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',*/}
-            {/*                display: 'flex',*/}
-            {/*                flexDirection: 'column',*/}
-            {/*                alignItems: 'center'*/}
-            {/*            }}>*/}
-            {/*                <Typography variant="h6" fontWeight="bold">{bid.number}</Typography>*/}
-            {/*                <Typography variant="body1" color="primary">₹{bid.amount}</Typography>*/}
-            {/*                <Typography variant="body2" color="secondary">₹{bid.amountMultiplied}</Typography>*/}
-            {/*            </Box>*/}
-            {/*        ))}*/}
-            {/*    </Box>*/}
-            {/*</Box>*/}
+            <ArrowBackIcon style={{cursor:"pointer"}} onClick={()=>{
+                navigate("/games")
+            }}/>
 
             <Grid container alignItems={"center"} spacing={2} justifyContent={"space-between"}>
                 <Grid item>
