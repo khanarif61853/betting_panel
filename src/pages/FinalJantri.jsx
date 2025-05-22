@@ -20,10 +20,9 @@ import CustomSnackbar from "../component/CustomSnackbar";
 const FinalJantri = () => {
   const navigate = useNavigate();
   const [bids, setBids] = useState([]);
-  const [insideNumbers, setInsideNumbers] = useState([]);
-  const [outsideNumbers, setOutsideNumbers] = useState([]);
+  const [insideNumbersAddBid, setInsideNumbersAddBid] = useState([]);
+  const [outsideNumbersAddBid, setOutsideNumbersAddBid] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedBid, setSelectedBid] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [resultDate, setResultDate] = useState(new Date());
@@ -80,8 +79,11 @@ const FinalJantri = () => {
             setBidDeclared(finalBidNumber);
             clearInterval(intervalId);
           }
+          
+
 
           setBids(bids);
+          console.log(response.data?.data?.bids, "-----bids");
           console.log(response.data?.data?.inside, "-----inside");
           console.log(response.data?.data?.outside, "-----outside");
           response?.data?.data?.prevGame?.id
