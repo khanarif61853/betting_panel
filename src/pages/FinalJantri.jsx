@@ -79,13 +79,26 @@ const FinalJantri = () => {
             setBidDeclared(finalBidNumber);
             clearInterval(intervalId);
           }
-          
 
+          inside = JSON.parse(inside);
+          outside = JSON.parse(outside);
+          const insideNumbers = inside.map((item) => ({
+            number: item.number,
+            amount: item.amount,
+          }));
 
+          const outsideNumbers = outside.map((item) => ({
+            number: item.number,
+            amount: item.amount,
+          }));
+
+          // console.log(insideNumbers, "insideNumbers");
+          // console.log(outsideNumbers, "outsideNumbers");
+
+          console.log(bids, "bids");
+          console.log(inside, "inside");
+          console.log(outside, "outside");
           setBids(bids);
-          console.log(response.data?.data?.bids, "-----bids");
-          console.log(response.data?.data?.inside, "-----inside");
-          console.log(response.data?.data?.outside, "-----outside");
           response?.data?.data?.prevGame?.id
             ? setSearchParams({ id: response?.data?.data?.prevGame?.id })
             : null;
@@ -143,7 +156,14 @@ const FinalJantri = () => {
   //     ? Math.min(...outsideNumbers.map((bid) => bid.amount))
   //     : 0;
 
-  const rows = Array.from({ length: 100 }, (_, i) => i);
+  const rows = Array.from({ length: 100 }, (_, i) => (i < 10 ? "0" + i : i));
+  // if (i < 10) {
+  //      "0"+ i;
+  // }
+  // else{
+  //    i
+  // }
+
   // const insideOutsideRow = Array.from({ length: 10 }, (_, i) => i);
   // const insideBidMap = insideNumbers?.reduce((acc, bid) => {
   //   acc[parseInt(bid.number, 10)] = bid.amount;
