@@ -14,6 +14,7 @@ import Rules from "../pages/Rules.jsx";
 import AddMoney from "../pages/AddMoney.jsx";
 import WinningUsers from "../pages/WinningUsers.jsx";
 import TotalBid from "../pages/TotalBid.jsx";
+import FinalJantri from "../pages/FinalJantri.jsx";
 
 const Routing = () => {
   return (
@@ -29,6 +30,7 @@ const Routing = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/games" element={<Games />} />
             <Route path="/game" element={<Game />} />
+            <Route path="/final-jantri" element={<FinalJantri />} />
             <Route path="/profile" element={<Profile />} />
             <Route
               path="/withdrawal-requests"
