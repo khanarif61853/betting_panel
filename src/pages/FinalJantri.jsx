@@ -82,18 +82,22 @@ const FinalJantri = () => {
 
           inside = JSON.parse(inside);
           outside = JSON.parse(outside);
-          const insideNumbers = inside.map((item) => ({
-            number: item.number,
-            amount: item.amount,
+          const insideNumbers = inside.map(({number,amount}) => ({
+            number: number,
+            amount: amount,
           }));
-
+       
           const outsideNumbers = outside.map((item) => ({
             number: item.number,
             amount: item.amount,
           }));
 
-          // console.log(insideNumbers, "insideNumbers");
-          // console.log(outsideNumbers, "outsideNumbers");
+          // bids.filter((bid) => (
+           
+            
+          // ))
+
+    
 
           console.log(bids, "bids");
           console.log(inside, "inside");
