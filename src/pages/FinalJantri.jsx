@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -82,17 +82,14 @@ const FinalJantri = () => {
           }
 
           setBids(bids);
-          console.log(response.data?.data?.prevGame?.id);
+          console.log(response.data?.data?.inside, "-----inside");
+          console.log(response.data?.data?.outside, "-----outside");
           response?.data?.data?.prevGame?.id
             ? setSearchParams({ id: response?.data?.data?.prevGame?.id })
             : null;
           response?.data?.data?.prevGame?.finalBidNumber
             ? setBidDeclared(response?.data?.data?.prevGame?.finalBidNumber)
             : setBidDeclared(false);
-          const parsedInside = JSON.parse(inside || "[]");
-          const parsedOutside = JSON.parse(outside || "[]");
-          setInsideNumbers(parsedInside);
-          setOutsideNumbers(parsedOutside);
 
           // Calculate Top 10 Max and Min Bids (multiply by 90)
           const sortedBids = [...bids].sort((a, b) => b.amount - a.amount);
@@ -113,8 +110,6 @@ const FinalJantri = () => {
       } catch (error) {
         console.error("Error fetching bids:", error);
         setBids([]);
-        setInsideNumbers([]);
-        setOutsideNumbers([]);
       }
     };
 
@@ -133,74 +128,73 @@ const FinalJantri = () => {
     return acc;
   }, {});
 
-  const minBidAmount =
-    bids?.length > 0 ? Math.min(...bids.map((bid) => bid.amount)) : 0;
-  const maxBidAmount =
-    bids?.length > 0 ? Math.max(...bids.map((bid) => bid.amount)) : 0;
-  const minInsideBidAmount =
-    insideNumbers?.length > 0
-      ? Math.min(...insideNumbers.map((bid) => bid.amount))
-      : 0;
-  const minOutsideBidAmount =
-    outsideNumbers?.length > 0
-      ? Math.min(...outsideNumbers.map((bid) => bid.amount))
-      : 0;
+  // const minBidAmount =
+  //   bids?.length > 0 ? Math.min(...bids.map((bid) => bid.amount)) : 0;
+  // const maxBidAmount =
+  //   bids?.length > 0 ? Math.max(...bids.map((bid) => bid.amount)) : 0;
+  // const minInsideBidAmount =
+  //   insideNumbers?.length > 0
+  //     ? Math.min(...insideNumbers.map((bid) => bid.amount))
+  //     : 0;
+  // const minOutsideBidAmount =
+  //   outsideNumbers?.length > 0
+  //     ? Math.min(...outsideNumbers.map((bid) => bid.amount))
+  //     : 0;
 
   const rows = Array.from({ length: 100 }, (_, i) => i);
-  const insideOutsideRow = Array.from({ length: 10 }, (_, i) => i);
-  const insideBidMap = insideNumbers?.reduce((acc, bid) => {
-    acc[parseInt(bid.number, 10)] = bid.amount;
-    return acc;
-  }, {});
-  const outsideBidMap = outsideNumbers?.reduce((acc, bid) => {
-    acc[parseInt(bid.number, 10)] = bid.amount;
-    return acc;
-  }, {});
+  // const insideOutsideRow = Array.from({ length: 10 }, (_, i) => i);
+  // const insideBidMap = insideNumbers?.reduce((acc, bid) => {
+  //   acc[parseInt(bid.number, 10)] = bid.amount;
+  //   return acc;
+  // }, {});
+  // const outsideBidMap = outsideNumbers?.reduce((acc, bid) => {
+  //   acc[parseInt(bid.number, 10)] = bid.amount;
+  //   return acc;
+  // }, {});
 
-  const formik = useFormik({
-    initialValues: {
-      bidNumber: {},
-      insideBidNumber: {},
-      outsideBidNumber: {},
-    },
-    onSubmit: (values) => {
-      // console.log(values);
-    },
-  });
+  // const formik = useFormik({
+  //   initialValues: {
+  //     bidNumber: {},
+  //     insideBidNumber: {},
+  //     outsideBidNumber: {},
+  //   },
+  //   onSubmit: (values) => {
+  //     // console.log(values);
+  //   },
+  // });
 
-  const handleBidNumberClick = (number) => {
-    // console.log(formik.values.bidNumber.number)
-    if (bidDeclared) return; // Prevent clicking if bid is declared
+  // const handleBidNumberClick = (number) => {
+  //   // console.log(formik.values.bidNumber.number)
+  //   if (bidDeclared) return; // Prevent clicking if bid is declared
 
-    let insideBidNumber = { number: 0, amount: 0 };
-    let outsideBidNumber = { number, amount: bidMap[number] || 0 };
+  //   let insideBidNumber = { number: 0, amount: 0 };
+  //   let outsideBidNumber = { number, amount: bidMap[number] || 0 };
 
-    if (number < 10) {
-      insideBidNumber = { number: 0, amount: insideBidMap[0] || 0 };
-      outsideBidNumber = { number, amount: bidMap[number] || 0 };
-    } else {
-      const numberStr = number.toString();
-      const insideNumber = parseInt(numberStr[0], 10);
-      const outsideNumber = parseInt(numberStr[numberStr.length - 1], 10);
+  //   if (number < 10) {
+  //     insideBidNumber = { number: 0, amount: insideBidMap[0] || 0 };
+  //     outsideBidNumber = { number, amount: bidMap[number] || 0 };
+  //   } else {
+  //     const numberStr = number.toString();
+  //     const insideNumber = parseInt(numberStr[0], 10);
+  //     const outsideNumber = parseInt(numberStr[numberStr.length - 1], 10);
 
-      insideBidNumber = {
-        number: insideNumber,
-        amount: insideBidMap[insideNumber] || 0,
-      };
-      outsideBidNumber = {
-        number: outsideNumber,
-        amount: outsideBidMap[outsideNumber] || 0,
-      };
-    }
+  //     insideBidNumber = {
+  //       number: insideNumber,
+  //       amount: insideBidMap[insideNumber] || 0,
+  //     };
+  //     outsideBidNumber = {
+  //       number: outsideNumber,
+  //       amount: outsideBidMap[outsideNumber] || 0,
+  //     };
+  //   }
 
-    formik.setFieldValue("bidNumber", { number, amount: bidMap[number] || 0 });
-    formik.setFieldValue("insideBidNumber", insideBidNumber);
-    formik.setFieldValue("outsideBidNumber", outsideBidNumber);
+  //   formik.setFieldValue("bidNumber", { number, amount: bidMap[number] || 0 });
+  //   formik.setFieldValue("insideBidNumber", insideBidNumber);
+  //   formik.setFieldValue("outsideBidNumber", outsideBidNumber);
 
-    setSelectedBid({ number, amount: bidMap[number] || 0 });
-  };
+  //   setSelectedBid({ number, amount: bidMap[number] || 0 });
+  // };
 
- 
   return (
     <Box padding={3}>
       {" "}
@@ -308,7 +302,7 @@ const FinalJantri = () => {
         </Typography>
         <Typography
           variant="h4"
-          fontFamily={"Alegreya Sans SC, sans-serif"}
+          fontFamily={"Alegreya Sans SC, sans -serif"}
           display={bidDeclared ? "inline-flex" : "none"}
           backgroundColor="red"
           borderRadius={"10px"}
@@ -329,7 +323,6 @@ const FinalJantri = () => {
         {rows.map((number) => (
           <Box
             key={number}
-            onClick={() => handleBidNumberClick(number)}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -343,7 +336,7 @@ const FinalJantri = () => {
               sx={{
                 width: "100%",
                 padding: 0.5,
-                backgroundColor:"#6f6bb7",
+                backgroundColor: "#6f6bb7",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -373,7 +366,7 @@ const FinalJantri = () => {
                   ? bidMap[number] !== undefined
                     ? `₹${bidMap[number]}`
                     : ""
-                  : ""} 
+                  : ""}
               </Typography>
             </Box>
           </Box>

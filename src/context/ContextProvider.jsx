@@ -52,7 +52,6 @@ const ContextProvider = ({ children }) => {
       },
       params: { limit, page, date: selectedDateWinningUsers || undefined },
     });
-    console.log("lastWinner", data);
     const jantriData = (data.jantri || []).map((item) => ({
       ...item,
       remark: "Jantri",
