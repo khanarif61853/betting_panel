@@ -242,13 +242,32 @@ const Home = () => {
               </Paper>
             </Grid>
 
-             <Grid
+            <Grid
               item
               xs={12}
               sm={6}
               md={3}
+              onClick={() => navigate("/andar-bahar-winners")}
               sx={{ cursor: "pointer" }}
             >
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <GroupIcon
+                    sx={{ color: theme.palette.primary.main, mr: 1 }}
+                  />
+                  <Typography variant="h6" color="primary">
+                    Andar Bahar Winners
+                  </Typography>
+                </Box>
+                {loading ? (
+                  <Skeleton variant="text" width="60%" height={50} />
+                ) : (
+                  <Typography variant="h4">{dashboardWinningUsers}</Typography>
+                )}
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3} sx={{ cursor: "pointer" }}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <EqualizerIcon
@@ -261,7 +280,9 @@ const Home = () => {
                 {loading ? (
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
-                  <Typography variant="h4">{"+500"} {"-200"}</Typography>
+                  <Typography variant="h4">
+                    {"+500"} {"-200"}
+                  </Typography>
                 )}
               </Paper>
             </Grid>
@@ -282,13 +303,6 @@ const Home = () => {
                     Withdrawal Requests
                   </Typography>
                 </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">
-                    {-dashboardData.totalCollection}
-                  </Typography>
-                )}
               </Paper>
             </Grid>
 
@@ -312,7 +326,14 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} onClick={() => navigate("/rules")}  sx={{cursor: "pointer"}}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              onClick={() => navigate("/rules")}
+              sx={{ cursor: "pointer" }}
+            >
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <PersonIcon
