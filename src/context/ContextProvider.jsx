@@ -9,6 +9,9 @@ export const useContextProvider = () => useContext(Context);
 const ContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [dataRequest, setDataRequest] = useState([]);
+  const [selectedDateAB, setSelectedDateAB] = useState("");
+  const [abData, setAbData] = useState([]);
+  const [abDataShowNo, setAbDataShowNo] = useState("");
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
   const [selectedDate, setSelectDate] = useState("");
@@ -75,10 +78,27 @@ const ContextProvider = ({ children }) => {
     setLoading(false); // Data is loaded, set loading to false
   };
 
+  // andar bahar winners  -------------------------
+  const abWinner = async () => {
+    setLoading(true);
+    const {
+      data: { data },
+    } = await axios.get(`${BASE_URL}/api/web/retrieve/ander-bahar-winner`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      params: { page, limit, date: selectedDateAB },
+    });
+
+    setAbData(data);
+    setAbDataShowNo(data?.length || 0);
+    setLoading(false);
+  };
+
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      await Promise.all([allbids(), lastWinner()]);
+      await Promise.all([allbids(), lastWinner(), abWinner()]);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -104,6 +124,9 @@ const ContextProvider = ({ children }) => {
         selectedDateWinningUsers,
         setRequests,
         requests,
+        abData,
+        setSelectedDateAB,
+        abDataShowNo
       }}
     >
       {children}

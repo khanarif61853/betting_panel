@@ -46,7 +46,7 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const { dashboardTotalBid, dashboardWinningUsers } = useContextProvider();
+  const { dashboardTotalBid,abDataShowNo, dashboardWinningUsers } = useContextProvider();
 
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
@@ -259,7 +259,7 @@ const Home = () => {
                 {loading ? (
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
-                  <Typography variant="h4">{0}</Typography>
+                  <Typography variant="h4">{abDataShowNo}</Typography>
                 )}
               </Paper>
             </Grid>
