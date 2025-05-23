@@ -15,6 +15,7 @@ import AddMoney from "../pages/AddMoney.jsx";
 import WinningUsers from "../pages/WinningUsers.jsx";
 import TotalBid from "../pages/TotalBid.jsx";
 import FinalJantri from "../pages/FinalJantri.jsx";
+import AndarBaharWinner from "../pages/AndarBaharWinner.jsx";
 
 const Routing = () => {
   return (
@@ -32,7 +33,7 @@ const Routing = () => {
             <Route path="/game" element={<Game />} />
             <Route path="/final-jantri" element={<FinalJantri />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/andar-bahar-winners" element={<Profile />} />
+            <Route path="/andar-bahar-winners" element={<AndarBaharWinner />} />
             <Route
               path="/withdrawal-requests"
               element={<WithdrawalRequests />}
