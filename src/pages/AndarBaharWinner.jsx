@@ -8,6 +8,7 @@ import axios from "axios";
 const AndarBaharWinner = () => {
   const [selectedDate, setSelectedDate] = useState();
   const [loading, setLoading] = useState(true);
+  const [abData,setAbData] = useState([]);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
 
@@ -21,6 +22,8 @@ const AndarBaharWinner = () => {
       },
       params: { page, limit, date: selectedDate },
     });
+    setAbData(data)
+    setLoading(false);
     console.log(data,'--dataandarbahar winnerss')
   };
 
@@ -33,7 +36,7 @@ const AndarBaharWinner = () => {
     { field: "finalBidNumber", headerName: "BID NUMBER", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
-  const andarBaharRows = [].map((item, i) => ({
+  const andarBaharRows = (abData || []).map((item, i) => ({
     id: i + 1,
     game: item.game_name || "N/A",
     total: item.total_bid || 0,
@@ -73,7 +76,7 @@ const AndarBaharWinner = () => {
           />
         </Box>
         <DataGrid
-          rows={andarBaharRows}
+        //   rows={andarBaharRows}
           columns={andarBaharColumns}
           sx={{
             "& .MuiToolbar-root > div.MuiInputBase-root > svg": {
