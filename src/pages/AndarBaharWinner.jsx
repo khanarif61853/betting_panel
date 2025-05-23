@@ -14,64 +14,93 @@ const AndarBaharWinner = () => {
     usePagination();
 
   const abWinner = async () => {
-  setLoading(true);
-  const {
-    data: { data },
-  } = await axios.get(`${BASE_URL}/api/web/retrieve/ander-bahar-winner`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    params: { page, limit, date: selectedDate },
-  });
+    setLoading(true);
+    const {
+      data: { data },
+    } = await axios.get(`${BASE_URL}/api/web/retrieve/ander-bahar-winner`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      params: { page, limit, date: selectedDate },
+    });
 
-  const allRows = data.flatMap((item) => {
-    const andarRows = (item.insideNumbers || []).map((item) => ({
-      ...item,
-      remark: "Andar",
-      customer: entry.Customer,
-      game: entry.Game,
-      finalBidNumber: entry.Game?.finalBidNumber,
-      createdAt: entry.createdAt,
-    }));
+    // const allRows = data.flatMap((entry) => {
 
-    const baharRows = (item.outsideNumbers || []).map((item) => ({
-      ...item,
-      remark: "Bahar",
-      customer: entry.Customer,
-      game: entry.Game,
-      finalBidNumber: entry.Game?.finalBidNumber,
-      createdAt: entry.createdAt,
-    }));
+    //   const andarRows = (entry.insideNumbers || []).map((item) => ({
+    //     ...item,
+    //     remark: "ANDAR",
+    //     customer: entry.Customer,
+    //     game: entry.Game,
+    //     finalBidNumber: entry.Game?.finalBidNumber,
+    //     createdAt: entry?.createdAt
+    //       ? moment(entry.createdAt).format("YYYY-MM-DD")
+    //       : "N/A",
+    //   }));
 
-    return [...andarRows, ...baharRows];
-  });
+    //   const baharRows = (entry.outsideNumbers || []).map((item) => ({
+    //     ...item,
+    //     remark: "BAHAR",
+    //     customer: entry.Customer,
+    //     game: entry.Game,
+    //     finalBidNumber: entry.Game?.finalBidNumber,
+    //     createdAt: entry?.createdAt
+    //       ? moment(entry.createdAt).format("YYYY-MM-DD")
+    //       : "N/A",
+    //   }));
 
-  setAbData(allRows);
-  setLoading(false);
-};
-
+      // return [...andarRows, ...baharRows];
+    // });
+    setAbData(data);
+    console.log(abData,'-----------abdata')
+    setLoading(false);
+  };
 
   const andarBaharColumns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "name", headerName: "Name", width: 200 },
     { field: "game", headerName: "GAME", width: 200 },
+    { field: "andar", headerName: "ANDAR", width: 200 },
+    { field: "bahar", headerName: "BAHAR", width: 200 },
+    { field: "finalBidNumber", headerName: "OPEN NUMBER", width: 200 },
     { field: "amount", headerName: "AMOUNT", width: 200 },
-    { field: "remark", headerName: "ANDAR / BAHAR", width: 200 }, 
-    { field: "finalBidNumber", headerName: "BID NUMBER", width: 200 },
+    { field: "winningAmount", headerName: "Winning AMOUNT", width: 200 },
     { field: "createdAt", headerName: "Created At", width: 200 },
   ];
 
-  const andarBaharRows = (abData || []).map((item, i) => ({
+
+ const andarBaharRows = (abData || []).map((item, i) => {
+  const andarAmount = (item.insideNumbers || []).reduce(
+    (sum, n) => sum + (Number(n.amount) || 0),
+    0
+  );
+  const baharAmount = (item.outsideNumbers || []).reduce(
+    (sum, n) => sum + (Number(n.amount) || 0),
+    0
+  );
+
+  const andarNumbers = (item.insideNumbers || [])
+    .map((n) => n.number)
+    .filter(Boolean)
+    .join(", ") || "N/A";
+  const baharNumbers = (item.outsideNumbers || [])
+    .map((n) => n.number)
+    .filter(Boolean)
+    .join(", ") || "N/A";
+
+  return {
     id: i + 1,
-    name: item.customer?.name || "N/A",
-    game: item.game?.name || "N/A",
-    amount: item.amount || item.total_bid || 0,
-    remark: item.remark,
-    finalBidNumber: item.finalBidNumber || "N/A",
+    name: item.Customer?.name || "N/A",
+    game: item.Game?.name || "N/A",
+    amount: andarAmount + baharAmount || "N/A",
+    winningAmount: item?.winningAmount || "N/A",
+    andar: andarNumbers,
+    bahar: baharNumbers,
+    finalBidNumber: item?.Game?.finalBidNumber || "N/A",
     createdAt: item?.createdAt
       ? moment(item.createdAt).format("YYYY-MM-DD")
       : "N/A",
-  }));
+  };
+});
 
   useEffect(() => {
     abWinner();
@@ -105,7 +134,7 @@ const AndarBaharWinner = () => {
           />
         </Box>
         <DataGrid
-            rows={andarBaharRows}
+          rows={andarBaharRows}
           columns={andarBaharColumns}
           sx={{
             "& .MuiToolbar-root > div.MuiInputBase-root > svg": {

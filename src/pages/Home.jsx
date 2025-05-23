@@ -259,7 +259,7 @@ const Home = () => {
                 {loading ? (
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
-                  <Typography variant="h4">{dashboardWinningUsers}</Typography>
+                  <Typography variant="h4">{0}</Typography>
                 )}
               </Paper>
             </Grid>
