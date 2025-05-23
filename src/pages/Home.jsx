@@ -57,32 +57,29 @@ const Home = () => {
 
   const [loading, setLoading] = useState(true); // Loading state for skeleton
 
+  // fetch data ---------------
+  const fetchData = async () => {
+    const {
+      data: { data },
+    } = await axios.get(`${BASE_URL}/api/web/retrieve/dashboard`, {
+      headers: localStorage.getItem("token"),
+      params: { page: page + 1, limit },
+    });
+    setDashboardData(data);
+    setLoading(false); // Data is loaded, set loading to false
+  };
+
+  const profitLoss = async () => {
+    const {
+      data: { data },
+    } = await axios.get(`${BASE_URL}/api/web/retrieve/dashboard`, {
+      headers: localStorage.getItem("token"),
+      params: { page: page + 1, limit },
+    });
+  };
+
   useEffect(() => {
-    // fetch data ---------------
-    const fetchData = async () => {
-      const {
-        data: { data },
-      } = await axios.get(`${BASE_URL}/api/web/retrieve/dashboard`, {
-        headers: localStorage.getItem("token"),
-        params: { page: page + 1, limit },
-      });
-      setDashboardData(data);
-      setLoading(false); // Data is loaded, set loading to false
-    };
-
-    // fetch all data -----------------------------
-    const fetchAllData = async () => {
-      setLoading(true);
-      try {
-        await Promise.all([fetchData()]);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAllData();
+    fetchData();
   }, [page, limit, selectedDate]);
 
   return (
