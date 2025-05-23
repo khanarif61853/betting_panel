@@ -82,26 +82,9 @@ const FinalJantri = () => {
 
           inside = JSON.parse(inside);
           outside = JSON.parse(outside);
-          const insideNumbers = inside.map(({number,amount}) => ({
-            number: number,
-            amount: amount,
-          }));
-       
-          const outsideNumbers = outside.map((item) => ({
-            number: item.number,
-            amount: item.amount,
-          })); 
+          setInsideNumbersAddBid(inside);
+          setOutsideNumbersAddBid(outside);
 
-          // bids.filter((bid) => (
-           
-            
-          // ))
-
-    
-
-          console.log(bids, "bids");
-          console.log(inside, "inside");
-          console.log(outside, "outside");
           setBids(bids);
           response?.data?.data?.prevGame?.id
             ? setSearchParams({ id: response?.data?.data?.prevGame?.id })
@@ -142,11 +125,28 @@ const FinalJantri = () => {
     };
   }, [searchParams, resultDate]);
 
+  //  -----------------------------------
+  const insideNumbers = outsideNumbersAddBid?.map(({ number, amount }) => ({
+    number: number,
+    amount: amount / 10,
+  }));
+
+  const outsideNumbers = insideNumbersAddBid?.map((item) => ({
+    number: item.number,
+    amount: item.amount / 10,
+  }));
+
+  // bids.filter((bid) => {
+  //   const bidNumber = parseInt(bid.number);
+  // });
+// -------------------------------------------
+
   const bidMap = bids?.reduce((acc, bid) => {
     acc[parseInt(bid.number, 10)] = bid.amount;
     return acc;
   }, {});
-
+console.log(bidMap,"-----------------bidMap");
+ 
   // const minBidAmount =
   //   bids?.length > 0 ? Math.min(...bids.map((bid) => bid.amount)) : 0;
   // const maxBidAmount =
@@ -160,7 +160,7 @@ const FinalJantri = () => {
   //     ? Math.min(...outsideNumbers.map((bid) => bid.amount))
   //     : 0;
 
-  const rows = Array.from({ length: 100 }, (_, i) => (i));
+  const rows = Array.from({ length: 100 }, (_, i) => i);
   // if (i < 10) {
   //      "0"+ i;
   // }
