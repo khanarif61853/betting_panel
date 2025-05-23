@@ -46,11 +46,14 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const { dashboardTotalBid,abDataShowNo, dashboardWinningUsers } = useContextProvider();
+  const { dashboardTotalBid, abDataShowNo, dashboardWinningUsers } =
+    useContextProvider();
 
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   let [selectedDate, setSelectedDate] = useState("");
+  const [profit, setProfit] = useState();
+  const [loss, setLoss] = useState();
 
   const navigate = useNavigate();
   console.log(selectedDate);
@@ -72,14 +75,17 @@ const Home = () => {
   const profitLoss = async () => {
     const {
       data: { data },
-    } = await axios.get(`${BASE_URL}/api/web/retrieve/dashboard`, {
-      headers: localStorage.getItem("token"),
-      params: { page: page + 1, limit },
+    } = await axios.get(`${BASE_URL}/api/web/retrieve/profit-loss`, {
+      headers: {
+        Authorization:`Bearer ${localStorage.getItem('token')}`
+      },
     });
+    console.log(data)
   };
 
   useEffect(() => {
     fetchData();
+    profitLoss();
   }, [page, limit, selectedDate]);
 
   return (
