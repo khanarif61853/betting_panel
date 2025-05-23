@@ -90,7 +90,7 @@ const FinalJantri = () => {
           const outsideNumbers = outside.map((item) => ({
             number: item.number,
             amount: item.amount,
-          }));
+          })); 
 
           // bids.filter((bid) => (
            
@@ -160,7 +160,7 @@ const FinalJantri = () => {
   //     ? Math.min(...outsideNumbers.map((bid) => bid.amount))
   //     : 0;
 
-  const rows = Array.from({ length: 100 }, (_, i) => (i < 10 ? "0" + i : i));
+  const rows = Array.from({ length: 100 }, (_, i) => (i));
   // if (i < 10) {
   //      "0"+ i;
   // }
