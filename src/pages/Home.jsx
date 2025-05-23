@@ -52,8 +52,8 @@ const Home = () => {
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   let [selectedDate, setSelectedDate] = useState("");
-  const [profit, setProfit] = useState();
-  const [loss, setLoss] = useState();
+  const [profitValue, setProfitValue] = useState();
+  const [lossValue, setLossValue] = useState();
 
   const navigate = useNavigate();
   console.log(selectedDate);
@@ -73,14 +73,44 @@ const Home = () => {
   };
 
   const profitLoss = async () => {
-    const {
-      data: { data },
-    } = await axios.get(`${BASE_URL}/api/web/retrieve/profit-loss`, {
-      headers: {
-        Authorization:`Bearer ${localStorage.getItem('token')}`
-      },
-    });
-    console.log(data)
+    try {
+      const {
+        data: { data },
+      } = await axios.get(`${BASE_URL}/api/web/retrieve/profit-loss`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+       const winValue = data?.jantriWin || 0;
+      const totalValue = data?.jantriTotalAmount || 0;
+      let profitValue;
+      let lossValue;
+      if (winValue > 0) {
+        profitValue = Number(totalValue) - Number(winValue);
+      }
+      if (winValue > totalValue) {
+        lossValue = Number(winValue) - Number(totalValue);
+        profitValue = 0;
+      }
+      if (totalValue == winValue) {
+        profitValue = 0;
+        lossValue = 0;
+      }
+      setProfitValue(profitValue);
+      setLossValue(lossValue);
+
+      console.log(
+        "Profit:",
+        profitValue,
+        "Loss:",
+        lossValue,
+        "jantri Total:",
+        data.jantriTotalAmount
+      );
+    } catch (error) {
+      console.error("Error fetching profit/loss:", error);
+    }
   };
 
   useEffect(() => {
@@ -283,9 +313,28 @@ const Home = () => {
                 {loading ? (
                   <Skeleton variant="text" width="60%" height={50} />
                 ) : (
-                  <Typography variant="h4">
-                    {"+500"} {"-200"}
-                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      width: "40%",
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    <Typography
+                      variant="h5"
+                      // fontFamily={"Alegreya Sans SC, sans-serif"}
+                      sx={{ fontWeight: 700, color: "green" }}
+                    >
+                      {`+${profitValue || 0}`}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      fontFamily={"Alegreya Sans SC, sans-serif"}
+                      sx={{ fontWeight: 700, color: "red" }}
+                    >
+                      {`-${lossValue || 0}`}
+                    </Typography>
+                  </Box>
                 )}
               </Paper>
             </Grid>
