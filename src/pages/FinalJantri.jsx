@@ -16,6 +16,7 @@ import { BASE_URL } from "../costants";
 import { useFormik } from "formik";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CustomSnackbar from "../component/CustomSnackbar";
+import { ElectricalServices } from "@mui/icons-material";
 
 const FinalJantri = () => {
   const navigate = useNavigate();
@@ -85,7 +86,35 @@ const FinalJantri = () => {
           setInsideNumbersAddBid(inside);
           setOutsideNumbersAddBid(outside);
 
-          setBids(bids);
+          //  -----------------------------------
+          // const insideNumbers = outsideNumbersAddBid?.map(({ number, amount }) => ({
+          //   number: number,
+          //   amount: amount / 10,
+          // }));
+
+          // const outsideNumbers = insideNumbersAddBid?.map((item) => ({
+          //   number: item.number,
+          //   amount: item.amount / 10,
+          // }));
+          // -------------------------------------------
+          const updateBids = bids?.map((bid) => {
+            let bidAmount = bid.amount;
+            const numString = bid.number.toString();
+            insideNumbersAddBid?.forEach((insideBid) => {
+              console.log(insideBid, "insideBid");
+              if (
+                parseInt(numString[0], 10) === insideBid.number ||
+                parseInt(numString[1], 10) === insideBid.number
+              ) {
+                bidAmount += insideBid.amount;
+                console.log(bidAmount, "insideBidAmount");
+                console.log(insideBid.amount, "insideBidAmount of .............");
+              }
+            });
+            return {...bid, amount: bidAmount };
+          });
+          
+          setBids(updateBids);
           response?.data?.data?.prevGame?.id
             ? setSearchParams({ id: response?.data?.data?.prevGame?.id })
             : null;
@@ -126,27 +155,23 @@ const FinalJantri = () => {
   }, [searchParams, resultDate]);
 
   //  -----------------------------------
-  const insideNumbers = outsideNumbersAddBid?.map(({ number, amount }) => ({
-    number: number,
-    amount: amount / 10,
-  }));
+  // const insideNumbers = outsideNumbersAddBid?.map(({ number, amount }) => ({
+  //   number: number,
+  //   amount: amount / 10,
+  // }));
 
-  const outsideNumbers = insideNumbersAddBid?.map((item) => ({
-    number: item.number,
-    amount: item.amount / 10,
-  }));
-
-  // bids.filter((bid) => {
-  //   const bidNumber = parseInt(bid.number);
-  // });
-// -------------------------------------------
+  // const outsideNumbers = insideNumbersAddBid?.map((item) => ({
+  //   number: item.number,
+  //   amount: item.amount / 10,
+  // }));
+  // -------------------------------------------
 
   const bidMap = bids?.reduce((acc, bid) => {
     acc[parseInt(bid.number, 10)] = bid.amount;
     return acc;
   }, {});
-console.log(bidMap,"-----------------bidMap");
- 
+  console.log(bidMap, "-----------------bidMap");
+
   // const minBidAmount =
   //   bids?.length > 0 ? Math.min(...bids.map((bid) => bid.amount)) : 0;
   // const maxBidAmount =
