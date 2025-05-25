@@ -96,23 +96,23 @@ const FinalJantri = () => {
           //   number: item.number,
           //   amount: item.amount / 10,
           // }));
-          // -------------------------------------------
-          const updateBids = bids?.map((bid) => {
-            let bidAmount = bid.amount;
-            const numString = bid.number.toString();
-            insideNumbersAddBid?.forEach((insideBid) => {
-              console.log(insideBid, "insideBid");
-              if (
-                parseInt(numString[0], 10) === insideBid.number ||
-                parseInt(numString[1], 10) === insideBid.number
-              ) {
-                bidAmount += insideBid.amount;
-                console.log(bidAmount, "insideBidAmount");
-                console.log(insideBid.amount, "insideBidAmount of .............");
-              }
-            });
-            return {...bid, amount: bidAmount };
-          });
+          // // -------------------------------------------
+          // const updateBids = bids?.map((bid) => {
+          //   let bidAmount = bid.amount;
+          //   const numString = bid.number.toString();
+          //   insideNumbersAddBid?.forEach((insideBid) => {
+          //     console.log(insideBid, "insideBid");
+          //     if (
+          //       parseInt(numString[0], 10) === insideBid.number ||
+          //       parseInt(numString[1], 10) === insideBid.number
+          //     ) {
+          //       bidAmount += insideBid.amount;
+          //       console.log(bidAmount, "insideBidAmount");
+          //       console.log(insideBid.amount, "insideBidAmount of .............");
+          //     }
+          //   });
+          //   return {...bid, amount: bidAmount };
+          // });
           
           setBids(updateBids);
           response?.data?.data?.prevGame?.id

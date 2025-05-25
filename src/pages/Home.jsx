@@ -329,7 +329,7 @@ const Home = () => {
                     </Typography>
                     <Typography
                       variant="h5"
-                      fontFamily={"Alegreya Sans SC, sans-serif"}
+                      // fontFamily={"Alegreya Sans SC, sans-serif"}
                       sx={{ fontWeight: 700, color: "red" }}
                     >
                       {`-${lossValue || 0}`}
