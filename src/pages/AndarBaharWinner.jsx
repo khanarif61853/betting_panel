@@ -1,30 +1,32 @@
-import { Box, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Paper,
+  useTheme,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import { BASE_URL } from "../costants";
-import { usePagination } from "../hooks/usePagination";
-import axios from "axios";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
+import CasinoIcon from "@mui/icons-material/Casino";
 
 const AndarBaharWinner = () => {
-  const { page, limit, total, changePage, changeLimit, changeTotal } =
-    usePagination();
-  const { abData, loading, setLoading,setSelectedDateAB } = useContextProvider();
+  const { abData, loading, setSelectedDateAB } = useContextProvider();
+  const theme = useTheme();
 
-  const andarBaharColumns = [
+  const columns = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "Name", width: 200 },
-    { field: "game", headerName: "GAME", width: 200 },
-    { field: "andar", headerName: "ANDAR", width: 200 },
-    { field: "bahar", headerName: "BAHAR", width: 200 },
-    { field: "finalBidNumber", headerName: "OPEN NUMBER", width: 200 },
-    { field: "amount", headerName: "AMOUNT", width: 200 },
-    { field: "winningAmount", headerName: "Winning AMOUNT", width: 200 },
-    { field: "createdAt", headerName: "Created At", width: 200 },
+    { field: "name", headerName: "Name", flex: 1 },
+    { field: "game", headerName: "Game", flex: 1 },
+    { field: "andar", headerName: "Andar", flex: 1 },
+    { field: "bahar", headerName: "Bahar", flex: 1 },
+    { field: "finalBidNumber", headerName: "Open Number", flex: 1 },
+    { field: "amount", headerName: "Amount", flex: 1 },
+    { field: "winningAmount", headerName: "Winning Amount", flex: 1 },
+    { field: "createdAt", headerName: "Created At", flex: 1 },
   ];
 
-  const andarBaharRows = (abData || []).map((item, i) => {
+  const rows = (abData || []).map((item, i) => {
     const andarAmount = (item.insideNumbers || []).reduce(
       (sum, n) => sum + (Number(n.amount) || 0),
       0
@@ -39,6 +41,7 @@ const AndarBaharWinner = () => {
         .map((n) => n.number)
         .filter(Boolean)
         .join(", ") || "N/A";
+
     const baharNumbers =
       (item.outsideNumbers || [])
         .map((n) => n.number)
@@ -61,45 +64,67 @@ const AndarBaharWinner = () => {
   });
 
   return (
-    <>
-      <Box style={{ height: 450, width: "100%" }} p={2}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 1,
-            mt: 1,
-          }}
-        >
-          <Typography sx={{ textAlign: "center" }} variant="h5">
+    <Paper
+      elevation={3}
+      sx={{
+        p: 3,
+        borderRadius: 3,
+        backgroundColor: "#f9fafc",
+        width: "100%",
+      }}
+    >
+      <Box
+        mb={2}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Box display="flex" alignItems="center" gap={1}>
+          <CasinoIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>
             Andar Bahar Winners
           </Typography>
-          <TextField
-            label="Filter by Date"
-            type="date"
-            size="small"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={(e) => {
-              setSelectedDateAB(e.target.value);
-            }}
-          />
         </Box>
-        <DataGrid
-          rows={andarBaharRows}
-          columns={andarBaharColumns}
-          sx={{
-            "& .MuiToolbar-root > div.MuiInputBase-root > svg": {
-              display: "none !important",
-            },
+        <TextField
+          label="Filter by Date"
+          type="date"
+          size="small"
+          InputLabelProps={{
+            shrink: true,
           }}
-          loading={loading}
-          getRowHeight={() => "auto"} // Adjust row height based on content
+          onChange={(e) => setSelectedDateAB(e.target.value)}
         />
       </Box>
-    </>
+
+      <Box
+        sx={{
+          height: 450,
+          width: "100%",
+          "& .MuiDataGrid-root": {
+            border: "none",
+            fontSize: 14,
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: theme.palette.grey[200],
+            fontWeight: "bold",
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+          },
+          "& .MuiDataGrid-row:nth-of-type(odd)": {
+            backgroundColor: "#f3f6f9",
+          },
+        }}
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          loading={loading}
+          disableSelectionOnClick
+          getRowHeight={() => "auto"}
+        />
+      </Box>
+    </Paper>
   );
 };
 
