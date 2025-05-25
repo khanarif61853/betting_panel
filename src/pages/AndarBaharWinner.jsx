@@ -71,6 +71,9 @@ const AndarBaharWinner = () => {
         borderRadius: 3,
         backgroundColor: "#f9fafc",
         width: "100%",
+        height: "calc(100vh - 150px)",  
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <Box

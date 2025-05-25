@@ -52,6 +52,9 @@ const WinningUsers = () => {
         borderRadius: 3,
         backgroundColor: "#f9fafc",
         width: "100%",
+        height: "calc(100vh - 150px)",  
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <Box
@@ -79,8 +82,8 @@ const WinningUsers = () => {
 
       <Box
         sx={{
-          height: 500,
-          width: "100%",
+          flex: 1,
+          overflow: "auto",
           "& .MuiDataGrid-root": {
             border: "none",
             fontSize: 14,
@@ -104,8 +107,7 @@ const WinningUsers = () => {
           rowCount={total}
           pageSize={limit}
           loading={loading}
-          disableSelectionOnClick
-          onRowSelectionModelChange={() => {}}
+          disableRowSelectionOnClick
           onPaginationModelChange={(value) => {
             if (value.pageSize !== limit) {
               changeLimit(value.pageSize);
@@ -114,6 +116,8 @@ const WinningUsers = () => {
             changePage(value.page);
             changeLimit(value.pageSize);
           }}
+          autoHeight={false}
+          density="comfortable"
         />
       </Box>
     </Paper>
