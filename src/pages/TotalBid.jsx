@@ -60,7 +60,7 @@ const TotalBid = () => {
         <Box display="flex" alignItems="center" gap={1}>
           <StackedBarChartIcon color="primary" />
           <Typography variant="h5" fontWeight={600}>
-            Total Bids: {dashboardTotalBid}
+            Total Bid: {dashboardTotalBid}
           </Typography>
         </Box>
         <TextField
