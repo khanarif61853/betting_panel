@@ -178,7 +178,7 @@ const Home = () => {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={3} sx={{ cursor: "pointer" }}>
+            <Grid item xs={12} sm={6} md={3}>
               <Paper elevation={3}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <SportsEsportsIcon
