@@ -536,10 +536,10 @@ const Games = () => {
                     severity={error ? "error" : "success"}
                 />
             </Box>
-            <Fab aria-label="add" color={"primary"} onClick={() => setOpenAddDialog(true)}
+            {/* <Fab aria-label="add" color={"primary"} onClick={() => setOpenAddDialog(true)}
                  sx={{background: "#614385", color: "white", position: 'fixed', bottom: 16, right: 16}}>
                 <AddIcon/>
-            </Fab>
+            </Fab> */}
             <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                 <DialogContent>
@@ -556,7 +556,7 @@ const Games = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
+            {/* <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
                 <DialogTitle>{editingGame ? 'Edit Game' : 'Add New Game'}</DialogTitle>
                 <DialogContent>
                     <form onSubmit={formik.handleSubmit}>
@@ -656,7 +656,7 @@ const Games = () => {
                         </DialogActions>
                     </form>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
         </ThemeProvider>
     );
 };
