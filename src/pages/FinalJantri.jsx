@@ -2,20 +2,28 @@ import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
+<<<<<<< HEAD
   useTheme,
   useMediaQuery,
+=======
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
   Grid,
   Select,
   MenuItem,
   TextField,
 } from "@mui/material";
+<<<<<<< HEAD
 import { useNavigate, useSearchParams } from "react-router-dom";
+=======
+import { useNavigate } from "react-router-dom";
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../costants";
 import { useFormik } from "formik";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CustomSnackbar from "../component/CustomSnackbar";
+<<<<<<< HEAD
 import { ElectricalServices } from "@mui/icons-material";
 
 const FinalJantri = () => {
@@ -32,11 +40,24 @@ const FinalJantri = () => {
   const [games, setGames] = useState([]);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+=======
+import { ElectricalServices, RsvpOutlined } from "@mui/icons-material";
+
+const FinalJantri = () => {
+  const navigate = useNavigate();
+  const [formattedRows, setFormattedRows] = useState([]);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [resultDate, setResultDate] = useState(new Date().toISOString().split('T')[0]);
+  const [topMaxBids, setTopMaxBids] = useState([]);
+  const [topMinBids, setTopMinBids] = useState([]);
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
 
   const handleCloseSnackbar = () => {
     setError(null);
     setSuccess(null);
   };
+<<<<<<< HEAD
   const [topMaxBids, setTopMaxBids] = useState([]);
   const [topMinBids, setTopMinBids] = useState([]);
 
@@ -124,21 +145,54 @@ const FinalJantri = () => {
 
           // Calculate Top 10 Max and Min Bids (multiply by 90)
           const sortedBids = [...bids].sort((a, b) => b.amount - a.amount);
+=======
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/web/retrieve/andar-bahar-jodi`,
+          {
+            params: {
+              resultDate,
+            },
+            headers: {
+              Authorization: localStorage.getItem("token"),
+            },
+          }
+        );
+        if (response.statusText === "OK") {
+          setFormattedRows(response.data.formatted);
+          
+          const allBids = response.data.formatted.flatMap((item) => item.bids);
+          const sortedBids = [...allBids].sort((a, b) => b.amount - a.amount);
+          
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
           const topMax = sortedBids.slice(0, 10).map((bid) => ({
             ...bid,
             amountMultiplied: bid.amount * 90,
           }));
+<<<<<<< HEAD
 
           const sortedMinBids = [...bids].sort((a, b) => a.amount - b.amount);
+=======
+          
+          const sortedMinBids = [...allBids].sort((a, b) => a.amount - b.amount);
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
           const topMin = sortedMinBids.slice(0, 10).map((bid) => ({
             ...bid,
             amountMultiplied: bid.amount * 90,
           }));
+<<<<<<< HEAD
 
+=======
+          
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
           setTopMaxBids(topMax);
           setTopMinBids(topMin);
         }
       } catch (error) {
+<<<<<<< HEAD
         console.error("Error fetching bids:", error);
         setBids([]);
       }
@@ -245,16 +299,50 @@ const FinalJantri = () => {
 
   //   setSelectedBid({ number, amount: bidMap[number] || 0 });
   // };
+=======
+        setError("Failed to fetch game data");
+        console.error("Error fetching games:", error);
+      }
+    };
+    fetchGames();
+  }, [resultDate]);
+
+  const allBids = formattedRows.flatMap((item) => item.bids);
+  console.log(allBids);
+  const bidMap = allBids.reduce((acc, bid) => {
+    acc[bid.number] = (acc[bid.number] || 0) + bid.amount;
+    return acc;
+  }, {});
+   const totalAmount = allBids.reduce((sum, bid) => sum + bid.amount, 0);
+
+  const rows = Array.from({ length: 100 }, (_, i) => i);
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
 
   return (
     <Box padding={3}>
       {" "}
+<<<<<<< HEAD
       <ArrowBackIcon
         style={{ cursor: "pointer" }}
         onClick={() => {
           navigate("/games");
         }}
       />
+=======
+      <Box
+        sx={{ display: "flex", justifyContent: "space-between", width: "50%" }}
+      >
+        <ArrowBackIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            navigate("/games");
+          }}
+        />
+        <Typography variant="v5" sx={{ fontSize: "20px" }} fontWeight={500}>
+          Final Jantri
+        </Typography>
+      </Box>
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
       <Grid
         container
         alignItems={"center"}
@@ -269,9 +357,13 @@ const FinalJantri = () => {
               fontWeight={500}
             >
               Total collection:{" "}
+<<<<<<< HEAD
               <span style={{ color: "#28a745" }}>
                 {collectedAmount ? "+" + -collectedAmount : 0}
               </span>
+=======
+              {totalAmount}
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
             </Typography>
           </Box>
         </Grid>
@@ -351,6 +443,7 @@ const FinalJantri = () => {
         >
           Bid Numbers
         </Typography>
+<<<<<<< HEAD
         <Typography
           variant="h4"
           fontFamily={"Alegreya Sans SC, sans -serif"}
@@ -363,6 +456,8 @@ const FinalJantri = () => {
         >
           {bidDeclared}
         </Typography>
+=======
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
       </Box>
       <Box
         sx={{
@@ -380,7 +475,10 @@ const FinalJantri = () => {
               alignItems: "center",
               border: "1px solid #ddd",
               borderRadius: 1,
+<<<<<<< HEAD
               cursor: bidDeclared ? "not-allowed" : "pointer", // Change cursor if bid is declared
+=======
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
             }}
           >
             <Box
@@ -400,10 +498,16 @@ const FinalJantri = () => {
             </Box>
             <Box
               sx={{
+<<<<<<< HEAD
                 // backgroundColor: '#eceaf6',
                 width: "100%",
                 height: 30,
                 backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6", // Change background color if bid is declared
+=======
+                width: "100%",
+                height: 30,
+                backgroundColor: "#eceaf6",
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -413,16 +517,21 @@ const FinalJantri = () => {
               }}
             >
               <Typography variant="body2" fontWeight={"bold"}>
+<<<<<<< HEAD
                 {bidMap
                   ? bidMap[number] !== undefined
                     ? `₹${bidMap[number]}`
                     : ""
                   : ""}
+=======
+                {bidMap[number] ? `₹${bidMap[number]}` : ""}
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
               </Typography>
             </Box>
           </Box>
         ))}
       </Box>
+<<<<<<< HEAD
       {/* Display Inside Numbers */}
       {/* <Box mt={4}>
         <Typography
@@ -655,6 +764,8 @@ const FinalJantri = () => {
           </DialogActions>
         </ModalDialog>
       </Modal> */}
+=======
+>>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
       <CustomSnackbar
         open={!!error || !!success}
         handleClose={handleCloseSnackbar}

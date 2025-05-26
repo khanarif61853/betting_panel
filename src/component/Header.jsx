@@ -60,7 +60,6 @@ export default function Header() {
         Profile
       </MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
-      <MenuItem >Setting</MenuItem>
     </Menu>
   );
 
@@ -140,7 +139,6 @@ export default function Header() {
               <MoreIcon />
             </IconButton>
           </Box>
-          
         </Toolbar>
       </AppBar>
 

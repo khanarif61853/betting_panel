@@ -1,9 +1,9 @@
+
 import { useContext, useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, Grid, Paper, Typography, Skeleton } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import PublicIcon from "@mui/icons-material/Public";
 import axios from "axios";
 import { BASE_URL } from "../costants";
 import usePagination from "@mui/material/usePagination/usePagination";
@@ -49,16 +49,14 @@ const Home = () => {
   const { dashboardTotalBid, abDataShowNo, dashboardWinningUsers } =
     useContextProvider();
 
-  const { page, limit, total, changePage, changeLimit, changeTotal } =
-    usePagination();
-  let [selectedDate, setSelectedDate] = useState("");
+
+  const { page, limit } = usePagination();
+  const [selectedDate] = useState("");
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
-
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  console.log(selectedDate);
 
-  const [loading, setLoading] = useState(true); // Loading state for skeleton
 
   // fetch data ---------------
   const fetchData = async () => {
@@ -118,290 +116,117 @@ const Home = () => {
     profitLoss();
   }, [page, limit, selectedDate]);
 
-  return (
-    <>
-      <ThemeProvider theme={theme}>
-        <Box sx={{ flexGrow: 1, p: 2 }}>
-          <Grid container spacing={2} my={2}>
-            {/* Key Metrics */}
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/customers")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <PeopleIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Total Customers
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">
-                    {dashboardData?.totalCustomers}
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
 
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/games")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <SportsEsportsIcon
-                    sx={{ color: theme.palette.secondary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Live Games
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">
-                    {dashboardData.liveGames}
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={3}>
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <SportsEsportsIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Total Games
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">
-                    {dashboardData.totalGames}
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/add-money")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <AddCardIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Total Add Money
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">
-                    {-dashboardData.totalCollection}
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/winning-users")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <GroupIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Winning Users
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">{dashboardWinningUsers}</Typography>
-                )}
-              </Paper>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/totalbid")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <EqualizerIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Total Bid
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">{dashboardTotalBid}</Typography>
-                )}
-              </Paper>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/andar-bahar-winner")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <GroupIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Andar Bahar Winners
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Typography variant="h4">{abDataShowNo}</Typography>
-                )}
-              </Paper>
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={3} sx={{ cursor: "pointer" }}>
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <EqualizerIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Profit / Loss
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="text" width="60%" height={50} />
-                ) : (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      width: "40%",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    <Typography
-                      variant="h5"
-                      // fontFamily={"Alegreya Sans SC, sans-serif"}
-                      sx={{ fontWeight: 700, color: "green" }}
-                    >
-                      {`+${profitValue || 0}`}
-                    </Typography>
-                    <Typography
-                      variant="h5"
-                      // fontFamily={"Alegreya Sans SC, sans-serif"}
-                      sx={{ fontWeight: 700, color: "red" }}
-                    >
-                      {`-${lossValue || 0}`}
-                    </Typography>
-                  </Box>
-                )}
-              </Paper>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/withdrawal-requests")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <AttachMoneyIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Withdrawal Requests
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/qr-code")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <PersonIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Qr Code
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              onClick={() => navigate("/rules")}
-              sx={{ cursor: "pointer" }}
-            >
-              <Paper elevation={3}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <PersonIcon
-                    sx={{ color: theme.palette.primary.main, mr: 1 }}
-                  />
-                  <Typography variant="h6" color="primary">
-                    Rules
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
+  const dashboardItems = [
+    {
+      title: "All Players",
+      value: dashboardData?.totalCustomers,
+      icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/customers"),
+    },
+    {
+      title: "Live Games",
+      value: dashboardData.liveGames,
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.secondary.main, mr: 1 }} />,
+      onClick: () => navigate("/games"),
+    },
+    {
+      title: "Total Games",
+      value: dashboardData.totalGames,
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    },
+    {
+      title: "Total Add Money",
+      value: -dashboardData.totalCollection,
+      icon: <AddCardIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/add-money"),
+    },
+    {
+      title: "Winning Users",
+      value: dashboardWinningUsers,
+      icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/winning-users"),
+    },
+    {
+      title: "Total Bid",
+      value: dashboardTotalBid,
+      icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/totalbid"),
+    },
+    {
+      title: "Andar Bahar Winners",
+      value: abDataShowNo,
+      icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/andar-bahar-winner"),
+    },
+    {
+      title: "Profit / Loss",
+      customContent: (
+        <Box sx={{ display: "flex", width: "40%", justifyContent: "space-evenly" }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: "green" }}>
+            {`+${profitValue || 0}`}
+          </Typography>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: "red" }}>
+            {`-${lossValue || 0}`}
+          </Typography>
         </Box>
-        {/* Render Snackbar */}
-      </ThemeProvider>
-    </>
+      ),
+      icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    },
+    {
+      title: "Withdrawal Requests",
+      icon: <AttachMoneyIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/withdrawal-requests"),
+    },
+    {
+      title: "Qr Code",
+      icon: <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/qr-code"),
+    },
+    {
+      title: "Rules",
+      icon: <PersonIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/rules"),
+    },
+  ];
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Box sx={{ flexGrow: 1, p: 2 }}>
+        <Grid container spacing={2} my={2}>
+          {dashboardItems.map((item, index) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={3}
+              key={index}
+              onClick={item.onClick}
+              sx={{ cursor: item.onClick ? "pointer" : "default" }}
+            >
+              <Paper elevation={3}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {item.icon}
+                  <Typography variant="h6" color="primary">
+                    {item.title}
+                  </Typography>
+                </Box>
+                {loading ? (
+                  <Skeleton variant="text" width="60%" height={50} />
+                ) : item.customContent ? (
+                  item.customContent
+                ) : (
+                  item.value !== undefined && (
+                    <Typography variant="h4">{item.value}</Typography>
+                  )
+                )}
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </ThemeProvider>
+
   );
 };
 
