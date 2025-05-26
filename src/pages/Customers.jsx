@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
@@ -243,7 +242,6 @@ const Customer = () => {
             </Menu>
         </ThemeProvider>
     );
-
 };
 
 export default Customer;

@@ -1,5 +1,4 @@
-
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Box, Grid, Paper, Typography, Skeleton } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
@@ -49,14 +48,12 @@ const Home = () => {
   const { dashboardTotalBid, abDataShowNo, dashboardWinningUsers } =
     useContextProvider();
 
-
   const { page, limit } = usePagination();
   const [selectedDate] = useState("");
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
 
   // fetch data ---------------
   const fetchData = async () => {
@@ -115,7 +112,6 @@ const Home = () => {
     fetchData();
     profitLoss();
   }, [page, limit, selectedDate]);
-
 
   const dashboardItems = [
     {
@@ -226,7 +222,6 @@ const Home = () => {
         </Grid>
       </Box>
     </ThemeProvider>
-
   );
 };
 

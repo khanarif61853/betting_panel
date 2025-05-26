@@ -108,11 +108,7 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     fetchAllData();
-<<<<<<< HEAD
-  }, [page, limit, selectedDateAB, selectedDateWinningUsers]);
-=======
   }, [page, limit, selectedDateAB, selectedDateWinningUsers,selectedDate]);
->>>>>>> 9cbca005a124c5fe173c878800d2fb34d112b328
 
   return (
     <Context.Provider
