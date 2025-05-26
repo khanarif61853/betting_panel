@@ -280,7 +280,7 @@ const Home = () => {
               xs={12}
               sm={6}
               md={3}
-              onClick={() => navigate("/andar-bahar-winners")}
+              onClick={() => navigate("/andar-bahar-winner")}
               sx={{ cursor: "pointer" }}
             >
               <Paper elevation={3}>

@@ -13,9 +13,7 @@ import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 const TotalBid = () => {
   const {
     loading,
-    setLoading,
     dataRequest,
-    setDataRequest,
     setSelectDate,
     dashboardTotalBid,
   } = useContextProvider();

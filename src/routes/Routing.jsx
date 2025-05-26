@@ -33,7 +33,7 @@ const Routing = () => {
             <Route path="/game" element={<Game />} />
             <Route path="/final-jantri" element={<FinalJantri />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/andar-bahar-winners" element={<AndarBaharWinner />} />
+            <Route path="/andar-bahar-winner" element={<AndarBaharWinner />} />
             <Route
               path="/withdrawal-requests"
               element={<WithdrawalRequests />}
