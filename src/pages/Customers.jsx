@@ -137,10 +137,10 @@ const Customer = () => {
             )
         },
         {
-            field: 'image',
-            headerName: 'Image',
+            field: 'referralCode',
+            headerName: 'Referral Code',
             flex: 1,
-            renderCell: (params) => <Avatar src={params.value} alt={params.row.name} />
+            // renderCell: (params) => <Avatar src={params.value} alt={params.row.name} />
         },
         { field: 'walletAmount', headerName: 'Wallet Amount', flex: 1 },
         {
@@ -148,12 +148,14 @@ const Customer = () => {
             headerName: 'Status',
             flex: 1,
             renderCell: (params) => (
-                <Switch
-                    size="small"
-                    color="warning"
-                    checked={Boolean(params.row.status)}
-                    onChange={() => handleStatusChange(params.row.id, params.row.status)}
-                />
+                 <Button
+            variant="contained"
+            color={params.row.status ? 'success' : 'error'}
+            size="small"
+            onClick={() => handleStatusChange(params.row.id, params.row.status)}
+        >
+            {params.row.status ? 'Active' : 'Banned'}
+        </Button>
             )
         },
         
@@ -173,7 +175,7 @@ const Customer = () => {
         id: customer.id,
         name: customer.name,
         mobile: customer.mobile,
-        image: customer.image,
+        referralCode: customer.referralCode,
         walletAmount: parseFloat(customer.totalWalletAmount).toFixed(2),
         status: customer.status,
     }));

@@ -11,11 +11,11 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Avatar } from "@mui/material";
 
+
 export default function Header() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const [logOut, setLogOut] = useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -31,14 +31,8 @@ export default function Header() {
 
   const handleLogout = async () => {
     localStorage.removeItem("token");
-    setLogOut(true);
+    navigate("sign-in");
   };
-
-  useEffect(() => {
-    if (logOut) {
-      navigate("sign-in");
-    }
-  }, [logOut]);
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -60,6 +54,7 @@ export default function Header() {
         Profile
       </MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <MenuItem>Setting</MenuItem>
     </Menu>
   );
 
