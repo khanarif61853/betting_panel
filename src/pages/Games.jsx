@@ -3,8 +3,14 @@ import Box from '@mui/material/Box';
 import {DataGrid} from '@mui/x-data-grid';
 import axios from 'axios';
 import CustomSnackbar from '../component/CustomSnackbar';
-import {Select, MenuItem, FormControl, InputLabel, Chip, Grid, Typography} from '@mui/material';
 import {
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Chip,
+    Grid,
+    Typography,
     Switch,
     IconButton,
     Avatar,
@@ -15,12 +21,10 @@ import {
     DialogTitle,
     Button,
     TextField,
-    Fab,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 import {useFormik} from 'formik';
 import {useNavigate} from 'react-router-dom';
 import gamesSchema from '../schema/gamesSchema';
@@ -30,10 +34,11 @@ import moment from 'moment';
 import {usePagination} from '../hooks/usePagination';
 import {DemoContainer} from '@mui/x-date-pickers/internals/demo';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider, } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useContextProvider } from '../context/ContextProvider';
 
 const theme = createTheme({
     palette: {
@@ -80,7 +85,7 @@ const Games = () => {
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [editingGame, setEditingGame] = useState(null); // State for editing game
     const {page, limit, total, changePage, changeLimit, changeTotal} = usePagination();
-
+  const {updateCreateGame} = useContextProvider();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -144,7 +149,7 @@ const Games = () => {
             }
         };
         fetchData(page, limit);
-    }, [page, limit, date]);
+    }, [page, limit, date, updateCreateGame]);
     const handlePageSizeChange = (newPageSize) => {
         changeLimit(newPageSize);
     };
@@ -509,34 +514,6 @@ const Games = () => {
                 position: 'relative'
             }}>
                 <CustomDataGrid rows={rows}/>
-
-                {/* <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { pageSize: 25, page: 0 },
-                        },
-                    }}
-                    autosizeOptions={{
-                        columns: ['name',],
-                        includeOutliers: true,
-                        includeHeaders: true,
-                    }}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    checkboxSelection
-                    disableSelectionOnClick
-                    loading={loading}
-                /> */}
-                {/* {loading && (
-                    <Backdrop
-                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute' }}
-                        open={loading}
-                    >
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
-                )} */}
                 <CustomSnackbar
                     open={!!error || !!success}
                     handleClose={handleCloseSnackbar}
@@ -544,10 +521,6 @@ const Games = () => {
                     severity={error ? "error" : "success"}
                 />
             </Box>
-            {/* <Fab aria-label="add" color={"primary"} onClick={() => setOpenAddDialog(true)}
-                 sx={{background: "#614385", color: "white", position: 'fixed', bottom: 16, right: 16}}>
-                <AddIcon/>
-            </Fab> */}
             <Dialog open={openDialog} onClose={handleCloseDialog} disableEscapeKeyDown disableBackdropClick>
                 <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                 <DialogContent>

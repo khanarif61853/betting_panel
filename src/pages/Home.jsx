@@ -45,15 +45,23 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const { dashboardTotalBid, abDataShowNo, dashboardWinningUsers } =
-    useContextProvider();
+  
+  const contextData = useContextProvider();
+  const { dashboardTotalBid, abDataShowNo, dashboardWinningUsers, dataRequest } = contextData;
 
   const { page, limit } = usePagination();
   const [selectedDate] = useState("");
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
+  const [lastGameTotalBid, setLastGameTotalBid] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (dataRequest && dataRequest.length > 0) {
+      setLastGameTotalBid(dataRequest[0].total_bid || 0);
+    }
+  }, [dataRequest]);
 
   // fetch data ---------------
   const fetchData = async () => {
@@ -138,24 +146,19 @@ const Home = () => {
     // },
     // ------------------------------------------------------------
     {
-      title: "Total Collection",
-      value: -dashboardData.totalCollection,
-      icon: <AddCardIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      title: "Last Game Result",
+      value: 0,
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {
-         title: "Last Game Result",
-         value: 0,
-         icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      title: "Last Game Total Bid",
+      value: lastGameTotalBid,
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {
-        title: "Last Game Total Bid",
-        value: 0,
-        icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-    },
-    {
-        title: "Last Game Winners",
-        value: 0,
-        icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      title: "Last Game Winners",
+      value: 0,
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {
       title: "Winning Users",
@@ -176,10 +179,15 @@ const Home = () => {
       onClick: () => navigate("/andar-bahar-winner"),
     },
     {
+      title: "Total Collection",
+      value: -dashboardData.totalCollection,
+      icon: <AddCardIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    },
+    {
       title: "Profit / Loss",
       customContent: (
         <Box
-          sx={{ display: "flex", width: "40%", justifyContent: "space-evenly" }}
+        sx={{ display: "flex", width: "40%", justifyContent: "space-evenly" }}
         >
           <Typography variant="h5" sx={{ fontWeight: 700, color: "green" }}>
             {`+${profitValue || 0}`}

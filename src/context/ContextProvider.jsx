@@ -12,6 +12,7 @@ const ContextProvider = ({ children }) => {
   const [selectedDateAB, setSelectedDateAB] = useState("");
   const [abData, setAbData] = useState([]);
   const [abDataShowNo, setAbDataShowNo] = useState("");
+  const [updateCreateGame, setUpdateCreateGame] = useState(false);
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
   const [selectedDate, setSelectDate] = useState("");
@@ -108,7 +109,7 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     fetchAllData();
-  }, [page, limit, selectedDateAB, selectedDateWinningUsers,selectedDate]);
+  }, [page, limit, selectedDateAB, selectedDateWinningUsers, selectedDate]);
 
   return (
     <Context.Provider
@@ -126,7 +127,9 @@ const ContextProvider = ({ children }) => {
         requests,
         abData,
         setSelectedDateAB,
-        abDataShowNo
+        abDataShowNo,
+        updateCreateGame,
+        setUpdateCreateGame,
       }}
     >
       {children}

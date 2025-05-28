@@ -36,6 +36,7 @@ import axios from "axios";
 import { BASE_URL } from "../costants";
 import CustomSnackbar from "./CustomSnackbar";
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { useContextProvider } from "../context/ContextProvider";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ export default function Header() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
+  const {setUpdateCreateGame,updateCreateGame} = useContextProvider();
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const isSettingsMenuOpen = Boolean(settingsAnchorEl);
@@ -185,17 +186,30 @@ export default function Header() {
       if (values.image) formData.append("image", values.image);
 
       try {
-        await axios.post(`${BASE_URL}/api/web/create/game`, formData, {
+        const response = await axios.post(`${BASE_URL}/api/web/create/game`, formData, {
           headers: {
             Authorization: localStorage.getItem("token"),
             "ngrok-skip-browser-warning": true,
             "Content-Type": "multipart/form-data",
           },
         });
-        handleAddDialogClose();
-        navigate("/games");
+        
+        if (response.data.type === "success") {
+          setUpdateCreateGame(prev => !prev); // Toggle the update flag
+          handleAddDialogClose();
+          setSnackbarMessage("Game added successfully");
+          setSnackbarSeverity("success");
+          navigate("/games");
+        } else {
+          setSnackbarMessage(response.data.message || "Failed to add game");
+          setSnackbarSeverity("error");
+        }
       } catch (error) {
         console.error("Error adding game:", error);
+        setSnackbarMessage(error.response?.data?.message || "Failed to add game");
+        setSnackbarSeverity("error");
+      } finally {
+        setSnackbarOpen(true);
       }
     },
   });
@@ -218,6 +232,7 @@ export default function Header() {
 
   const handleAddDialogOpen = () => {
     setOpenAddDialog(true);
+    setUpdateCreateGame(!updateCreateGame);
     handleSettingsMenuClose();
   };
 
@@ -538,6 +553,7 @@ export default function Header() {
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
+        severity={snackbarSeverity}
       />
 
       <Menu
