@@ -41,6 +41,7 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
+  const [walletAnchorEl, setWalletAnchorEl] = useState(null);
   const [withdrawRequestEnabled, setWithdrawRequestEnabled] = useState(false);
   const [addMoneyEnabled, setAddMoneyEnabled] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -267,7 +268,10 @@ export default function Header() {
         <ListItemIcon>
           <AccountBalanceWalletIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Wallet</ListItemText>
+        <ListItemText onClick={(event) => {
+          event.stopPropagation();
+          setWalletAnchorEl(event.currentTarget);
+        }}>Wallet</ListItemText>
       </MenuItem>
       <MenuItem
         sx={{
@@ -521,8 +525,36 @@ export default function Header() {
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
-        // severity={snackbarSeverity}
       />
+
+      <Menu
+        anchorEl={walletAnchorEl}
+        open={Boolean(walletAnchorEl)}
+        onClose={() => setWalletAnchorEl(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <MenuItem onClick={() => {
+          navigate("/add-money");
+          setWalletAnchorEl(null);
+          handleSettingsMenuClose();
+        }}>
+          <ListItemIcon>
+            <AddCircleIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Add Money</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => {
+          navigate("/withdrawal-approved");
+          setWalletAnchorEl(null);
+          handleSettingsMenuClose();
+        }}>
+          <ListItemIcon>
+            <AccountBalanceWalletIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Withdrawal Approved List</ListItemText>
+        </MenuItem>
+      </Menu>
     </>
   );
 }
