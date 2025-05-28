@@ -15,12 +15,10 @@ import {
     DialogTitle,
     Button,
     TextField,
-    Fab,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
 import {useFormik} from 'formik';
 import {useNavigate} from 'react-router-dom';
 import gamesSchema from '../schema/gamesSchema';
@@ -32,9 +30,9 @@ import {DemoContainer} from '@mui/x-date-pickers/internals/demo';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider, } from '@mui/x-date-pickers';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useContextProvider } from '../context/ContextProvider';
+import PropTypes from 'prop-types';
 
 const theme = createTheme({
     palette: {
@@ -68,20 +66,23 @@ const theme = createTheme({
 
 
 const Games = () => {
-
-    const [rows, setRows] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [existingGames, setExistingGames] = useState([]);
-    const [date, setDate] = useState(dayjs());
-    const [latestResult, setLatestResult] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
     const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [editingGame, setEditingGame] = useState(null); // State for editing game
-    const {page, limit, total, changePage, changeLimit, changeTotal} = usePagination();
-    const {setLatestLastGameResult} = useContextProvider();
+    const [editingGame, setEditingGame] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const {page, limit, changePage, changeLimit} = usePagination();
+    const {
+        games,
+        gamesTotal,
+        loading: contextLoading,
+        setGamesDate,
+        gamesDate,
+        latestLastGameResult
+    } = useContextProvider();
 
     const navigate = useNavigate();
 
@@ -94,81 +95,19 @@ const Games = () => {
                         'ngrok-skip-browser-warning': true,
                     },
                 });
-                // if (response.data.type == "error") {
-                //     console.log("sdjsaj")
-                //     setError(response.data.message);
-                // }
-                setExistingGames(response.data.data); // Adjust based on the actual response structure
+                setExistingGames(response.data.data);
             } catch (err) {
                 if (err.response) {
                     console.error('Error fetching data', err.response.data.message);
                     setError(err.response.data.message);
                 } else {
                     console.error('Error fetching data', err.message);
-
                 }
             }
         };
 
         fetchGames();
-        const fetchData = async (page, limit) => {
-            setLoading(true);
-            try {
-                const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {
-                    headers: {
-                        Authorization: localStorage.getItem('token'),
-                        'ngrok-skip-browser-warning': true,
-                    },
-                    params: {
-                        page,
-                        limit,
-                        startDateTime:date,
-
-                    },
-                });
-                const games = response.data.data.games?.map((game) => ({
-                    id: game.id,
-                    name: game.name,
-                    startDateTime: moment(game.startDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-                    endDateTime: moment(game.endDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-                    resultDateTime: moment(game.resultDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-                    image: game.image,
-                    status: game.status,
-                    finalBidNumber: game.finalBidNumber,
-                }));
-
-                // Get current Indian time
-                const currentIndianTime = moment().tz('Asia/Kolkata');
-
-                // Find latest declared result
-                const declaredGames = games.filter(game => {
-                    const resultTime = moment(game.resultDateTime);
-                    return game.finalBidNumber && resultTime.isBefore(currentIndianTime);
-                });
-
-                if (declaredGames.length > 0) {
-                    // Sort by result datetime to get the latest
-                    const latestDeclared = declaredGames.sort((a, b) => 
-                        moment(b.resultDateTime).diff(moment(a.resultDateTime))
-                    )[0];
-                    setLatestResult(latestDeclared);
-                    setLatestLastGameResult(latestDeclared.finalBidNumber);
-                }
-
-                setRows(games);
-                changeTotal(response.data.data.total); // Assuming the API returns the total number of items
-            } catch (err) {
-                console.error('Error fetching data', err.message);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData(page, limit);
-    }, [page, limit, date]);
-    const handlePageSizeChange = (newPageSize) => {
-        changeLimit(newPageSize);
-    };
+    }, []);
 
     const handleStatusChange = async (id) => {
         setLoading(true);
@@ -176,7 +115,7 @@ const Games = () => {
             await axios.post(
                 `${BASE_URL}/api/web/status/game`,
                 {
-                    status: !rows.find((row) => row.id === id).status,
+                    status: !games.find((row) => row.id === id).status,
                     id: id,
                 },
                 {
@@ -186,7 +125,6 @@ const Games = () => {
                     },
                 }
             );
-            setRows(rows?.map((row) => (row.id === id ? {...row, status: !row.status} : row)));
             setSuccess("Game status updated successfully");
         } catch (error) {
             console.error('Error updating game status', error.response.data.message);
@@ -202,7 +140,7 @@ const Games = () => {
     };
 
     const handleEdit = (id) => {
-        const gameToEdit = rows.find(row => row.id === id);
+        const gameToEdit = games.find(row => row.id === id);
         setEditingGame(gameToEdit);
         formik.setValues({
             name: gameToEdit.name,
@@ -230,7 +168,6 @@ const Games = () => {
                 setError(response.data.message);
                 return
             }
-            setRows(rows.filter((row) => row.id !== deleteId));
             setSuccess("Game deleted successfully");
         } catch (error) {
             console.error('Error deleting game', error.response.data.message);
@@ -273,7 +210,6 @@ const Games = () => {
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-                    setRows(rows?.map((row) => (row.id === editingGame.id ? { ...row, ...values } : row)));
                     setSuccess("Game updated successfully");
                 } catch (err) {
                     return setError(err.message)
@@ -287,20 +223,7 @@ const Games = () => {
                     },
                 });
                 if (response.data.type === "success") {
-                    const newGame = {
-                        id: response.data.data.id,
-                        name: response.data.data.name,
-                        startDateTime: moment(response.data.data.startDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-                        endDateTime: moment(response.data.data.endDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-                        resultDateTime: moment(response.data.data.resultDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-                        image: response.data.data.image,
-                        status: response.data.data.status,
-                        finalBidNumber: response.data.data.finalBidNumber,
-                    };
-                    setRows(prevRows => [newGame, ...prevRows]);
-                    setError(null);
                     setSuccess("Game added successfully");
-
                 } else {
                     setError(response.data.message);
                 }
@@ -313,11 +236,6 @@ const Games = () => {
             setEditingGame(null);
         }
     };
-    // const formatDateTimeLocal = (dateString) => {
-    //     const date = new Date(dateString);
-    //     const pad = (num) => (num < 10 ? '0' : '') + num;
-    //     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    // };
 
     const formik = useFormik({
         initialValues: {
@@ -442,8 +360,10 @@ const Games = () => {
         });
 
         const handleDateChange = (newDate) => {
-            setDate(newDate);
+            setGamesDate(newDate);
         };
+
+        const latestGame = rows.find(game => game.finalBidNumber === latestLastGameResult);
 
         return (
             <>
@@ -455,18 +375,18 @@ const Games = () => {
                         }}
                     />
                     <Grid container alignItems={"center"} mb={2} justifyContent={"space-between"}>
-                        {latestResult && (
+                        {latestLastGameResult && latestGame && (
                             <Grid item xs={12}>
                                 <Box sx={{ mb: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
-                                        Latest Result: {latestResult.name}
+                                        Latest Result: {latestGame.name}
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography variant="subtitle1" sx={{ mr: 1 }}>
-                                            {moment(latestResult.resultDateTime).format('DD/MM/YYYY HH:mm')}
+                                            {moment(latestGame.resultDateTime).format('DD/MM/YYYY HH:mm')}
                                         </Typography>
                                         <Chip 
-                                            label={latestResult.finalBidNumber} 
+                                            label={latestLastGameResult} 
                                             sx={{
                                                 bgcolor: "#ff1744",
                                                 color: "white",
@@ -488,28 +408,20 @@ const Games = () => {
                                 <MenuItem value="notDeclared">Not Declared</MenuItem>
                             </Select>
                         </Grid>
-                        <Grid item xs={5}display={"flex"} alignItems={"center"}>
+                        <Grid item xs={5} display={"flex"} alignItems={"center"}>
                             <Typography variant="h6" paddingX={1}>
                                 Start Date:
                             </Typography>
                             <DemoContainer components={['DatePicker']}>
                                 <DatePicker
-                                    // minDate={dayjs()}
                                     label="Basic date picker"
-                                    value={date}
+                                    value={gamesDate}
                                     onChange={handleDateChange}
                                 />
                             </DemoContainer>
                         </Grid>
-
-
-
                     </Grid>
-                    <Grid container alignItems={"center"} mb={2}>
-
-                    </Grid>
-                    <div style={{height: 450, width: '100%'}}> {/* Set the height and width of the DataGrid */}
-
+                    <div style={{height: 450, width: '100%'}}>
                         <DataGrid
                             rows={filteredRows}
                             columns={columns}
@@ -519,12 +431,11 @@ const Games = () => {
                                 },
                             }}
                             paginationMode='server'
-                            rowCount={total}
+                            rowCount={gamesTotal}
                             pageSize={limit}
                             checkboxSelection
                             onPaginationModelChange={(value) => {
-                                if (value.pageSize != limit) {
-                                    // console.log(value.page, value.pageSize)
+                                if (value.pageSize !== limit) {
                                     changeLimit(value.pageSize)
                                     return changePage(0)
                                 }
@@ -532,15 +443,22 @@ const Games = () => {
                                 changeLimit(value.pageSize)
                             }}
                             disableSelectionOnClick
-                            loading={loading}
+                            loading={contextLoading || loading}
                         />
                     </div>
                 </LocalizationProvider>
-
             </>
         );
     };
 
+    CustomDataGrid.propTypes = {
+        rows: PropTypes.arrayOf(PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string.isRequired,
+            finalBidNumber: PropTypes.string,
+            resultDateTime: PropTypes.string,
+        })).isRequired,
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -552,35 +470,7 @@ const Games = () => {
                 padding: '16px',
                 position: 'relative'
             }}>
-                <CustomDataGrid rows={rows}/>
-
-                {/* <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { pageSize: 25, page: 0 },
-                        },
-                    }}
-                    autosizeOptions={{
-                        columns: ['name',],
-                        includeOutliers: true,
-                        includeHeaders: true,
-                    }}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    checkboxSelection
-                    disableSelectionOnClick
-                    loading={loading}
-                /> */}
-                {/* {loading && (
-                    <Backdrop
-                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, position: 'absolute' }}
-                        open={loading}
-                    >
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
-                )} */}
+                <CustomDataGrid rows={games}/>
                 <CustomSnackbar
                     open={!!error || !!success}
                     handleClose={handleCloseSnackbar}
@@ -588,10 +478,6 @@ const Games = () => {
                     severity={error ? "error" : "success"}
                 />
             </Box>
-            {/* <Fab aria-label="add" color={"primary"} onClick={() => setOpenAddDialog(true)}
-                 sx={{background: "#614385", color: "white", position: 'fixed', bottom: 16, right: 16}}>
-                <AddIcon/>
-            </Fab> */}
             <Dialog open={openDialog} onClose={handleCloseDialog} disableEscapeKeyDown disableBackdropClick>
                 <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                 <DialogContent>
