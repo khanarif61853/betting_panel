@@ -554,7 +554,7 @@ export default function Header() {
           <ListItemText>Add Money Approved List</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
-          navigate("/withdrawal");
+          navigate("/withdrawal-approved");
           setWalletAnchorEl(null);
           handleSettingsMenuClose();
         }}>

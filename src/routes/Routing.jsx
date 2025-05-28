@@ -16,6 +16,7 @@ import WinningUsers from "../pages/WinningUsers.jsx";
 import TotalBid from "../pages/TotalBid.jsx";
 import FinalJantri from "../pages/FinalJantri.jsx";
 import AndarBaharWinner from "../pages/AndarBaharWinner.jsx";
+import WithdrawalApprovedList from "../pages/WithdrawalApprovedList.jsx";
 
 const Routing = () => {
   return (
@@ -34,6 +35,7 @@ const Routing = () => {
             <Route path="/final-jantri" element={<FinalJantri />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/andar-bahar-winner" element={<AndarBaharWinner />} />
+            <Route path="/withdrawal-approved" element={<WithdrawalApprovedList />} />
             <Route
               path="/withdrawal-requests"
               element={<WithdrawalRequests />}
