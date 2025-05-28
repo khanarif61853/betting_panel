@@ -548,7 +548,7 @@ const Games = () => {
                  sx={{background: "#614385", color: "white", position: 'fixed', bottom: 16, right: 16}}>
                 <AddIcon/>
             </Fab> */}
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
+            <Dialog open={openDialog} onClose={handleCloseDialog} disableEscapeKeyDown disableBackdropClick>
                 <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -564,7 +564,7 @@ const Games = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
+            <Dialog open={openAddDialog} onClose={handleAddDialogClose} disableEscapeKeyDown disableBackdropClick>
                 <DialogTitle>{'Edit Game'}</DialogTitle>
                 <DialogContent>
                     <form onSubmit={formik.handleSubmit}>

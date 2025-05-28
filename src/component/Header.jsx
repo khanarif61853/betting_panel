@@ -47,7 +47,6 @@ export default function Header() {
   const [addMoneyEnabled, setAddMoneyEnabled] = useState(false);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [existingGames, setExistingGames] = useState([]);
-  const [editingGame, setEditingGame] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
@@ -418,9 +417,9 @@ export default function Header() {
         <Outlet />
       </Box>
 
-      <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
-        <DialogTitle>{editingGame ? "Edit Game" : "Add New Game"}</DialogTitle>
-        <DialogContent>
+      <Dialog open={openAddDialog} onClose={handleAddDialogClose} disableEscapeKeyDown disableBackdropClick>
+        <DialogTitle>{"Add New Game"}</DialogTitle>
+        <DialogContent> 
           <form onSubmit={formik.handleSubmit}>
             <FormControl fullWidth margin="dense">
               <InputLabel>Select Game</InputLabel>
@@ -529,7 +528,7 @@ export default function Header() {
                 Cancel
               </Button>
               <Button type="submit" color="secondary">
-                {editingGame ? "Update Game" : "Add Game"}
+                {"Add Game"}
               </Button>
             </DialogActions>
           </form>
@@ -556,7 +555,7 @@ export default function Header() {
           <ListItemIcon>
             <AddCircleIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Add Money Approved List</ListItemText>
+          <ListItemText>Add Money List</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
           navigate("/withdrawal-approved");

@@ -61,12 +61,15 @@ const WithdrawalApprovedList = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${BASE_URL}/api/web/retrieve/withdrawal-requests`, {
-        params: { limit, page },
+        params: { 
+          limit, 
+          page,
+          status: 'Approved'
+        },
         headers:{
           "Authorization":localStorage.getItem("token")
         }
       });
-      console.log(response.data.data.requests);
       setRequests(response.data.data.requests);
       changeTotal(response.data.data.count);
       setSnackbarSeverity('success');
@@ -91,7 +94,7 @@ const WithdrawalApprovedList = () => {
       headerName: 'Status',
       width: 120,
       renderCell: () => (
-        <Chip label="Approved" sx={{ background: "#2e7d32", color: "white" }} />
+        <Chip label="Approved" size="small" sx={{ background: "#2e7d32", color: "white",mt:1,mb:1 }}   />
       ),
     },
     {
@@ -107,7 +110,7 @@ const WithdrawalApprovedList = () => {
     { field: 'createdAt', headerName: 'Created At', width: 200 },
   ];
 
-  const rows = requests?.filter(request => request.status === 'Approved').map((request) => {
+  const rows = requests?.map((request) => {
     let accountDetails = '';
     if (request.accountDetails) {
       try {
