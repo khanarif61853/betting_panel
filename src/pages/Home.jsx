@@ -13,6 +13,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { useContextProvider } from "../context/ContextProvider";
+import moment from "moment";
 
 const theme = createTheme({
   palette: {
@@ -45,15 +46,20 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const { dashboardTotalBid, abDataShowNo, dashboardWinningUsers } =
-    useContextProvider();
+  const { 
+    dashboardTotalBid, 
+    abDataShowNo, 
+    dashboardWinningUsers,
+    latestLastGameResult,
+    lastGameTotalBid,
+    lastGameWinners
+  } = useContextProvider();
 
   const { page, limit } = usePagination();
   const [selectedDate] = useState("");
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
-  const {latestLastGameResult} = useContextProvider();
   const navigate = useNavigate();
 
   // fetch data ---------------
@@ -144,19 +150,29 @@ const Home = () => {
       icon: <AddCardIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {
-         title: "Last Game Result",
-         value: latestLastGameResult,
-         icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      title: "Last Game Result",
+      value: latestLastGameResult,
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {
-        title: "Last Game Total Bid",
-        value: 0,
-        icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      title: "Last Game Total Bid",
+      customContent: (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <Typography variant="h4">{lastGameTotalBid.amount}</Typography>
+        </Box>
+      ),
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/totalbid"),
     },
     {
-        title: "Last Game Winners",
-        value: 0,
-        icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      title: "Last Game Winners",
+      customContent: (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <Typography variant="h4">{lastGameWinners.count}</Typography>
+        </Box>
+      ),
+      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/last-game-winners"),
     },
     {
       title: "Winning Users",

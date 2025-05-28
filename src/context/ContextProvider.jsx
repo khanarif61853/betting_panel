@@ -16,6 +16,8 @@ const ContextProvider = ({ children }) => {
   const [abDataShowNo, setAbDataShowNo] = useState("");
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
+  const [lastGameTotalBid, setLastGameTotalBid] = useState({ amount: 0, timestamp: null });
+  const [lastGameWinners, setLastGameWinners] = useState({ winners: [], count: 0, timestamp: null });
   const [selectedDate, setSelectDate] = useState("");
   const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState("");
   const [latestLastGameResult, setLatestLastGameResult] = useState("");
@@ -38,11 +40,29 @@ const ContextProvider = ({ children }) => {
         params: { date: selectedDate || undefined },
       });
       setDataRequest(data);
+
+      // Calculate total bids
       const totalbids = (data || []).reduce(
         (sum, item) => sum + (Number(item.total_bid) || 0),
         0
       );
       setDashboardTotalBid(totalbids);
+
+      // Find the last game's total bid based on date/time
+      if (data && data.length > 0) {
+        // Sort by createdAt to get the latest bid
+        const sortedData = [...data].sort((a, b) => 
+          moment(b.createdAt).diff(moment(a.createdAt))
+        );
+        
+        const lastBid = sortedData[0];
+        if (lastBid) {
+          setLastGameTotalBid({
+            amount: Number(lastBid.total_bid || 0),
+            timestamp: lastBid.createdAt
+          });
+        }
+      }
     } catch (error) {
       console.error("Failed to fetch all bids:", error);
     }
@@ -53,35 +73,60 @@ const ContextProvider = ({ children }) => {
 
   const lastWinner = async () => {
     setLoading(true);
-    const {
-      data: { data },
-    } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      params: { limit, page, date: selectedDateWinningUsers || undefined },
-    });
-    const jantriData = (data.jantri || []).map((item) => ({
-      ...item,
-      remark: "Jantri",
-    }));
+    try {
+      const {
+        data: { data },
+      } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: { limit, page, date: selectedDateWinningUsers || undefined },
+      });
+      
+      const jantriData = (data.jantri || []).map((item) => ({
+        ...item,
+        remark: "Jantri",
+      }));
 
-    const crossData = (data.cross || []).map((item) => ({
-      ...item,
-      remark: "Cross",
-    }));
+      const crossData = (data.cross || []).map((item) => ({
+        ...item,
+        remark: "Cross",
+      }));
 
-    const openPlayData = (data.openPlay || []).map((item) => ({
-      ...item,
-      remark: "Open Play",
-    }));
+      const openPlayData = (data.openPlay || []).map((item) => ({
+        ...item,
+        remark: "Open Play",
+      }));
 
-    const combinedData = [...jantriData, ...crossData, ...openPlayData];
-    setRequests(combinedData);
-    changeTotal(combinedData?.length || 0);
-    setDashboardWinningUsers(combinedData?.length || 0);
+      const combinedData = [...jantriData, ...crossData, ...openPlayData];
+      setRequests(combinedData);
+      changeTotal(combinedData?.length || 0);
+      setDashboardWinningUsers(combinedData?.length || 0);
 
-    setLoading(false); // Data is loaded, set loading to false
+      // Find the latest winners based on timestamp
+      if (combinedData.length > 0) {
+        const sortedData = [...combinedData].sort((a, b) => 
+          moment(b.createdAt).diff(moment(a.createdAt))
+        );
+        
+        // Get the most recent timestamp
+        const latestTimestamp = sortedData[0]?.createdAt;
+        
+        // Filter winners from the same latest game
+        const latestWinners = sortedData.filter(winner => 
+          moment(winner.createdAt).isSame(moment(latestTimestamp))
+        );
+
+        setLastGameWinners({
+          winners: latestWinners,
+          count: latestWinners.length,
+          timestamp: latestTimestamp
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch winners:", error);
+    }
+    setLoading(false);
   };
 
   // andar bahar winners  -------------------------
@@ -176,6 +221,7 @@ const ContextProvider = ({ children }) => {
         setLoading,
         dataRequest,
         dashboardTotalBid,
+        lastGameTotalBid,
         setDataRequest,
         setSelectDate,
         dashboardWinningUsers,
@@ -192,6 +238,8 @@ const ContextProvider = ({ children }) => {
         gamesTotal,
         setGamesDate,
         gamesDate,
+        lastGameWinners,
+        setLastGameWinners,
       }}
     >
       {children}
