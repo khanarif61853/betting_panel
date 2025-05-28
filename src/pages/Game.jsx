@@ -38,10 +38,11 @@ const Game = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [resultDate, setResultDate] = useState(new Date());
-    const [bidDeclared, setBidDeclared] = useState(false); // New state for declaration status
-    const [collectedAmount, setCollectedAmount] = useState()
-    const [games, setGames] = useState([])
-    const [selectedName, setSelectedName] = useState("")
+    const [bidDeclared, setBidDeclared] = useState(false);
+    const [savedBid, setSavedBid] = useState(null);
+    const [collectedAmount, setCollectedAmount] = useState();
+    const [games, setGames] = useState([]);
+    const [selectedName, setSelectedName] = useState("");
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -220,6 +221,31 @@ const Game = () => {
         setOpenConfirmDialog(false);
     };
 
+    // Load saved bid from localStorage on component mount
+    useEffect(() => {
+        const saved = localStorage.getItem('savedBid');
+        if (saved) {
+            const parsedBid = JSON.parse(saved);
+            setSavedBid(parsedBid);
+            setSelectedBid(parsedBid);
+            formik.setFieldValue('bidNumber', parsedBid);
+        }
+    }, []);
+
+    const handleSaveBid = () => {
+        if (selectedBid) {
+            localStorage.setItem('savedBid', JSON.stringify(selectedBid));
+            setSavedBid(selectedBid);
+            setSuccess('Bid saved successfully');
+        }
+    };
+
+    const handleEditSavedBid = () => {
+        localStorage.removeItem('savedBid');
+        setSavedBid(null);
+        setSuccess('You can now select a new bid');
+    };
+
     return (
         <Box padding={3}>
             <ArrowBackIcon style={{cursor:"pointer"}} onClick={()=>{
@@ -309,11 +335,25 @@ const Game = () => {
 
             </Grid>
             <Box mt={2} display="flex" alignItems={"center"} justifyContent={"space-between"} mb={2}>
-                <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>Bid
-                    Numbers</Typography>
-                <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"}
-                            display={bidDeclared ? "inline-flex" : "none"} backgroundColor="red" borderRadius={"10px"}
-                            color={"white"} p={1} fontWeight={500}>{bidDeclared}</Typography>
+                <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
+                    Bid Numbers {savedBid && `(Saved: ${savedBid.number})`}
+                </Typography>
+                <Box display="flex" gap={2}>
+                    {savedBid && (
+                        <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"}
+                                backgroundColor="#4CAF50" borderRadius={"10px"}
+                                color={"white"} p={1} fontWeight={500}>
+                            Saved: {savedBid.number}
+                        </Typography>
+                    )}
+                    {bidDeclared && (
+                        <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"}
+                                backgroundColor="red" borderRadius={"10px"}
+                                color={"white"} p={1} fontWeight={500}>
+                            {bidDeclared}
+                        </Typography>
+                    )}
+                </Box>
             </Box>
             <Box
                 sx={{
@@ -495,20 +535,59 @@ const Game = () => {
                     ))}
                 </Box>
             </Box>
-            <Tooltip title={formik.values.bidNumber.number ? "" : bidDeclared ? "" : "Select bid number first"}
-                     placement="left-start">
-
+            <Box sx={{ position: 'fixed', bottom: 20, right: 20, display: 'flex', gap: 2 }}>
+                {!savedBid ? (
+                    <Button
+                        variant='contained'
+                        onClick={handleSaveBid}
+                        sx={{
+                            backgroundColor: formik.values.bidNumber.number !== undefined ? '#4CAF50' : '#BEB8D1',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: formik.values.bidNumber.number !== undefined ? '#45a049' : '#BEB8D1',
+                            },
+                            '&:disabled': {
+                                backgroundColor: '#BEB8D1',
+                                color: '#FFFFFF',
+                            },
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
+                            borderRadius: '8px',
+                            padding: '10px 20px',
+                            fontWeight: 'bold',
+                        }}
+                        disabled={!formik.values.bidNumber.number || bidDeclared}
+                    >
+                        Save Bid
+                    </Button>
+                ) : (
+                    <Button
+                        variant='contained'
+                        onClick={handleEditSavedBid}
+                        sx={{
+                            backgroundColor: '#FF9800',
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: '#F57C00',
+                            },
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
+                            borderRadius: '8px',
+                            padding: '10px 20px',
+                            fontWeight: 'bold',
+                        }}
+                        disabled={bidDeclared}
+                    >
+                        Edit Bid
+                    </Button>
+                )}
+                
                 <Button
                     variant='contained'
                     onClick={() => setOpenConfirmDialog(true)}
                     sx={{
-                        position: "fixed",
-                        bottom: 20,
-                        right: 20,
-                        backgroundColor: formik.values.bidNumber.number !== undefined && formik.values.bidNumber.number !== null ? '#604586' : '#BEB8D1',
+                        backgroundColor: savedBid ? '#604586' : '#BEB8D1',
                         color: 'white',
                         '&:hover': {
-                            backgroundColor: formik.values.bidNumber.number !== undefined && formik.values.bidNumber.number !== null ? '#4b356a' : '#BEB8D1',
+                            backgroundColor: savedBid ? '#4b356a' : '#BEB8D1',
                         },
                         '&:disabled': {
                             backgroundColor: '#BEB8D1',
@@ -519,11 +598,11 @@ const Game = () => {
                         padding: '10px 20px',
                         fontWeight: 'bold',
                     }}
-                    disabled={formik.values.bidNumber.number === undefined || formik.values.bidNumber.number === null || bidDeclared} // Updated condition to check for undefined or null
+                    disabled={!savedBid || bidDeclared}
                 >
                     Declare Bid
                 </Button>
-            </Tooltip>
+            </Box>
 
             {/* Confirmation Dialog */}
             <Modal open={openConfirmDialog}
