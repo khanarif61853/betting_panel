@@ -138,6 +138,11 @@ const Home = () => {
     // },
     // ------------------------------------------------------------
     {
+      title: "Total Collection",
+      value: -dashboardData.totalCollection,
+      icon: <AddCardIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    },
+    {
          title: "Last Game Result",
          value: 0,
          icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
@@ -152,12 +157,6 @@ const Home = () => {
         value: 0,
         icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
-    // {
-    //   title: "Total Add Money",
-    //   value: -dashboardData.totalCollection,
-    //   icon: <AddCardIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-    //   onClick: () => navigate("/add-money"),
-    // },
     {
       title: "Winning Users",
       value: dashboardWinningUsers,

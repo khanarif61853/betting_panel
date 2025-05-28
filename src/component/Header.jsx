@@ -293,7 +293,7 @@ export default function Header() {
             handleWithdrawRequest(e);
           }}
           onClick={(e) => e.stopPropagation()}
-          sx={{ ml: 2 }}
+          sx={{ mb: 2 }}
         />
       </MenuItem>
       <MenuItem
