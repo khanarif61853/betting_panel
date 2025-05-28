@@ -2,6 +2,8 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BASE_URL } from "../costants";
 import { usePagination } from "../hooks/usePagination";
+import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 
 export const Context = createContext();
 export const useContextProvider = () => useContext(Context);
@@ -12,12 +14,17 @@ const ContextProvider = ({ children }) => {
   const [selectedDateAB, setSelectedDateAB] = useState("");
   const [abData, setAbData] = useState([]);
   const [abDataShowNo, setAbDataShowNo] = useState("");
-  const [updateCreateGame, setUpdateCreateGame] = useState(false);
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
+  const [lastGameTotalBid, setLastGameTotalBid] = useState({ amount: 0, timestamp: null });
+  const [lastGameWinners, setLastGameWinners] = useState({ winners: [], count: 0, timestamp: null });
   const [selectedDate, setSelectDate] = useState("");
   const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState("");
+  const [latestLastGameResult, setLatestLastGameResult] = useState("");
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
+  const [games, setGames] = useState([]);
+  const [gamesDate, setGamesDate] = useState(dayjs());
+  const [gamesTotal, setGamesTotal] = useState(0);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   // all bids api  ----------------------
@@ -30,14 +37,32 @@ const ContextProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        params: { date: selectedDate || undefined },
+        params: { date: selectedDate },
       });
       setDataRequest(data);
+
+      // Calculate total bids
       const totalbids = (data || []).reduce(
         (sum, item) => sum + (Number(item.total_bid) || 0),
         0
       );
       setDashboardTotalBid(totalbids);
+
+      // Find the last game's total bid based on date/time
+      if (data && data.length > 0) {
+        // Sort by createdAt to get the latest bid
+        const sortedData = [...data].sort((a, b) => 
+          moment(b.createdAt).diff(moment(a.createdAt))
+        );
+        
+        const lastBid = sortedData[0];
+        if (lastBid) {
+          setLastGameTotalBid({
+            amount: Number(lastBid.total_bid || 0),
+            timestamp: lastBid.createdAt
+          });
+        }
+      }
     } catch (error) {
       console.error("Failed to fetch all bids:", error);
     }
@@ -48,35 +73,60 @@ const ContextProvider = ({ children }) => {
 
   const lastWinner = async () => {
     setLoading(true);
-    const {
-      data: { data },
-    } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      params: { limit, page, date: selectedDateWinningUsers || undefined },
-    });
-    const jantriData = (data.jantri || []).map((item) => ({
-      ...item,
-      remark: "Jantri",
-    }));
+    try {
+      const {
+        data: { data },
+      } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: { limit, page, date: selectedDateWinningUsers || undefined },
+      });
+      
+      const jantriData = (data.jantri || []).map((item) => ({
+        ...item,
+        remark: "Jantri",
+      }));
 
-    const crossData = (data.cross || []).map((item) => ({
-      ...item,
-      remark: "Cross",
-    }));
+      const crossData = (data.cross || []).map((item) => ({
+        ...item,
+        remark: "Cross",
+      }));
 
-    const openPlayData = (data.openPlay || []).map((item) => ({
-      ...item,
-      remark: "Open Play",
-    }));
+      const openPlayData = (data.openPlay || []).map((item) => ({
+        ...item,
+        remark: "Open Play",
+      }));
 
-    const combinedData = [...jantriData, ...crossData, ...openPlayData];
-    setRequests(combinedData);
-    changeTotal(combinedData?.length || 0);
-    setDashboardWinningUsers(combinedData?.length || 0);
+      const combinedData = [...jantriData, ...crossData, ...openPlayData];
+      setRequests(combinedData);
+      changeTotal(combinedData?.length || 0);
+      setDashboardWinningUsers(combinedData?.length || 0);
 
-    setLoading(false); // Data is loaded, set loading to false
+      // Find the latest winners based on timestamp
+      if (combinedData.length > 0) {
+        const sortedData = [...combinedData].sort((a, b) => 
+          moment(b.createdAt).diff(moment(a.createdAt))
+        );
+        
+        // Get the most recent timestamp
+        const latestTimestamp = sortedData[0]?.createdAt;
+        
+        // Filter winners from the same latest game
+        const latestWinners = sortedData.filter(winner => 
+          moment(winner.createdAt).isSame(moment(latestTimestamp))
+        );
+
+        setLastGameWinners({
+          winners: latestWinners,
+          count: latestWinners.length,
+          timestamp: latestTimestamp
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch winners:", error);
+    }
+    setLoading(false);
   };
 
   // andar bahar winners  -------------------------
@@ -96,10 +146,63 @@ const ContextProvider = ({ children }) => {
     setLoading(false);
   };
 
+  // Games API call
+  const fetchGames = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+          'ngrok-skip-browser-warning': true,
+        },
+        params: {
+          page,
+          limit,
+          startDateTime: gamesDate,
+        },
+      });
+
+      const gamesData = response.data.data.games?.map((game) => ({
+        id: game.id,
+        name: game.name,
+        startDateTime: moment(game.startDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+        endDateTime: moment(game.endDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+        resultDateTime: moment(game.resultDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+        image: game.image,
+        status: game.status,
+        finalBidNumber: game.finalBidNumber,
+      }));
+
+      // Get current Indian time
+      const currentIndianTime = moment().tz('Asia/Kolkata');
+
+      // Find latest declared result
+      const declaredGames = gamesData.filter(game => {
+        const resultTime = moment(game.resultDateTime);
+        return game.finalBidNumber && resultTime.isBefore(currentIndianTime);
+      });
+
+      if (declaredGames.length > 0) {
+        // Sort by result datetime to get the latest
+        const latestDeclared = declaredGames.sort((a, b) => 
+          moment(b.resultDateTime).diff(moment(a.resultDateTime))
+        )[0];
+        setLatestLastGameResult(latestDeclared.finalBidNumber);
+      }
+
+      setGames(gamesData);
+      setGamesTotal(response.data.data.total);
+    } catch (err) {
+      console.error('Error fetching games:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      await Promise.all([allbids(), lastWinner(), abWinner()]);
+      await Promise.all([allbids(), lastWinner(), abWinner(), fetchGames()]);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -109,7 +212,7 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     fetchAllData();
-  }, [page, limit, selectedDateAB, selectedDateWinningUsers, selectedDate]);
+  }, [page, limit, selectedDateAB, selectedDateWinningUsers, selectedDate, gamesDate]);
 
   return (
     <Context.Provider
@@ -118,6 +221,7 @@ const ContextProvider = ({ children }) => {
         setLoading,
         dataRequest,
         dashboardTotalBid,
+        lastGameTotalBid,
         setDataRequest,
         setSelectDate,
         dashboardWinningUsers,
@@ -128,8 +232,14 @@ const ContextProvider = ({ children }) => {
         abData,
         setSelectedDateAB,
         abDataShowNo,
-        updateCreateGame,
-        setUpdateCreateGame,
+        latestLastGameResult,
+        setLatestLastGameResult,
+        games,
+        gamesTotal,
+        setGamesDate,
+        gamesDate,
+        lastGameWinners,
+        setLastGameWinners,
       }}
     >
       {children}

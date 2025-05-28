@@ -1,26 +1,17 @@
 import {
   Box,
-  TextField,
   Typography,
   Paper,
   useTheme,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import { usePagination } from "../hooks/usePagination";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
-const WinningUsers = () => {
+const LastGameWinner = () => {
   const theme = useTheme();
-  const { page, limit, total, changePage, changeLimit } = usePagination();
-  const {
-    requests,
-    loading,
-    setSelectedDateWinningUsers,
-    dashboardWinningUsers,
-  } = useContextProvider();
+  const { lastGameWinners, loading } = useContextProvider();
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -29,19 +20,15 @@ const WinningUsers = () => {
     { field: "finalBidNumber", headerName: "Bid Number", flex: 1 },
     { field: "winningAmount", headerName: "Winning Amount", flex: 1 },
     { field: "gameCategory", headerName: "Game Category", flex: 1 },
-    { field: "createdAt", headerName: "Created At", flex: 1 },
   ];
 
-  const rows = (requests || []).map((request, i) => ({
+  const rows = (lastGameWinners.winners || []).map((winner, i) => ({
     id: i + 1,
-    customerName: request?.customer?.name || "N/A",
-    game: request?.Game?.name || "N/A",
-    finalBidNumber: request?.Game?.finalBidNumber || "N/A",
-    winningAmount: request?.winningAmount || "0",
-    gameCategory: request?.remark || "N/A",
-    createdAt: request?.createdAt
-      ? moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss")
-      : "N/A",
+    customerName: winner?.customer?.name || "N/A",
+    game: winner?.Game?.name || "N/A",
+    finalBidNumber: winner?.Game?.finalBidNumber || "N/A",
+    winningAmount: winner?.winningAmount || "0",
+    gameCategory: winner?.remark || "N/A",
   }));
 
   return (
@@ -63,21 +50,14 @@ const WinningUsers = () => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Box display="flex" alignItems="center" gap={1}>
-          <EmojiEventsIcon color="primary" />
-          <Typography variant="h5" fontWeight={600}>
-            Winning Users: {dashboardWinningUsers}
-          </Typography>
+        <Box display="flex" flexDirection="column" gap={1}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <EmojiEventsIcon color="primary" />
+            <Typography variant="h5" fontWeight={600}>
+              Last Game Winners: {lastGameWinners.count}
+            </Typography>
+          </Box>
         </Box>
-        <TextField
-          label="Filter by Date"
-          type="date"
-          size="small"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={(e) => setSelectedDateWinningUsers(e.target.value)}
-        />
       </Box>
 
       <Box
@@ -103,25 +83,15 @@ const WinningUsers = () => {
         <DataGrid
           rows={rows}
           columns={columns}
-          paginationMode="server"
-          rowCount={total}
-          pageSize={limit}
           loading={loading}
           disableRowSelectionOnClick
-          onPaginationModelChange={(value) => {
-            if (value.pageSize !== limit) {
-              changeLimit(value.pageSize);
-              return changePage(0);
-            }
-            changePage(value.page);
-            changeLimit(value.pageSize);
-          }}
           autoHeight={false}
           density="comfortable"
+          hideFooterPagination
         />
       </Box>
     </Paper>
   );
 };
 
-export default WinningUsers;
+export default LastGameWinner;
