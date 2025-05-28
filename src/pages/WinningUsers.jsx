@@ -40,7 +40,7 @@ const WinningUsers = () => {
     winningAmount: request?.winningAmount || "0",
     gameCategory: request?.remark || "N/A",
     createdAt: request?.createdAt
-      ? moment(request.createdAt).format("YYYY-MM-DD")
+      ? moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss")
       : "N/A",
   }));
 

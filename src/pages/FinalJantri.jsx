@@ -7,7 +7,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../costants";
@@ -24,6 +24,8 @@ const FinalJantri = () => {
   const [resultDate, setResultDate] = useState(new Date().toISOString().split('T')[0]);
   const [topMaxBids, setTopMaxBids] = useState([]);
   const [topMinBids, setTopMinBids] = useState([]);
+  const location = useLocation();
+  const gameId = location.state?.id;
 
   const handleCloseSnackbar = () => {
     setError(null);
@@ -37,7 +39,7 @@ const FinalJantri = () => {
           `${BASE_URL}/api/web/retrieve/andar-bahar-jodi`,
           {
             params: {
-              resultDate,
+              gameId,
             },
             headers: {
               Authorization: localStorage.getItem("token"),

@@ -16,6 +16,7 @@ const ContextProvider = ({ children }) => {
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
   const [selectedDate, setSelectDate] = useState("");
   const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState("");
+  const [latestLastGameResult, setLatestLastGameResult] = useState("");
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
@@ -108,7 +109,7 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     fetchAllData();
-  }, [page, limit, selectedDateAB, selectedDateWinningUsers,selectedDate]);
+  }, [page, limit, selectedDateAB, selectedDateWinningUsers, selectedDate]);
 
   return (
     <Context.Provider
@@ -126,7 +127,9 @@ const ContextProvider = ({ children }) => {
         requests,
         abData,
         setSelectedDateAB,
-        abDataShowNo
+        abDataShowNo,
+        latestLastGameResult,
+        setLatestLastGameResult,
       }}
     >
       {children}

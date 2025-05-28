@@ -53,6 +53,7 @@ const Home = () => {
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
+  const {latestLastGameResult} = useContextProvider();
   const navigate = useNavigate();
 
   // fetch data ---------------
@@ -144,7 +145,7 @@ const Home = () => {
     },
     {
          title: "Last Game Result",
-         value: 0,
+         value: latestLastGameResult,
          icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {

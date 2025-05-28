@@ -26,7 +26,7 @@ import {useNavigate} from 'react-router-dom';
 import gamesSchema from '../schema/gamesSchema';
 import {useEffect, useState} from 'react';
 import {BASE_URL} from '../costants';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {usePagination} from '../hooks/usePagination';
 import {DemoContainer} from '@mui/x-date-pickers/internals/demo';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
@@ -34,6 +34,7 @@ import { LocalizationProvider, } from '@mui/x-date-pickers';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useContextProvider } from '../context/ContextProvider';
 
 const theme = createTheme({
     palette: {
@@ -72,7 +73,7 @@ const Games = () => {
     const [loading, setLoading] = useState(true);
     const [existingGames, setExistingGames] = useState([]);
     const [date, setDate] = useState(dayjs());
-
+    const [latestResult, setLatestResult] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
@@ -80,6 +81,7 @@ const Games = () => {
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [editingGame, setEditingGame] = useState(null); // State for editing game
     const {page, limit, total, changePage, changeLimit, changeTotal} = usePagination();
+    const {setLatestLastGameResult} = useContextProvider();
 
     const navigate = useNavigate();
 
@@ -134,6 +136,25 @@ const Games = () => {
                     status: game.status,
                     finalBidNumber: game.finalBidNumber,
                 }));
+
+                // Get current Indian time
+                const currentIndianTime = moment().tz('Asia/Kolkata');
+
+                // Find latest declared result
+                const declaredGames = games.filter(game => {
+                    const resultTime = moment(game.resultDateTime);
+                    return game.finalBidNumber && resultTime.isBefore(currentIndianTime);
+                });
+
+                if (declaredGames.length > 0) {
+                    // Sort by result datetime to get the latest
+                    const latestDeclared = declaredGames.sort((a, b) => 
+                        moment(b.resultDateTime).diff(moment(a.resultDateTime))
+                    )[0];
+                    setLatestResult(latestDeclared);
+                    setLatestLastGameResult(latestDeclared.finalBidNumber);
+                }
+
                 setRows(games);
                 changeTotal(response.data.data.total); // Assuming the API returns the total number of items
             } catch (err) {
@@ -279,6 +300,7 @@ const Games = () => {
                     setRows(prevRows => [newGame, ...prevRows]);
                     setError(null);
                     setSuccess("Game added successfully");
+
                 } else {
                     setError(response.data.message);
                 }
@@ -386,7 +408,7 @@ const Games = () => {
             textAlign: "center",
             renderCell: ({row}) => ( 
             <div>
-                <Chip label={"Open"} sx={{textAlign:"center",marginLeft:2,cursor:"pointer"}} color="primary" onClick={()=> navigate(`/final-jantri/?id=${row.id}`)}/>
+                <Chip label={"Open"} sx={{textAlign:"center",marginLeft:2,cursor:"pointer"}} color="primary" onClick={()=> navigate("/final-jantri", {state:{id : row.id}})}/>
             </div>
             )
         },
@@ -418,23 +440,45 @@ const Games = () => {
             if (filter === 'declared') return row.finalBidNumber !== null;
             if (filter === 'notDeclared') return row.finalBidNumber === null;
         });
-        // console.log(filteredRows)
 
         const handleDateChange = (newDate) => {
             setDate(newDate);
-            console.log(newDate.$d); // Log the JavaScript Date object
         };
+
         return (
             <>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                     <ArrowBackIcon
-                            style={{ cursor: "pointer" }}
-                            onClick={() => {
-                              navigate("/home");
-                            }}
-                          />
-                    <Grid container alignItems={"center"} mb={2} justifyContent={"flex-between"}>
-                        <Grid item  xs={5} display={"flex"} alignItems={"center"}>
+                    <ArrowBackIcon
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                            navigate("/home");
+                        }}
+                    />
+                    <Grid container alignItems={"center"} mb={2} justifyContent={"space-between"}>
+                        {latestResult && (
+                            <Grid item xs={12}>
+                                <Box sx={{ mb: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
+                                        Latest Result: {latestResult.name}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Typography variant="subtitle1" sx={{ mr: 1 }}>
+                                            {moment(latestResult.resultDateTime).format('DD/MM/YYYY HH:mm')}
+                                        </Typography>
+                                        <Chip 
+                                            label={latestResult.finalBidNumber} 
+                                            sx={{
+                                                bgcolor: "#ff1744",
+                                                color: "white",
+                                                fontWeight: 'bold',
+                                                fontSize: '1.1rem'
+                                            }}
+                                        />
+                                    </Box>
+                                </Box>
+                            </Grid>
+                        )}
+                        <Grid item xs={5} display={"flex"} alignItems={"center"}>
                             <Typography variant="h6" paddingX={1}>
                                 Result:
                             </Typography>

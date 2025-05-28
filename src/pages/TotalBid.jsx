@@ -30,7 +30,7 @@ const TotalBid = () => {
     game: item.game_name || "N/A",
     total: item.total_bid || 0,
     createdAt: item?.createdAt
-      ? moment(item.createdAt).format("YYYY-MM-DD")
+      ? moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')
       : "N/A",
   }));
 
