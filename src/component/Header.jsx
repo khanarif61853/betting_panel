@@ -35,6 +35,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { BASE_URL } from "../costants";
 import CustomSnackbar from "./CustomSnackbar";
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -272,6 +273,10 @@ export default function Header() {
           event.stopPropagation();
           setWalletAnchorEl(event.currentTarget);
         }}>Wallet</ListItemText>
+
+        <ListItemIcon>
+          <ArrowRightIcon fontSize="small" />
+        </ListItemIcon>
       </MenuItem>
       <MenuItem
         sx={{
@@ -551,7 +556,7 @@ export default function Header() {
           <ListItemIcon>
             <AddCircleIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Add Money Approved List</ListItemText>
+          <ListItemText>Add Money  List</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
           navigate("/withdrawal-approved");

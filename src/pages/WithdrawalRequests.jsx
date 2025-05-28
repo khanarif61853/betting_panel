@@ -257,19 +257,6 @@ const WithdrawalRequest = () => {
             Please review the details before approving this request.
           </DialogContentText>
           <form onSubmit={handleSubmit}>
-            {/* <TextField
-              margin="dense"
-              label="Account Details"
-              fullWidth
-              multiline
-              rows={4}
-              name="bankDetails"
-              value={values.bankDetails}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={Boolean(errors.bankDetails)}
-              helperText={errors.bankDetails}
-            /> */}
             <div>
               <Typography variant="body1" style={{ whiteSpace: 'pre-line', marginTop: '16px' }}>
                 {values.bankDetails}
