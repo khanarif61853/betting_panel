@@ -36,7 +36,7 @@ const Customer = () => {
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState("bankDetails");
-  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(0);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const { page, limit, total, changePage, changeLimit, changeTotal } =

@@ -174,8 +174,7 @@ export default function Header() {
       startDateTime: Yup.string().required("Start date time is required"),
       endDateTime: Yup.string().required("End date time is required"),
       resultDateTime: Yup.string().required("Result date time is required"),
-      image: Yup.mixed().required("Image is required"),
-    }),
+        }),
     onSubmit: async (values) => {
       const formData = new FormData();
       formData.append("name", values.name);
