@@ -287,9 +287,13 @@ export default function Header() {
           <ListItemText>Withdraw Request</ListItemText>
         </Box>
         <Switch
-          // edge="end"
           checked={Boolean(withdrawRequestEnabled)}
-          onChange={handleWithdrawRequest}
+          onChange={(e) => {
+            e.stopPropagation();
+            handleWithdrawRequest(e);
+          }}
+          onClick={(e) => e.stopPropagation()}
+          sx={{ ml: 2 }}
         />
       </MenuItem>
       <MenuItem
@@ -308,7 +312,12 @@ export default function Header() {
         <Switch
           edge="end"
           checked={addMoneyEnabled}
-          onChange={handleVerifyAmountRequest}
+          onChange={(e) => {
+            e.stopPropagation();
+            handleVerifyAmountRequest(e);
+          }}
+          onClick={(e) => e.stopPropagation()}
+          sx={{ ml: 2 }}
         />
       </MenuItem>
       <Divider />
@@ -542,10 +551,10 @@ export default function Header() {
           <ListItemIcon>
             <AddCircleIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Add Money</ListItemText>
+          <ListItemText>Add Money Approved List</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
-          navigate("/withdrawal-approved");
+          navigate("/withdrawal");
           setWalletAnchorEl(null);
           handleSettingsMenuClose();
         }}>
