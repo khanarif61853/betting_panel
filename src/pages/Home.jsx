@@ -64,6 +64,7 @@ const Home = () => {
       params: { page: page + 1, limit },
     });
     setDashboardData(data);
+    console.log(data,"---home data");
     setLoading(false); // Data is loaded, set loading to false
   };
 
@@ -77,7 +78,7 @@ const Home = () => {
         },
       });
 
-       const winValue = data?.jantriWin || 0;
+      const winValue = data?.jantriWin || 0;
       const totalValue = data?.jantriTotalAmount || 0;
       let profitValue;
       let lossValue;
@@ -123,14 +124,34 @@ const Home = () => {
     {
       title: "Live Games",
       value: dashboardData.liveGames,
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.secondary.main, mr: 1 }} />,
+      icon: (
+        <SportsEsportsIcon
+          sx={{ color: theme.palette.secondary.main, mr: 1 }}
+        />
+      ),
       onClick: () => navigate("/games"),
     },
-    {
-      title: "Total Games",
-      value: dashboardData.totalGames,
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-    },
+    // {
+    //   title: "Total Games",
+    //   value: dashboardData.totalGames,
+    //   icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    // },
+    // ------------------------------------------------------------
+    // {
+    //      title: "Last Game Result",
+    //      value: 0,
+    //      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    // },
+    // {
+    //     title: "Last Game Total Bid",
+    //     value: 0,
+    //     icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    // },
+    // {
+    //     title: "Last Game Winners",
+    //     value: 0,
+    //     icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    // },
     {
       title: "Total Add Money",
       value: -dashboardData.totalCollection,
@@ -158,7 +179,9 @@ const Home = () => {
     {
       title: "Profit / Loss",
       customContent: (
-        <Box sx={{ display: "flex", width: "40%", justifyContent: "space-evenly" }}>
+        <Box
+          sx={{ display: "flex", width: "40%", justifyContent: "space-evenly" }}
+        >
           <Typography variant="h5" sx={{ fontWeight: 700, color: "green" }}>
             {`+${profitValue || 0}`}
           </Typography>
@@ -171,7 +194,9 @@ const Home = () => {
     },
     {
       title: "Withdrawal Requests",
-      icon: <AttachMoneyIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      icon: (
+        <AttachMoneyIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
       onClick: () => navigate("/withdrawal-requests"),
     },
     {

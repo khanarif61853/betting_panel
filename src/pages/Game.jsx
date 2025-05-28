@@ -75,7 +75,7 @@ const Game = () => {
                         'ngrok-skip-browser-warning': true,
                     },
                 });
-
+                // console.log(response.data.data,"---response");
                 if (response.data.type === "success") {
                     let {bids, inside, outside, finalBidNumber, collectedAmount: amountCollection} = response.data.data;
                     if (finalBidNumber == 0) {

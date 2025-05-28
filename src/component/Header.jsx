@@ -9,16 +9,32 @@ import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Outlet, useNavigate } from "react-router-dom";
-import { Avatar, Switch, ListItemIcon, ListItemText, Divider, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, TextField, DialogActions, Button } from "@mui/material";
+import {
+  Avatar,
+  Switch,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import PhoneIcon from "@mui/icons-material/Phone";
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
-import { BASE_URL } from '../costants';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
+import { BASE_URL } from "../costants";
+import CustomSnackbar from "./CustomSnackbar";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -30,63 +46,156 @@ export default function Header() {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [existingGames, setExistingGames] = useState([]);
   const [editingGame, setEditingGame] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const isSettingsMenuOpen = Boolean(settingsAnchorEl);
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/web/retrieve/gamesName`, {
+  const handleWithdrawRequest = async (e) => {
+    const newStatus = e.target.checked;
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/api/web/status/withdrawal-request`,
+        { status: newStatus },
+        {
           headers: {
-            Authorization: localStorage.getItem('token'),
-            'ngrok-skip-browser-warning': true,
+            Authorization: localStorage.getItem("token"),
           },
-        });
-        setExistingGames(response.data.data);
-      } catch (err) {
-        console.error('Error fetching games:', err);
-      }
-    };
+        }
+      );
+      setWithdrawRequestEnabled(Boolean(Number(newStatus)));
+      setSnackbarMessage(data?.message);
+      setSnackbarSeverity("success");
+    } catch (error) {
+      console.error("Error updating status:", error.message);
+      setSnackbarMessage("Failed to update status");
+      setSnackbarSeverity("error");
+    } finally {
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleVerifyAmountRequest = async (e) => {
+    const newStatus = e.target.checked;
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/api/web/status/verify-amount-request`,
+        {
+          status: newStatus,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      setAddMoneyEnabled(Boolean(Number(newStatus)));
+      setSnackbarMessage(data?.message);
+      setSnackbarSeverity("success");
+    } catch (error) {
+      console.error("Error updating status:", error);
+      setSnackbarMessage("Failed to update status");
+      setSnackbarSeverity("error");
+    } finally {
+      setSnackbarOpen(true);
+    }
+  };
+
+  const getWithdrawalStatus = async () => {
+    try {
+      const {
+        data: { data },
+      } = await axios.get(
+        `${BASE_URL}/api/web/retrieve/withdrawal-request-setting`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      setWithdrawRequestEnabled(Boolean(Number(data.status)));
+    } catch (err) {
+      console.error("Failed to fetch status:", err.message);
+    }
+  };
+  const getVerifyAmountRequest = async () => {
+    try {
+      const {
+        data: { data },
+      } = await axios.get(
+        `${BASE_URL}/api/web/retrieve/verify-amount-request-setting`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      setAddMoneyEnabled(Boolean(Number(data.status)));
+    } catch (err) {
+      console.error("Failed to fetch status:", err.message);
+    }
+  };
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/web/retrieve/gamesName`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "ngrok-skip-browser-warning": true,
+          },
+        }
+      );
+      setExistingGames(response.data.data);
+    } catch (err) {
+      console.error("Error fetching games:", err);
+    }
+  };
+
+  useEffect(() => {
     fetchGames();
+    getWithdrawalStatus();
+    getVerifyAmountRequest()
   }, []);
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      startDateTime: '',
-      endDateTime: '',
-      resultDateTime: '',
+      name: "",
+      startDateTime: "",
+      endDateTime: "",
+      resultDateTime: "",
       image: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name is required'),
-      startDateTime: Yup.string().required('Start date time is required'),
-      endDateTime: Yup.string().required('End date time is required'),
-      resultDateTime: Yup.string().required('Result date time is required'),
-      image: Yup.mixed().required('Image is required'),
+      name: Yup.string().required("Name is required"),
+      startDateTime: Yup.string().required("Start date time is required"),
+      endDateTime: Yup.string().required("End date time is required"),
+      resultDateTime: Yup.string().required("Result date time is required"),
+      image: Yup.mixed().required("Image is required"),
     }),
     onSubmit: async (values) => {
       const formData = new FormData();
-      formData.append('name', values.name);
-      formData.append('startDateTime', values.startDateTime);
-      formData.append('endDateTime', values.endDateTime);
-      formData.append('resultDateTime', values.resultDateTime);
-      if (values.image) formData.append('image', values.image);
+      formData.append("name", values.name);
+      formData.append("startDateTime", values.startDateTime);
+      formData.append("endDateTime", values.endDateTime);
+      formData.append("resultDateTime", values.resultDateTime);
+      if (values.image) formData.append("image", values.image);
 
       try {
         await axios.post(`${BASE_URL}/api/web/create/game`, formData, {
           headers: {
-            Authorization: localStorage.getItem('token'),
-            'ngrok-skip-browser-warning': true,
-            'Content-Type': 'multipart/form-data',
+            Authorization: localStorage.getItem("token"),
+            "ngrok-skip-browser-warning": true,
+            "Content-Type": "multipart/form-data",
           },
         });
         handleAddDialogClose();
-        navigate('/games');
+        navigate("/games");
       } catch (error) {
-        console.error('Error adding game:', error);
+        console.error("Error adding game:", error);
       }
     },
   });
@@ -149,43 +258,45 @@ export default function Header() {
       open={isSettingsMenuOpen}
       onClose={handleSettingsMenuClose}
     >
-      <MenuItem onClick={handleAddDialogOpen}
-        sx={{ minHeight: '48px' }}
-      >
+      <MenuItem onClick={handleAddDialogOpen} sx={{ minHeight: "48px" }}>
         <ListItemIcon>
           <SportsEsportsIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Add Game</ListItemText>
       </MenuItem>
-      <MenuItem sx={{ minHeight: '48px' }}>
+      <MenuItem sx={{ minHeight: "48px" }}>
         <ListItemIcon>
           <AccountBalanceWalletIcon fontSize="small" />
         </ListItemIcon>
         <ListItemText>Wallet</ListItemText>
       </MenuItem>
-      <MenuItem sx={{ 
-        minHeight: '48px',
-        display: 'flex',
-        justifyContent: 'space-between'
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <MenuItem
+        sx={{
+          minHeight: "48px",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <ListItemIcon>
             <MoneyOffIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Withdraw Request</ListItemText>
         </Box>
         <Switch
-          edge="end"
-          checked={withdrawRequestEnabled}
-          onChange={(e) => setWithdrawRequestEnabled(e.target.checked)}
+          // edge="end"
+          checked={Boolean(withdrawRequestEnabled)}
+          onChange={handleWithdrawRequest}
         />
       </MenuItem>
-      <MenuItem sx={{ 
-        minHeight: '48px',
-        display: 'flex',
-        justifyContent: 'space-between'
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <MenuItem
+        sx={{
+          minHeight: "48px",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <ListItemIcon>
             <AddCircleIcon fontSize="small" />
           </ListItemIcon>
@@ -194,11 +305,11 @@ export default function Header() {
         <Switch
           edge="end"
           checked={addMoneyEnabled}
-          onChange={(e) => setAddMoneyEnabled(e.target.checked)}
+          onChange={handleVerifyAmountRequest}
         />
       </MenuItem>
       <Divider />
-      <MenuItem sx={{ minHeight: '48px' }}>
+      <MenuItem sx={{ minHeight: "48px" }}>
         <ListItemIcon>
           <PhoneIcon fontSize="small" />
         </ListItemIcon>
@@ -289,9 +400,9 @@ export default function Header() {
       <Box sx={{ p: 3, width: "100%", mt: 10 }}>
         <Outlet />
       </Box>
-      
+
       <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
-        <DialogTitle>{editingGame ? 'Edit Game' : 'Add New Game'}</DialogTitle>
+        <DialogTitle>{editingGame ? "Edit Game" : "Add New Game"}</DialogTitle>
         <DialogContent>
           <form onSubmit={formik.handleSubmit}>
             <FormControl fullWidth margin="dense">
@@ -300,7 +411,7 @@ export default function Header() {
                 label="Select Game"
                 value={formik.values.name}
                 onChange={(event) => {
-                  formik.setFieldValue('name', event.target.value);
+                  formik.setFieldValue("name", event.target.value);
                 }}
               >
                 {existingGames?.map((game, index) => (
@@ -313,7 +424,7 @@ export default function Header() {
             <TextField
               margin="dense"
               label="Or Enter New Game Name"
-              name='name'
+              name="name"
               type="text"
               fullWidth
               value={formik.values.name}
@@ -324,7 +435,7 @@ export default function Header() {
             />
             <TextField
               margin="dense"
-              name='startDateTime'
+              name="startDateTime"
               label="Start Date Time"
               type="datetime-local"
               fullWidth
@@ -334,13 +445,18 @@ export default function Header() {
               value={formik.values.startDateTime}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.startDateTime && Boolean(formik.errors.startDateTime)}
-              helperText={formik.touched.startDateTime && formik.errors.startDateTime}
+              error={
+                formik.touched.startDateTime &&
+                Boolean(formik.errors.startDateTime)
+              }
+              helperText={
+                formik.touched.startDateTime && formik.errors.startDateTime
+              }
             />
             <TextField
               margin="dense"
               label="End Date Time"
-              name='endDateTime'
+              name="endDateTime"
               type="datetime-local"
               fullWidth
               value={formik.values.endDateTime}
@@ -349,13 +465,17 @@ export default function Header() {
                 shrink: true,
               }}
               onBlur={formik.handleBlur}
-              error={formik.touched.endDateTime && Boolean(formik.errors.endDateTime)}
-              helperText={formik.touched.endDateTime && formik.errors.endDateTime}
+              error={
+                formik.touched.endDateTime && Boolean(formik.errors.endDateTime)
+              }
+              helperText={
+                formik.touched.endDateTime && formik.errors.endDateTime
+              }
             />
             <TextField
               margin="dense"
               label="Result Date Time"
-              name='resultDateTime'
+              name="resultDateTime"
               type="datetime-local"
               fullWidth
               InputLabelProps={{
@@ -364,19 +484,26 @@ export default function Header() {
               value={formik.values.resultDateTime}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.resultDateTime && Boolean(formik.errors.resultDateTime)}
-              helperText={formik.touched.resultDateTime && formik.errors.resultDateTime}
+              error={
+                formik.touched.resultDateTime &&
+                Boolean(formik.errors.resultDateTime)
+              }
+              helperText={
+                formik.touched.resultDateTime && formik.errors.resultDateTime
+              }
             />
             <TextField
               margin="dense"
               label="Image"
-              name='image'
+              name="image"
               type="file"
               fullWidth
               InputLabelProps={{
                 shrink: true,
               }}
-              onChange={(event) => formik.setFieldValue('image', event.currentTarget.files[0])}
+              onChange={(event) =>
+                formik.setFieldValue("image", event.currentTarget.files[0])
+              }
               error={formik.touched.image && Boolean(formik.errors.image)}
               helperText={formik.touched.image && formik.errors.image}
             />
@@ -385,12 +512,18 @@ export default function Header() {
                 Cancel
               </Button>
               <Button type="submit" color="secondary">
-                {editingGame ? 'Update Game' : 'Add Game'}
+                {editingGame ? "Update Game" : "Add Game"}
               </Button>
             </DialogActions>
           </form>
         </DialogContent>
       </Dialog>
+      <CustomSnackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        // severity={snackbarSeverity}
+      />
     </>
   );
 }

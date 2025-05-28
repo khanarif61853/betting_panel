@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, DialogContentText, Box, Typography, Chip } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import axios from 'axios';
@@ -11,8 +12,6 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [balance, setBalance] = useState(0);
     const [totalProfit, setTotalProfit] = useState(0);
-    const [totalCredit, setTotalCredit] = useState(0);
-    const [totalDebit, setTotalDebit] = useState(0);
     const [totalDeposits, setTotalDeposits] = useState(0);
     const [totalWinning, setTotalWinning] = useState(0);
     const [withdrawableAmount, setWithdrawableAmount] = useState(0);
@@ -30,6 +29,12 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                     break;
                 case 'walletStatement':
                     endpoint = `${BASE_URL}/api/web/retrieve/statement`;
+                    break;
+                case 'fetchCustomerDetails':
+                    endpoint = `${BASE_URL}/api/web/retrieve/bid-history`;
+                    break;
+                case 'withdrawalHistory':
+                    endpoint = `${BASE_URL}/api/web/retrieve/withdrawal-history`;
                     break;
                 default:
                     throw new Error(`Unknown type: ${type}`);
@@ -60,18 +65,111 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                 setData(formattedData);
                 setBalance(response?.data?.data?.balance);
                 setTotalProfit(response?.data?.data?.totalProfit);
-                setTotalCredit(response?.data?.data?.totalCredit);
-                setTotalDebit(response?.data?.data?.totalDebit);
                 setTotalDeposits(response?.data?.data?.totalDeposits);
                 setTotalWinning(response?.data?.data?.totalWinning);
                 setWithdrawableAmount(response?.data?.data?.withdrawableAmount);
                 changeTotal(totalItems);
             } else if (type === 'bankDetails') {
                 setData(response?.data?.data);
+            } else if (type === 'withdrawalHistory') {
+                const withdrawalData = response?.data?.data?.data || [];
+                const totalItems = response?.data?.data?.count || 0;
+                
+                if (withdrawalData.length === 0) {
+                    setData([]);
+                } else {
+                    const formattedData = withdrawalData.map((item) => ({
+                        id: item.id,
+                        amount: parseFloat(item.amount).toFixed(2),
+                        status: item.status,
+                        upiId: item.upiId || 'N/A',
+                        customerName: item.Customer?.name || 'N/A',
+                        customerMobile: item.Customer?.mobile || 'N/A',
+                        createdAt: item.createdAt,
+                        updatedAt: item.updatedAt
+                    }));
+                    setData(formattedData);
+                }
+                changeTotal(totalItems);
+            } else if (type === 'fetchCustomerDetails') {
+                const gameData = response?.data?.data || [];
+                console.log('Game Data:', gameData); // For debugging
+                const formattedData = [];
+                
+                // Process each game's data
+                gameData.forEach((item) => {
+                    // Process Jantri Bids
+                    if (item.jantriBids && item.jantriBids.length > 0) {
+                        formattedData.push({
+                            id: `${item.gameId}-jantri`,
+                            gameName: item.Game.name,
+                            gameType: 'Jantri',
+                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
+                            finalBidNumber: item.Game.finalBidNumber,
+                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
+                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
+                            bidDetails: item.jantriBids.map(bid => ({
+                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
+                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
+                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
+                                bidAmount: bid.bidAmount,
+                                winningAmount: bid.winningAmount,
+                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
+                            }))
+                        });
+                    }
+
+                    // Process Cross Bids
+                    if (item.crossBids && item.crossBids.length > 0) {
+                        formattedData.push({
+                            id: `${item.gameId}-cross`,
+                            gameName: item.Game.name,
+                            gameType: 'Cross',
+                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
+                            finalBidNumber: item.Game.finalBidNumber,
+                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
+                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
+                            bidDetails: item.crossBids.map(bid => ({
+                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
+                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
+                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
+                                bidAmount: bid.bidAmount,
+                                winningAmount: bid.winningAmount,
+                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
+                            }))
+                        });
+                    }
+
+                    // Process Openplay Bids
+                    if (item.openplayBids && item.openplayBids.length > 0) {
+                        formattedData.push({
+                            id: `${item.gameId}-openplay`,
+                            gameName: item.Game.name,
+                            gameType: 'Openplay',
+                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
+                            finalBidNumber: item.Game.finalBidNumber,
+                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
+                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
+                            bidDetails: item.openplayBids.map(bid => ({
+                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
+                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
+                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
+                                bidAmount: bid.bidAmount,
+                                winningAmount: bid.winningAmount,
+                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
+                            }))
+                        });
+                    }
+                });
+
+                console.log('Formatted Data:', formattedData); // For debugging
+                setData(formattedData);
+                changeTotal(formattedData.length);
             }
 
         } catch (error) {
             console.error(`Error fetching ${type}:`, error);
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -238,7 +336,221 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                 <DialogContentText><b>IFSC Code:</b> {data?.ifscCode}</DialogContentText>
                             </>
                         ) : (
-                            <DialogContentText>No Details found</DialogContentText>
+                            <DialogContentText>No Bank Details found</DialogContentText>
+                        )}
+                    </>
+                );
+
+            case 'withdrawalHistory':
+                return (
+                    <>
+                        {data.length > 0 ? (
+                            <Box style={{ height: 450, width: '100%', overflow: 'auto' }} p={2}>
+                                <DataGrid
+                                    rows={data}
+                                    columns={[
+                                        {
+                                            field: 'amount',
+                                            headerName: 'Amount',
+                                            width: 120,
+                                            renderCell: (params) => (
+                                                <strong style={{ color: 'green' }}>
+                                                    ₹{params.value}
+                                                </strong>
+                                            )
+                                        },
+                                        {
+                                            field: 'upiId',
+                                            headerName: 'UPI ID',
+                                            width: 200,
+                                        },
+                                        {
+                                            field: 'customerName',
+                                            headerName: 'Name',
+                                            width: 150,
+                                        },
+                                        {
+                                            field: 'customerMobile',
+                                            headerName: 'Mobile',
+                                            width: 150,
+                                        },
+                                        {
+                                            field: 'status',
+                                            headerName: 'Status',
+                                            width: 130,
+                                            renderCell: (params) => (
+                                                <Chip
+                                                    label={params.value}
+                                                    color={params.value === 'Completed' ? 'success' : 
+                                                           params.value === 'Pending' ? 'warning' : 'error'}
+                                                    variant="filled"
+                                                />
+                                            )
+                                        },
+                                        {
+                                            field: 'createdAt',
+                                            headerName: 'Requested On',
+                                            width: 180,
+                                            valueFormatter: (params) => 
+                                                moment(params.value).format("DD/MM/YYYY HH:mm")
+                                        },
+                                        {
+                                            field: 'updatedAt',
+                                            headerName: 'Last Updated',
+                                            width: 180,
+                                            valueFormatter: (params) => 
+                                                moment(params.value).format("DD/MM/YYYY HH:mm")
+                                        }
+                                    ]}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: { pageSize: limit, page },
+                                        },
+                                    }}
+                                    paginationMode="server"
+                                    rowCount={total}
+                                    pageSize={limit}
+                                    components={{ Toolbar: GridToolbar }}
+                                    onPaginationModelChange={(pagination) => {
+                                        const { pageSize, page } = pagination;
+                                        if (pageSize !== limit) {
+                                            handleLimitChange(pageSize);
+                                        } else {
+                                            handlePageChange(page);
+                                        }
+                                    }}
+                                    disableRowSelectionOnClick
+                                    loading={loading}
+                                    sx={{
+                                        '& .MuiDataGrid-cell': {
+                                            borderBottom: '1px solid #ddd',
+                                        },
+                                        '& .MuiDataGrid-columnHeaders': {
+                                            backgroundColor: '#f5f5f5',
+                                            borderBottom: '2px solid #ddd',
+                                        }
+                                    }}
+                                />
+                            </Box>
+                        ) : (
+                            <Box p={3} textAlign="center">
+                                <Typography variant="h6" color="textSecondary">
+                                    No Withdrawal History Found
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    This customer hasn't made any withdrawal requests yet.
+                                </Typography>
+                            </Box>
+                        )}
+                    </>
+                );
+
+            case 'fetchCustomerDetails':
+                return (
+                    <>
+                        {data.length > 0 ? (
+                            <Box style={{ height: 450, width: '100%', overflow: 'auto' }} p={2}>
+                                <DataGrid
+                                    rows={data}
+                                    columns={[
+                                        {
+                                            field: 'gameName',
+                                            headerName: 'Game Name',
+                                            width: 120
+                                        },
+                                        {
+                                            field: 'gameType',
+                                            headerName: 'Game Type',
+                                            width: 100
+                                        },
+                                        {
+                                            field: 'startDateTime',
+                                            headerName: 'Start Time',
+                                            width: 160
+                                        },
+                                        {
+                                            field: 'endDateTime',
+                                            headerName: 'End Time',
+                                            width: 160
+                                        },
+                                        {
+                                            field: 'totalAmountSpentOnBid',
+                                            headerName: 'Amount Spent',
+                                            width: 120,
+                                            renderCell: (params) => (
+                                                <strong style={{ color: params.value < 0 ? 'red' : 'green' }}>
+                                                    {Math.abs(params.value)}
+                                                </strong>
+                                            )
+                                        },
+                                        {
+                                            field: 'finalBidNumber',
+                                            headerName: 'Result',
+                                            width: 100,
+                                            renderCell: (params) => (
+                                                <strong>{params.value || 'Pending'}</strong>
+                                            )
+                                        },
+                                        {
+                                            field: 'bidDetails',
+                                            headerName: 'Bid Details',
+                                            width: 400,
+                                            renderCell: (params) => (
+                                                <Box>
+                                                    {params.value.map((bid, index) => (
+                                                        <Box key={index} sx={{ mb: 1, p: 1, border: '1px solid #eee', borderRadius: 1 }}>
+                                                            {bid.bidNumbers.length > 0 && (
+                                                                <Typography variant="body2">
+                                                                    <strong>Numbers:</strong> {bid.bidNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
+                                                                </Typography>
+                                                            )}
+                                                            {bid.insideNumbers.length > 0 && (
+                                                                <Typography variant="body2">
+                                                                    <strong>Inside:</strong> {bid.insideNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
+                                                                </Typography>
+                                                            )}
+                                                            {bid.outsideNumbers.length > 0 && (
+                                                                <Typography variant="body2">
+                                                                    <strong>Outside:</strong> {bid.outsideNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
+                                                                </Typography>
+                                                            )}
+                                                            <Typography variant="body2">
+                                                                <strong>Bid:</strong> ₹{bid.bidAmount},
+                                                                <strong> Win:</strong> {bid.winningAmount ? `₹${bid.winningAmount}` : 'N/A'}
+                                                            </Typography>
+                                                            <Typography variant="caption" color="textSecondary">
+                                                                {bid.createdAt}
+                                                            </Typography>
+                                                        </Box>
+                                                    ))}
+                                                </Box>
+                                            )
+                                        }
+                                    ]}
+                                    pageSize={limit}
+                                    components={{ Toolbar: GridToolbar }}
+                                    disableRowSelectionOnClick
+                                    loading={loading}
+                                    sx={{
+                                        '& .MuiDataGrid-cell': {
+                                            borderBottom: '1px solid #ddd',
+                                        },
+                                        '& .MuiDataGrid-columnHeaders': {
+                                            backgroundColor: '#f5f5f5',
+                                            borderBottom: '2px solid #ddd',
+                                        }
+                                    }}
+                                />
+                            </Box>
+                        ) : (
+                            <Box p={3} textAlign="center">
+                                <Typography variant="h6" color="textSecondary">
+                                    No Game History Found
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    This customer hasn't played any games yet.
+                                </Typography>
+                            </Box>
                         )}
                     </>
                 );
@@ -249,14 +561,31 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth={type === "walletStatement" ? "xl" : "sm"}>
-            <DialogTitle>{type === 'bankDetails' ? 'Bank Details' : 'Wallet Statement'}</DialogTitle>
+        <Dialog 
+            open={open} 
+            onClose={onClose} 
+            fullWidth 
+            maxWidth={type === "walletStatement" || type === "fetchCustomerDetails" || type === "withdrawalHistory" ? "xl" : "sm"}
+        >
+            <DialogTitle>
+                {type === 'bankDetails' ? 'Bank Details' : 
+                 type === 'walletStatement' ? 'Wallet Statement' : 
+                 type === 'withdrawalHistory' ? 'Withdrawal History' :
+                 'Customer Game Details'}
+            </DialogTitle>
             <DialogContent>{loading ? 'Loading...' : renderContent()}</DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">Close</Button>
             </DialogActions>
         </Dialog>
     );
+};
+
+CustomerDialog.propTypes = {
+    type: PropTypes.oneOf(['bankDetails', 'walletStatement', 'fetchCustomerDetails', 'withdrawalHistory']).isRequired,
+    customerId: PropTypes.number.isRequired,
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
 };
 
 export default CustomerDialog;
