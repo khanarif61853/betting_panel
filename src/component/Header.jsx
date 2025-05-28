@@ -556,7 +556,7 @@ export default function Header() {
           <ListItemIcon>
             <AddCircleIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Add Money  List</ListItemText>
+          <ListItemText>Add Money Approved List</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => {
           navigate("/withdrawal-approved");

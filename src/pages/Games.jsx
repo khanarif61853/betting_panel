@@ -242,17 +242,17 @@ const Games = () => {
         setOpenAddDialog(false);
 
         try {
-            if (editingGame){
+            if (editingGame) {
                 try {
                     await axios.put(`${BASE_URL}/api/web/update/game`, formData, {
-                        params: {id: editingGame.id},
+                        params: { id: editingGame.id },
                         headers: {
                             "Authorization": localStorage.getItem('token'),
                             'ngrok-skip-browser-warning': true,
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-                    setRows(rows?.map((row) => (row.id === editingGame.id ? {...row, ...values} : row)));
+                    setRows(rows?.map((row) => (row.id === editingGame.id ? { ...row, ...values } : row)));
                     setSuccess("Game updated successfully");
                 } catch (err) {
                     return setError(err.message)
@@ -265,19 +265,27 @@ const Games = () => {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-                if (response.data.type == "success") {
-                    // console.log(rows,"-----------------------rows")
-                    // console.log(response.data.data)
-                    setRows([response.data.data, ...rows]);
-                    setError(null)
+                if (response.data.type === "success") {
+                    const newGame = {
+                        id: response.data.data.id,
+                        name: response.data.data.name,
+                        startDateTime: moment(response.data.data.startDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+                        endDateTime: moment(response.data.data.endDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+                        resultDateTime: moment(response.data.data.resultDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+                        image: response.data.data.image,
+                        status: response.data.data.status,
+                        finalBidNumber: response.data.data.finalBidNumber,
+                    };
+                    setRows(prevRows => [newGame, ...prevRows]);
+                    setError(null);
                     setSuccess("Game added successfully");
                 } else {
-                    setError(response.data.message)
+                    setError(response.data.message);
                 }
             }
         } catch (error) {
-            console.error('Error adding/updating game', error.response.data.message);
-            setError(error.response.data.message);
+            console.error('Error adding/updating game', error.response?.data?.message || error.message);
+            setError(error.response?.data?.message || error.message);
         } finally {
             setLoading(false);
             setEditingGame(null);
@@ -556,8 +564,8 @@ const Games = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {/* <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
-                <DialogTitle>{editingGame ? 'Edit Game' : 'Add New Game'}</DialogTitle>
+            <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
+                <DialogTitle>{'Edit Game'}</DialogTitle>
                 <DialogContent>
                     <form onSubmit={formik.handleSubmit}>
                         <FormControl fullWidth margin="dense">
@@ -656,7 +664,7 @@ const Games = () => {
                         </DialogActions>
                     </form>
                 </DialogContent>
-            </Dialog> */}
+            </Dialog>
         </ThemeProvider>
     );
 };
