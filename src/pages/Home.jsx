@@ -162,7 +162,7 @@ const Home = () => {
         </Box>
       ),
       icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-      onClick: () => navigate("/totalbid"),
+      // onClick: () => navigate("/totalbid"),
     },
     {
       title: "Last Game Winners",

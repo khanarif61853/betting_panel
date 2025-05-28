@@ -185,17 +185,33 @@ export default function Header() {
       if (values.image) formData.append("image", values.image);
 
       try {
-        await axios.post(`${BASE_URL}/api/web/create/game`, formData, {
+       const {data} = await axios.post(`${BASE_URL}/api/web/create/game`, formData, {
           headers: {
             Authorization: localStorage.getItem("token"),
             "ngrok-skip-browser-warning": true,
             "Content-Type": "multipart/form-data",
           },
         });
+        
+        if (data.type === "error") {
+          setSnackbarOpen(true);
+          setSnackbarMessage(data.message);
+          setSnackbarSeverity("error");
+          return; // Keep dialog open on error
+        }
+
+        // Only close dialog and navigate on success
         handleAddDialogClose();
+        setSnackbarOpen(true);
+        setSnackbarMessage(data.message);
+        setSnackbarSeverity("success");
         navigate("/games");
       } catch (error) {
-        console.error("Error adding game:", error);
+        console.error("Error adding game:", error.message);
+        setSnackbarOpen(true);
+        setSnackbarMessage(error?.response?.data?.message || error.message);
+        setSnackbarSeverity("error");
+        // Don't close dialog on error
       }
     },
   });
@@ -314,7 +330,7 @@ export default function Header() {
           <ListItemText>Add Money</ListItemText>
         </Box>
         <Switch
-          edge="end"
+          // edge="end"
           checked={addMoneyEnabled}
           onChange={(e) => {
             e.stopPropagation();
@@ -538,6 +554,7 @@ export default function Header() {
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
+        severity={snackbarSeverity}
       />
 
       <Menu
