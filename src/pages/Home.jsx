@@ -53,7 +53,8 @@ const Home = () => {
     latestLastGameResult,
     lastGameTotalBid,
     gamesTotal,
-    lastGameWinners
+    lastGameWinners,
+    fetchAllCount
   } = useContextProvider();
 
   const { page, limit } = usePagination();
@@ -109,7 +110,7 @@ const Home = () => {
   useEffect(() => {
     fetchData();
     profitLoss();
-  }, [page, limit, selectedDate]);
+  }, [page, limit, selectedDate,fetchAllCount]);
 
   const dashboardItems = [
     {
@@ -120,7 +121,7 @@ const Home = () => {
     },
     {
       title: "All Games",
-      value: gamesTotal || 'N/A',
+      value: fetchAllCount || 'N/A',
       icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/all-games"),
     },

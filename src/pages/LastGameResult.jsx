@@ -5,7 +5,8 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 const LastGameResult = () => {
   const theme = useTheme();
-  const { latestLastGameResult, loading } = useContextProvider();
+  const { games, loading } = useContextProvider();
+  console.log(games, "---games");
 //   console.log(latestLastGameResult, "---latestLastGameResult");
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -13,7 +14,7 @@ const LastGameResult = () => {
     { field: "finalBidNumber", headerName: "Bid Number", flex: 1 },
   ];
 
-  const rows = (latestLastGameResult.winners || []).map((val, i) => ({
+  const rows = (games || []).map((val, i) => ({
     id: i + 1,
     game:  val?.name || "N/A",
     finalBidNumber: val?.finalBidNumber || "N/A",

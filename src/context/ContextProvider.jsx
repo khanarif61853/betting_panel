@@ -2,8 +2,8 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { BASE_URL } from "../costants";
 import { usePagination } from "../hooks/usePagination";
-import moment from 'moment-timezone';
-import dayjs from 'dayjs';
+import moment from "moment-timezone";
+import dayjs from "dayjs";
 
 export const Context = createContext();
 export const useContextProvider = () => useContext(Context);
@@ -16,8 +16,15 @@ const ContextProvider = ({ children }) => {
   const [abDataShowNo, setAbDataShowNo] = useState("");
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
-  const [lastGameTotalBid, setLastGameTotalBid] = useState({ amount: 0, timestamp: null });
-  const [lastGameWinners, setLastGameWinners] = useState({ winners: [], count: 0, timestamp: null });
+  const [lastGameTotalBid, setLastGameTotalBid] = useState({
+    amount: 0,
+    timestamp: null,
+  });
+  const [lastGameWinners, setLastGameWinners] = useState({
+    winners: [],
+    count: 0,
+    timestamp: null,
+  });
   const [selectedDate, setSelectDate] = useState("");
   const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState("");
   const [latestLastGameResult, setLatestLastGameResult] = useState("");
@@ -25,7 +32,10 @@ const ContextProvider = ({ children }) => {
   const [games, setGames] = useState([]);
   const [allGames, setAllGames] = useState([]);
   const [gamesDate, setGamesDate] = useState(dayjs());
+  const [existingGames, setExistingGames] = useState([]);
+  const [fetchAllCount, setFetchAllCount] = useState(0);
   const [gamesTotal, setGamesTotal] = useState(0);
+  const [error, setError] = useState(null);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   // all bids api  ----------------------
@@ -52,15 +62,15 @@ const ContextProvider = ({ children }) => {
       // Find the last game's total bid based on date/time
       if (data && data.length > 0) {
         // Sort by createdAt to get the latest bid
-        const sortedData = [...data].sort((a, b) => 
+        const sortedData = [...data].sort((a, b) =>
           moment(b.createdAt).diff(moment(a.createdAt))
         );
-        
+
         const lastBid = sortedData[0];
         if (lastBid) {
           setLastGameTotalBid({
             amount: Number(lastBid.total_bid || 0),
-            timestamp: lastBid.createdAt
+            timestamp: lastBid.createdAt,
           });
         }
       }
@@ -76,7 +86,9 @@ const ContextProvider = ({ children }) => {
     setLoading(true);
     try {
       const {
-        data: { data:{data} },
+        data: {
+          data: { data },
+        },
       } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -85,43 +97,44 @@ const ContextProvider = ({ children }) => {
       });
       // console.log({data})
       const jantriData = (data || [])?.map((item) => {
-const finalBidNumber = item.Game.finalBidNumber.toString(); // convert to string
-const firstDigit = finalBidNumber[0];
-const secondDigit = finalBidNumber[1];
+        const finalBidNumber = item.Game.finalBidNumber.toString(); // convert to string
+        const firstDigit = finalBidNumber[0];
+        const secondDigit = finalBidNumber[1];
 
-// Parse the JSON strings
-const bidNumbers = JSON.parse(item.bidNumbers || '[]');
-const insideNumbers = JSON.parse(item.insideNumbers || '[]');
-const outsideNumbers = JSON.parse(item.outsideNumbers || '[]');
+        // Parse the JSON strings
+        const bidNumbers = JSON.parse(item.bidNumbers || "[]");
+        const insideNumbers = JSON.parse(item.insideNumbers || "[]");
+        const outsideNumbers = JSON.parse(item.outsideNumbers || "[]");
 
-const matchedNumbers = [];
+        const matchedNumbers = [];
 
-// Match in bidNumbers
-bidNumbers.forEach((bid) => {
-  if (bid.number.toString() === finalBidNumber) {
-    matchedNumbers.push(`${bid.number}J`);
-  }
-});
+        // Match in bidNumbers
+        bidNumbers.forEach((bid) => {
+          if (bid.number.toString() === finalBidNumber) {
+            matchedNumbers.push(`${bid.number}J`);
+          }
+        });
 
-// Match in insideNumbers
-insideNumbers.forEach((inside) => {
-  if (inside.number.toString() === firstDigit) {
-    matchedNumbers.push(`${inside.number}A`);
-  }
-});
+        // Match in insideNumbers
+        insideNumbers.forEach((inside) => {
+          if (inside.number.toString() === firstDigit) {
+            matchedNumbers.push(`${inside.number}A`);
+          }
+        });
 
-// Match in outsideNumbers
-outsideNumbers.forEach((outside) => {
-  if (outside.number.toString() === secondDigit.toString()) {
-    matchedNumbers.push(`${outside.number}B`);
-  }
-});
-        return({
-        ...item,
-        matchedNumbers
-        // bidNumber: arr.push()
-        // remark: "Jantri",
-      })});
+        // Match in outsideNumbers
+        outsideNumbers.forEach((outside) => {
+          if (outside.number.toString() === secondDigit.toString()) {
+            matchedNumbers.push(`${outside.number}B`);
+          }
+        });
+        return {
+          ...item,
+          matchedNumbers,
+          // bidNumber: arr.push()
+          // remark: "Jantri",
+        };
+      });
 
       // const crossData = (data.cross || []).map((item) => ({
       //   ...item,
@@ -141,22 +154,22 @@ outsideNumbers.forEach((outside) => {
 
       // Find the latest winners based on timestamp
       if (combinedData.length > 0) {
-        const sortedData = [...combinedData].sort((a, b) => 
+        const sortedData = [...combinedData].sort((a, b) =>
           moment(b.createdAt).diff(moment(a.createdAt))
         );
-        
+
         // Get the most recent timestamp
         const latestTimestamp = sortedData[0]?.createdAt;
-        
+
         // Filter winners from the same latest game
-        const latestWinners = sortedData.filter(winner => 
+        const latestWinners = sortedData.filter((winner) =>
           moment(winner.createdAt).isSame(moment(latestTimestamp))
         );
-// console.log(latestWinners,'lastWinner-')
+        // console.log(latestWinners,'lastWinner-')
         setLastGameWinners({
           winners: latestWinners,
           count: latestWinners.length,
-          timestamp: latestTimestamp
+          timestamp: latestTimestamp,
         });
       }
     } catch (error) {
@@ -188,8 +201,8 @@ outsideNumbers.forEach((outside) => {
     try {
       const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {
         headers: {
-          Authorization: localStorage.getItem('token'),
-          'ngrok-skip-browser-warning': true,
+          Authorization: localStorage.getItem("token"),
+          "ngrok-skip-browser-warning": true,
         },
         params: {
           page,
@@ -201,17 +214,23 @@ outsideNumbers.forEach((outside) => {
       const gamesData = response.data.data.games?.map((game) => ({
         id: game.id,
         name: game.name,
-        startDateTime: moment(game.startDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-        endDateTime: moment(game.endDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
-        resultDateTime: moment(game.resultDateTime).utc().format('YYYY-MM-DD HH:mm:ss'),
+        startDateTime: moment(game.startDateTime)
+          .utc()
+          .format("YYYY-MM-DD HH:mm:ss"),
+        endDateTime: moment(game.endDateTime)
+          .utc()
+          .format("YYYY-MM-DD HH:mm:ss"),
+        resultDateTime: moment(game.resultDateTime)
+          .utc()
+          .format("YYYY-MM-DD HH:mm:ss"),
         image: game.image,
         status: game.status,
         finalBidNumber: game.finalBidNumber,
       }));
-      console.log(gamesData,'---gamesData')
+
       for (const gameData of gamesData) {
         if (gameData.finalBidNumber) {
-          setLatestLastGameResult(gameData)
+          setLatestLastGameResult(gameData);
           break;
         }
       }
@@ -226,26 +245,58 @@ outsideNumbers.forEach((outside) => {
 
       // if (declaredGames.length > 0) {
       //   // Sort by result datetime to get the latest
-      //   const latestDeclared = declaredGames.sort((a, b) => 
+      //   const latestDeclared = declaredGames.sort((a, b) =>
       //     moment(b.resultDateTime).diff(moment(a.resultDateTime))
       //   )[0];
       //   setLatestLastGameResult(latestDeclared.finalBidNumber);
       // }
 
-
       setGames(gamesData);
       setGamesTotal(response.data.data.total);
     } catch (err) {
-      console.error('Error fetching games:', err);
+      console.error("Error fetching games:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+
+  const fetchAllGames = async () => {
+    try {
+      const { data } = await axios.get(
+        `${BASE_URL}/api/web/retrieve/all-games`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "ngrok-skip-browser-warning": true,
+          },
+        }
+      );
+      if (data && data.data) {
+        setExistingGames(data.data);
+        setFetchAllCount(data.data.total || 0);
+      }
+    } catch (err) {
+      if (err.response) {
+        console.error("Error fetching data", err.response.data.message);
+        setError(err.response.data.message);
+      } else {
+        console.error("Error fetching data", err.message);
+      }
+      setFetchAllCount(0); // Set to 0 on error
     }
   };
 
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      await Promise.all([allbids(), lastWinner(), abWinner(), fetchGames()]);
+      await Promise.all([
+        allbids(),
+        lastWinner(),
+        abWinner(),
+        fetchGames(),
+        fetchAllGames(),
+      ]);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -255,7 +306,15 @@ outsideNumbers.forEach((outside) => {
 
   useEffect(() => {
     fetchAllData();
-  }, [page, limit, selectedDateAB, selectedDateWinningUsers, selectedDate, gamesDate]);
+  }, [
+    page,
+    limit,
+    selectedDateAB,
+    selectedDateWinningUsers,
+    selectedDate,
+    gamesDate,
+    fetchAllCount
+  ]);
 
   return (
     <Context.Provider
@@ -283,6 +342,11 @@ outsideNumbers.forEach((outside) => {
         gamesDate,
         lastGameWinners,
         setLastGameWinners,
+        existingGames,
+        setExistingGames,
+        error,
+        setError,
+        fetchAllCount,
       }}
     >
       {children}
