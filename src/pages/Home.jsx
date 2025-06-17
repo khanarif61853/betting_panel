@@ -149,6 +149,7 @@ const Home = () => {
       title: "Last Game Result",
       value: (latestLastGameResult ? `${latestLastGameResult.finalBidNumber} (${latestLastGameResult.name})` : "N/A"),
       icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick:()=> navigate('/last-game-result')
     },
     {
       title: "Last Game Total Bid",

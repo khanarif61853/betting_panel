@@ -20,6 +20,7 @@ import WithdrawalApprovedList from "../pages/WithdrawalApprovedList.jsx";
 import LastGameWinner from "../pages/LastGameWinner.jsx";
 import Allgames from "../pages/Allgames.jsx";
 import AddMoneyApprovedList from "../pages/AddMoneyApprovedList.jsx";
+import LastGameResult from "../pages/LastGameResult.jsx";
 
 const Routing = () => {
   return (
@@ -39,14 +40,21 @@ const Routing = () => {
             <Route path="/final-jantri" element={<FinalJantri />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/andar-bahar-winner" element={<AndarBaharWinner />} />
-            <Route path="/withdrawal-approved" element={<WithdrawalApprovedList />} />
+            <Route
+              path="/withdrawal-approved"
+              element={<WithdrawalApprovedList />}
+            />
             <Route path="/last-game-winners" element={<LastGameWinner />} />
             <Route
               path="/withdrawal-requests"
               element={<WithdrawalRequests />}
             />
+            <Route path="/last-game-result" element={<LastGameResult />} />
             <Route path="/add-money" element={<AddMoney />} />
-            <Route path="/add-money-approved" element={<AddMoneyApprovedList />} />
+            <Route
+              path="/add-money-approved"
+              element={<AddMoneyApprovedList />}
+            />
             <Route path="/customers" element={<Customers />} />
             <Route path="/Rules" element={<Rules />} />
             <Route path="/qr-code" element={<QrCodes />} />
