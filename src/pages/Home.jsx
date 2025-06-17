@@ -52,6 +52,7 @@ const Home = () => {
     dashboardWinningUsers,
     latestLastGameResult,
     lastGameTotalBid,
+    gamesTotal,
     lastGameWinners
   } = useContextProvider();
 
@@ -119,7 +120,7 @@ const Home = () => {
     },
     {
       title: "All Games",
-      value: 4,
+      value: gamesTotal || 'N/A',
       icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/all-games"),
     },
