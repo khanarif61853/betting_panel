@@ -96,10 +96,7 @@ const Games = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  useEffect(() => {
-    fetchGames();
-  }, [page, limit]);
-
+  
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -116,7 +113,7 @@ const Games = () => {
           }
         }
       );
-      if (response.data.type === "success") {
+      if (response.data) {
         setExistingGames(response.data.data);
       } else {
         setError(response.data.message);
@@ -133,7 +130,10 @@ const Games = () => {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    fetchGames();
+  }, [page, limit]);
+  
   const handleStatusChange = async (id) => {
     setLoading(true);
     try {

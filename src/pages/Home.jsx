@@ -123,12 +123,12 @@ const Home = () => {
       icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/customers"),
     },
-    {
-      title: "All Games",
-      value: fetchAllCount || 'N/A',
-      icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-      onClick: () => navigate("/all-games"),
-    },
+    // {
+    //   title: "All Games",
+    //   value: fetchAllCount || 'N/A',
+    //   icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    //   onClick: () => navigate("/all-games"),
+    // },
     {
       title: "Live Games",
       value: dashboardData.liveGames,

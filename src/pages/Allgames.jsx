@@ -76,7 +76,9 @@ const theme = createTheme({
 });
 
 const Allgames = () => {
+  const [existingGames, setExistingGames] = useState([]);
   const [openAddDialog1, setOpenAddDialog1] = useState(false);
+  const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -90,7 +92,28 @@ const Allgames = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const { existingGames, setExistingGames, error, setError, fetchAllGames } = useContextProvider();
+
+  const fetchGames = async () => {
+    try {
+      const { data } = await axios.get(
+        `${BASE_URL}/api/web/retrieve/all-games`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "ngrok-skip-browser-warning": true,
+          },
+        }
+      );
+      setExistingGames(data.data);
+    } catch (err) {
+      if (err.response) {
+        console.error("Error fetching data", err.response.data.message);
+        setError(err.response.data.message);
+      } else {
+        console.error("Error fetching data", err.message);
+      }
+    }
+  };
 
   const formikAdd = useFormik({
     initialValues: {
@@ -140,6 +163,7 @@ const Allgames = () => {
         setSnackbarMessage(data.message);
         setSnackbarSeverity("success");
         setOpenAddDialog1(false);
+        fetchGames();
         // resetForm()
       } catch (error) {
         console.error("Error adding game:", error.message);
@@ -151,6 +175,9 @@ const Allgames = () => {
     },
   });
 
+  useEffect(() => {
+    fetchGames();
+  }, []);
 
   const handleStatusChange = async (id) => {
     const currentStatus = existingGames?.games?.find(
@@ -448,16 +475,10 @@ const Allgames = () => {
             alignItems={"center"}
             mb={2}
             justifyContent={"space-between"}
-          >
-            <Grid item>
-              <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
-                All Games
-              </Typography>
-            </Grid>
-          </Grid>
+          ></Grid>
           <div style={{ height: 450, width: "100%" }}>
             <DataGrid
-              rows={existingGames?.games || []}
+              rows={existingGames?.games}
               columns={columns}
               initialState={{
                 pagination: {
@@ -465,7 +486,7 @@ const Allgames = () => {
                 },
               }}
               paginationMode="server"
-              rowCount={existingGames?.total || 0}
+              rowCount={existingGames.total}
               pageSize={limit}
               checkboxSelection
               onPaginationModelChange={(value) => {
@@ -478,7 +499,6 @@ const Allgames = () => {
               }}
               disableSelectionOnClick
               loading={loading}
-              error={error}
             />
           </div>
         </LocalizationProvider>

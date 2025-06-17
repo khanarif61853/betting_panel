@@ -65,7 +65,7 @@ const Game = () => {
         fetchGames()
     }, []);
 
-    useEffect(() => {
+        useEffect(() => {
         let intervalId;
         const fetchData = async () => {
             try {
@@ -136,7 +136,7 @@ const Game = () => {
         };
     }, [searchParams,resultDate]);
 
-    const bidMap = bids?.reduce((acc, bid) => {
+    const bidMap = (bids || [])?.reduce((acc, bid) => {
         acc[parseInt(bid.number, 10)] = bid.amount;
         return acc;
     }, {});

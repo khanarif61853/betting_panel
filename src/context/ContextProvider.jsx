@@ -261,31 +261,31 @@ const ContextProvider = ({ children }) => {
   };
 
 
-  const fetchAllGames = async () => {
-    try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/web/retrieve/all-games`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "ngrok-skip-browser-warning": true,
-          },
-        }
-      );
-      if (data && data.data) {
-        setExistingGames(data.data);
-        setFetchAllCount(data.data.total || 0);
-      }
-    } catch (err) {
-      if (err.response) {
-        console.error("Error fetching data", err.response.data.message);
-        setError(err.response.data.message);
-      } else {
-        console.error("Error fetching data", err.message);
-      }
-      setFetchAllCount(0); // Set to 0 on error
-    }
-  };
+  // const fetchAllGames = async () => {
+  //   try {
+  //     const { data } = await axios.get(
+  //       `${BASE_URL}/api/web/retrieve/all-games`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           "ngrok-skip-browser-warning": true,
+  //         },
+  //       }
+  //     );
+  //     if (data && data.data) {
+  //       setExistingGames(data.data);
+  //       setFetchAllCount(data.data.total || 0);
+  //     }
+  //   } catch (err) {
+  //     if (err.response) {
+  //       console.error("Error fetching data", err.response.data.message);
+  //       setError(err.response.data.message);
+  //     } else {
+  //       console.error("Error fetching data", err.message);
+  //     }
+  //     setFetchAllCount(0); // Set to 0 on error
+  //   }
+  // };
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -294,9 +294,7 @@ const ContextProvider = ({ children }) => {
         allbids(),
         lastWinner(),
         abWinner(),
-        fetchGames(),
-        fetchAllGames(),
-      ]);
+        fetchGames(),      ]);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
