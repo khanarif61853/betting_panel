@@ -46,7 +46,6 @@ const FinalJantri = () => {
             },
           }
         );
-        if (response.statusText === "OK") {
           setFormattedRows(response.data.formatted);
           
           const allBids = response.data.formatted.flatMap((item) => item.bids);
@@ -65,7 +64,7 @@ const FinalJantri = () => {
           
           setTopMaxBids(topMax);
           setTopMinBids(topMin);
-        }
+        
       } catch (error) {
         setError("Failed to fetch game data");
         console.error("Error fetching games:", error);

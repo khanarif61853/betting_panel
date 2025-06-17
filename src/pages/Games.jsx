@@ -90,13 +90,16 @@ const Games = () => {
     gamesDate,
     latestLastGameResult,
   } = useContextProvider();
-
+  
   const navigate = useNavigate();
-
+  
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  
+      useEffect(()=>{
+        fetchGames()
+      },[])
 
-  useEffect(() => {
     const fetchGames = async () => {
       try {
         const response = await axios.get(
@@ -119,8 +122,6 @@ const Games = () => {
       }
     };
 
-    fetchGames();
-  }, []);
 
   const handleStatusChange = async (id) => {
     setLoading(true);
