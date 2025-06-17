@@ -208,7 +208,7 @@ outsideNumbers.forEach((outside) => {
         status: game.status,
         finalBidNumber: game.finalBidNumber,
       }));
-      console.log(gamesData,'gam,e')
+      console.log(gamesData,'---gamesData')
       for (const gameData of gamesData) {
         if (gameData.finalBidNumber) {
           setLatestLastGameResult(gameData)
