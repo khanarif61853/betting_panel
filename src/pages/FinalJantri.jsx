@@ -15,6 +15,7 @@ import { useFormik } from "formik";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CustomSnackbar from "../component/CustomSnackbar";
 import { ElectricalServices, RsvpOutlined } from "@mui/icons-material";
+import moment from "moment-timezone";
 
 const FinalJantri = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const FinalJantri = () => {
   const [resultDate, setResultDate] = useState(new Date().toISOString().split('T')[0]);
   const [topMaxBids, setTopMaxBids] = useState([]);
   const [topMinBids, setTopMinBids] = useState([]);
+  const [gameDetails, setGameDetails] = useState(null);
   const location = useLocation();
   const gameId = location.state?.id;
 
@@ -47,6 +49,7 @@ const FinalJantri = () => {
           }
         );
           setFormattedRows(response.data.formatted);
+          setGameDetails(response.data.gameDetails);
           
           const allBids = response.data.formatted.flatMap((item) => item.bids);
           const sortedBids = [...allBids].sort((a, b) => b.amount - a.amount);
@@ -105,6 +108,11 @@ const FinalJantri = () => {
 
   const rows = Array.from({ length: 100 }, (_, i) => i);
 
+  const formatDateTime = (dateTimeStr) => {
+    if (!dateTimeStr) return '';
+    return moment(dateTimeStr).format('DD MMM YYYY, hh:mm A');
+  };
+
   return (
     <Box padding={3}>
       {" "}
@@ -121,6 +129,43 @@ const FinalJantri = () => {
           Final Jantri
         </Typography>
       </Box>
+      {gameDetails && (
+        <Grid container spacing={2} sx={{ mt: 2, mb: 3 }}>
+          <Grid item xs={12} md={4}>
+            <Box sx={{ 
+              p: 2, 
+              backgroundColor: '#f5f5f5', 
+              borderRadius: 1,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <Typography variant="subtitle2" color="text.secondary">Start Time</Typography>
+              <Typography variant="h6">{formatDateTime(gameDetails.startTime)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box sx={{ 
+              p: 2, 
+              backgroundColor: '#f5f5f5', 
+              borderRadius: 1,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <Typography variant="subtitle2" color="text.secondary">End Time</Typography>
+              <Typography variant="h6">{formatDateTime(gameDetails.endTime)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box sx={{ 
+              p: 2, 
+              backgroundColor: '#f5f5f5', 
+              borderRadius: 1,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <Typography variant="subtitle2" color="text.secondary">Result Time</Typography>
+              <Typography variant="h6">{formatDateTime(gameDetails.resultTime)}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      )}
       <Grid
         container
         alignItems={"center"}
