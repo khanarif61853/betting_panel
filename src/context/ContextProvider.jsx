@@ -9,7 +9,7 @@ export const Context = createContext();
 export const useContextProvider = () => useContext(Context);
 
 const ContextProvider = ({ children }) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [dataRequest, setDataRequest] = useState([]);
   const [selectedDateAB, setSelectedDateAB] = useState("");
   const [abData, setAbData] = useState([]);
@@ -36,10 +36,25 @@ const ContextProvider = ({ children }) => {
   const [fetchAllCount, setFetchAllCount] = useState(0);
   const [gamesTotal, setGamesTotal] = useState(0);
   const [error, setError] = useState(null);
-  const { page, limit, total, changePage, changeLimit, changeTotal } =
-    usePagination();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { page, limit, total, changePage, changeLimit, changeTotal } = usePagination();
+
+  // Helper function to check authentication
+  const checkAuth = () => {
+    const token = localStorage.getItem("token");
+    return !!token;
+  };
+
+  // Function to trigger data fetch after login
+  const triggerDataFetch = () => {
+    setIsAuthenticated(true);
+    fetchAllData();
+  };
+
   // all bids api  ----------------------
   const allbids = async () => {
+    if (!isAuthenticated) return;
+    
     setLoading(true);
     try {
       const {
@@ -61,7 +76,6 @@ const ContextProvider = ({ children }) => {
 
       // Find the last game's total bid based on date/time
       if (data && data.length > 0) {
-        // Sort by createdAt to get the latest bid
         const sortedData = [...data].sort((a, b) =>
           moment(b.createdAt).diff(moment(a.createdAt))
         );
@@ -76,13 +90,17 @@ const ContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Failed to fetch all bids:", error);
+      if (error.response?.status === 401) {
+        setIsAuthenticated(false);
+      }
     }
     setLoading(false);
   };
 
   //  winning users api ---------------------
-
   const lastWinner = async () => {
+    if (!isAuthenticated) return;
+    
     setLoading(true);
     try {
       const {
@@ -95,34 +113,30 @@ const ContextProvider = ({ children }) => {
         },
         params: { limit, page, date: selectedDateWinningUsers },
       });
-      // console.log({data})
+
       const jantriData = (data || [])?.map((item) => {
-        const finalBidNumber = item.Game.finalBidNumber.toString(); // convert to string
+        const finalBidNumber = item.Game.finalBidNumber.toString();
         const firstDigit = finalBidNumber[0];
         const secondDigit = finalBidNumber[1];
 
-        // Parse the JSON strings
         const bidNumbers = JSON.parse(item.bidNumbers || "[]");
         const insideNumbers = JSON.parse(item.insideNumbers || "[]");
         const outsideNumbers = JSON.parse(item.outsideNumbers || "[]");
 
         const matchedNumbers = [];
 
-        // Match in bidNumbers
         bidNumbers.forEach((bid) => {
           if (bid.number.toString() === finalBidNumber) {
             matchedNumbers.push(`${bid.number}J`);
           }
         });
 
-        // Match in insideNumbers
         insideNumbers.forEach((inside) => {
           if (inside.number.toString() === firstDigit) {
             matchedNumbers.push(`${inside.number}A`);
           }
         });
 
-        // Match in outsideNumbers
         outsideNumbers.forEach((outside) => {
           if (outside.number.toString() === secondDigit.toString()) {
             matchedNumbers.push(`${outside.number}B`);
@@ -131,41 +145,24 @@ const ContextProvider = ({ children }) => {
         return {
           ...item,
           matchedNumbers,
-          // bidNumber: arr.push()
-          // remark: "Jantri",
         };
       });
 
-      // const crossData = (data.cross || []).map((item) => ({
-      //   ...item,
-      //   remark: "Cross",
-      // }));
-
-      // const openPlayData = (data.openPlay || []).map((item) => ({
-      //   ...item,
-      //   remark: "Open Play",
-      // }));
-
       const combinedData = [...jantriData];
-      // console.log({combinedData})
       setRequests(combinedData);
       changeTotal(combinedData?.length || 0);
       setDashboardWinningUsers(combinedData?.length || 0);
 
-      // Find the latest winners based on timestamp
       if (combinedData.length > 0) {
         const sortedData = [...combinedData].sort((a, b) =>
           moment(b.createdAt).diff(moment(a.createdAt))
         );
 
-        // Get the most recent timestamp
         const latestTimestamp = sortedData[0]?.createdAt;
-
-        // Filter winners from the same latest game
         const latestWinners = sortedData.filter((winner) =>
           moment(winner.createdAt).isSame(moment(latestTimestamp))
         );
-        // console.log(latestWinners,'lastWinner-')
+
         setLastGameWinners({
           winners: latestWinners,
           count: latestWinners.length,
@@ -174,34 +171,48 @@ const ContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Failed to fetch winners:", error);
+      if (error.response?.status === 401) {
+        setIsAuthenticated(false);
+      }
     }
     setLoading(false);
   };
 
   // andar bahar winners  -------------------------
   const abWinner = async () => {
+    if (!isAuthenticated) return;
+    
     setLoading(true);
-    const {
-      data: { data },
-    } = await axios.get(`${BASE_URL}/api/web/retrieve/ander-bahar-winner`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      params: { page, limit, date: selectedDateAB },
-    });
+    try {
+      const {
+        data: { data },
+      } = await axios.get(`${BASE_URL}/api/web/retrieve/ander-bahar-winner`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: { page, limit, date: selectedDateAB },
+      });
 
-    setAbData(data);
-    setAbDataShowNo(data?.length || 0);
+      setAbData(data);
+      setAbDataShowNo(data?.length || 0);
+    } catch (error) {
+      console.error("Failed to fetch ander bahar winners:", error);
+      if (error.response?.status === 401) {
+        setIsAuthenticated(false);
+      }
+    }
     setLoading(false);
   };
 
   // Games API call
   const fetchGames = async () => {
+    if (!isAuthenticated) return;
+    
     setLoading(true);
     try {
       const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "ngrok-skip-browser-warning": true,
         },
         params: {
@@ -234,67 +245,30 @@ const ContextProvider = ({ children }) => {
           break;
         }
       }
-      // Get current Indian time
-      // const currentIndianTime = moment().tz('Asia/Kolkata');
-
-      // // Find latest declared result
-      // const declaredGames = gamesData.filter(game => {
-      //   const resultTime = moment(game.resultDateTime);
-      //   return game.finalBidNumber && resultTime.isBefore(currentIndianTime);
-      // });
-
-      // if (declaredGames.length > 0) {
-      //   // Sort by result datetime to get the latest
-      //   const latestDeclared = declaredGames.sort((a, b) =>
-      //     moment(b.resultDateTime).diff(moment(a.resultDateTime))
-      //   )[0];
-      //   setLatestLastGameResult(latestDeclared.finalBidNumber);
-      // }
 
       setGames(gamesData);
       setGamesTotal(response.data.data.total);
-    } catch (err) {
-      console.error("Error fetching games:", err);
+    } catch (error) {
+      console.error("Error fetching games:", error);
+      if (error.response?.status === 401) {
+        setIsAuthenticated(false);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-
-  // const fetchAllGames = async () => {
-  //   try {
-  //     const { data } = await axios.get(
-  //       `${BASE_URL}/api/web/retrieve/all-games`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //           "ngrok-skip-browser-warning": true,
-  //         },
-  //       }
-  //     );
-  //     if (data && data.data) {
-  //       setExistingGames(data.data);
-  //       setFetchAllCount(data.data.total || 0);
-  //     }
-  //   } catch (err) {
-  //     if (err.response) {
-  //       console.error("Error fetching data", err.response.data.message);
-  //       setError(err.response.data.message);
-  //     } else {
-  //       console.error("Error fetching data", err.message);
-  //     }
-  //     setFetchAllCount(0); // Set to 0 on error
-  //   }
-  // };
-
   const fetchAllData = async () => {
+    if (!isAuthenticated) return;
+    
     setLoading(true);
     try {
       await Promise.all([
         allbids(),
         lastWinner(),
         abWinner(),
-        fetchGames(),      ]);
+        fetchGames(),
+      ]);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -303,14 +277,18 @@ const ContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchAllData();
+    // Only fetch data if authenticated
+    if (isAuthenticated) {
+      fetchAllData();
+    }
   }, [
     page,
     limit,
     selectedDateAB,
     selectedDateWinningUsers,
     selectedDate,
-    gamesDate
+    gamesDate,
+    isAuthenticated
   ]);
 
   return (
@@ -344,6 +322,8 @@ const ContextProvider = ({ children }) => {
         error,
         setError,
         fetchAllCount,
+        triggerDataFetch,
+        isAuthenticated,
       }}
     >
       {children}

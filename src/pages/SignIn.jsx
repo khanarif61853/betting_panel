@@ -18,6 +18,7 @@ import { BASE_URL } from '../costants';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Person } from '@mui/icons-material'; // Example icon
 import { Container } from '@mui/material';
+import { useContextProvider } from '../context/ContextProvider';
 
 // Define the theme with colors matching the dashboard
 const theme = createTheme({ 
@@ -63,6 +64,7 @@ export default function SignIn() {
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { triggerDataFetch } = useContextProvider();
 
   useEffect(() => {
     if (snackbarOpen) {
@@ -96,11 +98,13 @@ export default function SignIn() {
         if (type === 'success') {
           const { data: { data: { token } } } = response;
           localStorage.setItem('token', token);
+          triggerDataFetch();
           navigate("/home");
         }
       } catch (error) {
+        console.error('Login error:', error);
         setSnackbarSeverity('error');
-        setSnackbarMessage('Sign in failed. Please try again.');
+        setSnackbarMessage(error.response?.data?.message || 'Sign in failed. Please try again.');
         setSnackbarOpen(true);
       } finally {
         setLoading(false);
