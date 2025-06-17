@@ -312,8 +312,7 @@ const ContextProvider = ({ children }) => {
     selectedDateAB,
     selectedDateWinningUsers,
     selectedDate,
-    gamesDate,
-    fetchAllCount
+    gamesDate
   ]);
 
   return (

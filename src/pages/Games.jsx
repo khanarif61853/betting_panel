@@ -98,9 +98,10 @@ const Games = () => {
 
   useEffect(() => {
     fetchGames();
-  }, []);
+  }, [page, limit]);
 
   const fetchGames = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${BASE_URL}/api/web/retrieve/gamesName`,
@@ -109,16 +110,27 @@ const Games = () => {
             Authorization: localStorage.getItem("token"),
             "ngrok-skip-browser-warning": true,
           },
+          params: {
+            page,
+            limit
+          }
         }
       );
-      setExistingGames(response.data.data);
+      if (response.data.type === "success") {
+        setExistingGames(response.data.data);
+      } else {
+        setError(response.data.message);
+      }
     } catch (err) {
       if (err.response) {
         console.error("Error fetching data", err.response.data.message);
         setError(err.response.data.message);
       } else {
         console.error("Error fetching data", err.message);
+        setError(err.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
