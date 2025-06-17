@@ -118,6 +118,12 @@ const Home = () => {
       onClick: () => navigate("/customers"),
     },
     {
+      title: "All Games",
+      value: 4,
+      icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      onClick: () => navigate("/all-games"),
+    },
+    {
       title: "Live Games",
       value: dashboardData.liveGames,
       icon: (
