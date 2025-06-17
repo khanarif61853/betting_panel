@@ -46,15 +46,15 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const { 
-    dashboardTotalBid, 
-    abDataShowNo, 
+  const {
+    dashboardTotalBid,
+    abDataShowNo,
     dashboardWinningUsers,
     latestLastGameResult,
     lastGameTotalBid,
     gamesTotal,
     lastGameWinners,
-    fetchAllCount
+    fetchAllCount,
   } = useContextProvider();
 
   const { page, limit } = usePagination();
@@ -62,6 +62,8 @@ const Home = () => {
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
+  const [totalAmount, setTotalAmount] = useState();
+  const [winAmount, setWinAmount] = useState();
   const navigate = useNavigate();
 
   // fetch data ---------------
@@ -87,6 +89,8 @@ const Home = () => {
       });
       const winValue = data?.jantriWin;
       const totalValue = data?.jantriTotalAmount;
+      setTotalAmount(totalValue);
+      setWinAmount(winValue);
       let profitValue;
       let lossValue;
       if (winValue > 0) {
@@ -121,7 +125,7 @@ const Home = () => {
     },
     {
       title: "All Games",
-      value: fetchAllCount || 'N/A',
+      value: fetchAllCount || "N/A",
       icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/all-games"),
     },
@@ -148,9 +152,13 @@ const Home = () => {
     },
     {
       title: "Last Game Result",
-      value: (latestLastGameResult ? `${latestLastGameResult.finalBidNumber} (${latestLastGameResult.name})` : "N/A"),
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-      onClick:()=> navigate('/last-game-result')
+      value: latestLastGameResult
+        ? `${latestLastGameResult.finalBidNumber} (${latestLastGameResult.name})`
+        : "N/A",
+      icon: (
+        <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
+      onClick: () => navigate("/last-game-result"),
     },
     {
       title: "Last Game Total Bid",
@@ -159,7 +167,9 @@ const Home = () => {
           <Typography variant="h4">{lastGameTotalBid.amount}</Typography>
         </Box>
       ),
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      icon: (
+        <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
       // onClick: () => navigate("/totalbid"),
     },
     {
@@ -169,7 +179,9 @@ const Home = () => {
           <Typography variant="h4">{lastGameWinners.count}</Typography>
         </Box>
       ),
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      icon: (
+        <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
       onClick: () => navigate("/last-game-winners"),
     },
     {
@@ -194,14 +206,39 @@ const Home = () => {
       title: "Profit / Loss",
       customContent: (
         <Box
-          sx={{ display: "flex", width: "40%", justifyContent: "space-evenly" }}
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            gap: 1,
+          }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 700, color: "green" }}>
-            {`+${profitValue || 0}`}
-          </Typography>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: "red" }}>
-            {`-${lossValue || 0}`}
-          </Typography>
+          <Box sx={{ display: "flex",gap:5 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ color: "green", fontWeight: "bold", fontSize: 18 }}
+            >
+              {profitValue ? `+₹${profitValue}` : "₹0"}
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{ color: "red", fontWeight: "bold", fontSize: 18 }}
+            >
+              {lossValue ? `-₹${lossValue}` : "₹0"}
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", flexDirection: "column", }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="subtitle2" color="dark" fontWeight={700}  fontFamily={"Alegreya Sans SC, sans-serif"}>
+                Total AMT: {totalAmount}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="subtitle2" color="green" fontWeight={700} fontFamily={"Alegreya Sans SC, sans-serif"}>
+                Win AMT: {winAmount}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       ),
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,

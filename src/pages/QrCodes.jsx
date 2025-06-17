@@ -123,6 +123,7 @@ const QrCodes = () => {
             renderCell: (params) => {
                 console.log(params)
                 return (
+                    <Box sx={{height:"100%",display:"flex",justifyContent:"center",alignItems:"center"}}>
                 <TextField
                     select
                     value={params.row.status}
@@ -139,6 +140,7 @@ const QrCodes = () => {
                     <MenuItem value={true}>Active</MenuItem>
                     <MenuItem value={false}>Inactive</MenuItem>
                 </TextField>
+                </Box>
             )},
         },
         {field: 'upi', headerName: 'UPI ID', width: 200},
