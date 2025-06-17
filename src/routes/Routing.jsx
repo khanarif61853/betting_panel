@@ -18,6 +18,8 @@ import FinalJantri from "../pages/FinalJantri.jsx";
 import AndarBaharWinner from "../pages/AndarBaharWinner.jsx";
 import WithdrawalApprovedList from "../pages/WithdrawalApprovedList.jsx";
 import LastGameWinner from "../pages/LastGameWinner.jsx";
+import Allgames from "../pages/Allgames.jsx";
+import AddMoneyApprovedList from "../pages/AddMoneyApprovedList.jsx";
 
 const Routing = () => {
   return (
@@ -33,6 +35,7 @@ const Routing = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/games" element={<Games />} />
             <Route path="/game" element={<Game />} />
+            <Route path="/all-games" element={<Allgames />} />
             <Route path="/final-jantri" element={<FinalJantri />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/andar-bahar-winner" element={<AndarBaharWinner />} />
@@ -43,6 +46,7 @@ const Routing = () => {
               element={<WithdrawalRequests />}
             />
             <Route path="/add-money" element={<AddMoney />} />
+            <Route path="/add-money-approved" element={<AddMoneyApprovedList />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/Rules" element={<Rules />} />
             <Route path="/qr-code" element={<QrCodes />} />

@@ -203,10 +203,10 @@ const Games = () => {
     }
   };
 
-  const handleOpenDialog = (id) => {
-    setDeleteId(id);
-    setOpenDialog(true);
-  };
+  // const handleOpenDialog = (id) => {
+  //   setDeleteId(id);
+  //   setOpenDialog(true);
+  // };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -306,45 +306,45 @@ const Games = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 90 },
+    // { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Name", width: 150 },
-    { field: "startDateTime", headerName: "Start Date Time", width: 200 },
-    { field: "endDateTime", headerName: "End Date Time", width: 200 },
-    { field: "resultDateTime", headerName: "Result Date Time", width: 200 },
+    { field: "startDateTime", headerName: "Start Time", width: 150 },
+    { field: "endDateTime", headerName: "End Time", width: 150 },
+    { field: "resultDateTime", headerName: "Result Time", width: 150 },
     {
       field: "image",
       headerName: "Image",
-      width: 150,
+      width: 100,
       renderCell: ({ row }) => (
         <Avatar src={`${BASE_URL}/img/game/` + row.image} variant="rounded">
           {row.name[0]}
         </Avatar>
       ),
     },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 120,
-      renderCell: ({ row }) => (
-        <Switch
-          size="small"
-          checked={Boolean(row.status)}
-          color="warning"
-          onChange={() => handleStatusChange(row.id)}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          inputProps={{ "aria-label": "controlled" }}
-        />
-      ),
-    },
+    // {
+    //   field: "status",
+    //   headerName: "Status",
+    //   width: 120,
+    //   renderCell: ({ row }) => (
+    //     <Switch
+    //       size="small"
+    //       checked={Boolean(row.status)}
+    //       color="warning"
+    //       onChange={() => handleStatusChange(row.id)}
+    //       onClick={(e) => {
+    //         e.stopPropagation();
+    //       }}
+    //       inputProps={{ "aria-label": "controlled" }}
+    //     />
+    //   ),
+    // },
     {
       field: "action",
       headerName: "Action",
       width: 130,
       renderCell: ({ row }) => (
         <div>
-          <IconButton
+          {/* <IconButton
             color="primary"
             sx={{ color: "purple" }}
             onClick={(e) => {
@@ -354,8 +354,8 @@ const Games = () => {
             aria-label="edit"
           >
             <EditIcon />
-          </IconButton>
-          <IconButton
+          </IconButton> */}
+          {/* <IconButton
             color="secondary"
             onClick={(e) => {
               e.stopPropagation();
@@ -364,7 +364,7 @@ const Games = () => {
             aria-label="delete"
           >
             <DeleteIcon />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             sx={{ color: "#4389A2" }}
             onClick={(e) => {
@@ -381,7 +381,7 @@ const Games = () => {
     {
       field: "finaljantri",
       headerName: "Final Jantri",
-      width: 150,
+      width: 100,
       textAlign: "center",
       renderCell: ({ row }) => (
         <div>
@@ -397,7 +397,7 @@ const Games = () => {
     {
       field: "result",
       headerName: "Result",
-      width: 150,
+      width: 100,
       textAlign: "center",
       renderCell: ({ row }) => (
         <div>
@@ -416,6 +416,19 @@ const Games = () => {
   ];
 
   const CustomDataGrid = ({ rows }) => {
+// let oldDateTime = moment('2025-08-31 12:47:00', "YYYY-MM-DD HH:mm:ss");
+// console.log(oldDateTime,'oldDateTime---')
+// let today = moment();
+// console.log(today.month(),'today')
+// let mergedDateTime = oldDateTime
+//   .set({
+//     year: today.year(),
+//     month: today.month(),
+//     date: today.date()
+//   })
+//   .format();
+
+// console.log(mergedDateTime, 'mergedDateTime------------');
     const [filter, setFilter] = useState("all");
 
     const handleFilterChange = (event) => {
@@ -438,7 +451,7 @@ const Games = () => {
 
     return (
       <>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
           <ArrowBackIcon
             style={{ cursor: "pointer" }}
             onClick={() => {
@@ -527,7 +540,7 @@ const Games = () => {
               loading={contextLoading || loading}
             />
           </div>
-        </LocalizationProvider>
+        {/* </LocalizationProvider> */}
       </>
     );
   };

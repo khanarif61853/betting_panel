@@ -71,7 +71,6 @@ const Home = () => {
       params: { page: page + 1, limit },
     });
     setDashboardData(data);
-    console.log(data,"---home data");
     setLoading(false); // Data is loaded, set loading to false
   };
 
@@ -84,9 +83,8 @@ const Home = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      const winValue = data?.jantriWin || 0;
-      const totalValue = data?.jantriTotalAmount || 0;
+      const winValue = data?.jantriWin;
+      const totalValue = data?.jantriTotalAmount;
       let profitValue;
       let lossValue;
       if (winValue > 0) {
@@ -96,21 +94,12 @@ const Home = () => {
         lossValue = Number(winValue) - Number(totalValue);
         profitValue = 0;
       }
-      if (totalValue == winValue) {
+      if (totalValue === winValue) {
         profitValue = 0;
         lossValue = 0;
       }
       setProfitValue(profitValue);
       setLossValue(lossValue);
-
-      console.log(
-        "Profit:",
-        profitValue,
-        "Loss:",
-        lossValue,
-        "jantri Total:",
-        data.jantriTotalAmount
-      );
     } catch (error) {
       console.error("Error fetching profit/loss:", error);
     }
@@ -151,7 +140,7 @@ const Home = () => {
     },
     {
       title: "Last Game Result",
-      value: latestLastGameResult,
+      value: (latestLastGameResult ? `${latestLastGameResult.finalBidNumber} (${latestLastGameResult.name})` : "N/A"),
       icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
     {

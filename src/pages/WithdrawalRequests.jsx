@@ -71,7 +71,7 @@ const WithdrawalRequest = () => {
           "Authorization":localStorage.getItem("token")
         }
       });
-      console.log(response.data.data)
+      // console.log(response.data.data)
       setRequests(response.data.data.requests);
       changeTotal(response.data.data.count);
       setSnackbarSeverity('success');
@@ -114,7 +114,7 @@ const WithdrawalRequest = () => {
 
   const handleClickOpen = (request) => {
     setSelectedRequest(request);
-    console.log(selectedRequest);
+    // console.log(selectedRequest);
     setValues((value)=>{
       return {...value, bankDetails: request.accountDetails };
     });

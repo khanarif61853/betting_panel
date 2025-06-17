@@ -85,7 +85,7 @@ const AddMoney = () => {
           },
         }
       );
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setRequests(response.data.data.payment);
       changeTotal(response.data.data.count);
       setSnackbarSeverity("success");
@@ -224,8 +224,8 @@ const AddMoney = () => {
   ];
 
   const rows = requests?.map((request) => {
-    console.log(request.screenshot,'re------')
-    console.log(`${BASE_URL}/img/payments/${request.screenshot}`)
+    // console.log(request.screenshot,'re------')
+    // console.log(`${BASE_URL}/img/payments/${request.screenshot}`)
     // console.log(first)
     let accountDetails = "";
     if (request.accountDetails) {

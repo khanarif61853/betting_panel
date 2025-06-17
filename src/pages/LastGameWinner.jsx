@@ -18,8 +18,9 @@ const LastGameWinner = () => {
     { field: "customerName", headerName: "Customer", flex: 1 },
     { field: "game", headerName: "Game", flex: 1 },
     { field: "finalBidNumber", headerName: "Bid Number", flex: 1 },
+    { field: "matchedNumbers", headerName: "Bid Number", flex: 1 },
     { field: "winningAmount", headerName: "Winning Amount", flex: 1 },
-    { field: "gameCategory", headerName: "Game Category", flex: 1 },
+    // { field: "gameCategory", headerName: "Game Category", flex: 1 },
   ];
 
   const rows = (lastGameWinners.winners || []).map((winner, i) => ({
@@ -27,6 +28,7 @@ const LastGameWinner = () => {
     customerName: winner?.customer?.name || "N/A",
     game: winner?.Game?.name || "N/A",
     finalBidNumber: winner?.Game?.finalBidNumber || "N/A",
+     matchedNumbers: winner?.matchedNumbers || "N/A",
     winningAmount: winner?.winningAmount || "0",
     gameCategory: winner?.remark || "N/A",
   }));

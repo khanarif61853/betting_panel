@@ -8,7 +8,7 @@ const CustomSnackbar = ({ open, onClose, handleClose, message, severity }) => {
   return (
     <Snackbar
       open={open}
-      autoHideDuration={3000}
+      autoHideDuration={2000}
       onClose={closeHandler}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
       sx={{
@@ -49,10 +49,10 @@ CustomSnackbar.propTypes = {
 };
 
 // Ensure at least one of onClose or handleClose is provided
-CustomSnackbar.defaultProps = {
-  onClose: undefined,
-  handleClose: undefined,
-  message: ''
-};
+// CustomSnackbar.defaultProps = {
+//   onClose: undefined,
+//   handleClose: undefined,
+//   message: ''
+// };
 
 export default CustomSnackbar;

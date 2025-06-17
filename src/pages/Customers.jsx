@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Chip,
-  Stack,
-} from "@mui/material";
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import HistoryIcon from '@mui/icons-material/History';
+import { Box, Button, TextField, Typography, Chip, Stack } from "@mui/material";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import HistoryIcon from "@mui/icons-material/History";
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { usePagination } from "../hooks/usePagination";
 import CustomSnackbar from "../component/CustomSnackbar";
 import CustomerDialog from "../component/CustomerDialog";
 import { BASE_URL } from "../costants";
+import TransactionModal from "../component/TransactionModal";
+
+
 
 const theme = createTheme({
   palette: {
     primary: { main: "#1976d2" },
     secondary: { main: "#d32f2f" },
     success: { main: "#2e7d32" },
-    black: { main: "#e0e0e0" }
+    black: { main: "#e0e0e0" },
   },
   typography: {
     fontFamily: "Arial, sans-serif",
@@ -38,7 +36,11 @@ const Customer = () => {
   const [dialogType, setDialogType] = useState("bankDetails");
   const [selectedCustomerId, setSelectedCustomerId] = useState(0);
   const [search, setSearch] = useState("");
+  const [nameSearch, setNameSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [type, setType] = useState("credit");
+  const [customerId, setCustomerId] = useState(null);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -70,16 +72,25 @@ const Customer = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCustomers();
-  }, [page, limit]);
+    const openModal = (t,id) => {
+    setType(t);
+    setOpen(true);
+    setCustomerId(id)
+  };
+
 
   useEffect(() => {
-    const filtered = search
-      ? customers.filter((customer) => customer.mobile.includes(search))
-      : customers;
+    fetchCustomers();
+  }, [page, limit,open]);
+
+  useEffect(() => {
+    const filtered = customers.filter(
+      (customer) =>
+        customer.mobile.includes(search) &&
+        customer.name.toLowerCase().includes(nameSearch.toLowerCase())
+    );
     setFilteredCustomers(filtered);
-  }, [search, customers]);
+  }, [search, nameSearch, customers]);
 
   const handleOpenDialog = (type, customerId) => {
     setDialogType(type);
@@ -175,15 +186,15 @@ const Customer = () => {
       flex: 2,
       minWidth: 350,
       renderCell: (params) => (
-        <Stack 
-          direction="row" 
-          spacing={0.5} 
+        <Stack
+          direction="row"
+          spacing={0.5}
           flexWrap="wrap"
           gap={0.5}
-          sx={{ 
+          sx={{
             py: 1,
-            width: '100%',
-            justifyContent: 'flex-start'
+            width: "100%",
+            justifyContent: "flex-start",
           }}
         >
           <Chip
@@ -191,7 +202,9 @@ const Customer = () => {
             size="small"
             color="primary"
             icon={<AccountBoxIcon />}
-            onClick={() => handleOpenDialog("fetchCustomerDetails", params.row.id)}
+            onClick={() =>
+              handleOpenDialog("fetchCustomerDetails", params.row.id)
+            }
             sx={{ cursor: "pointer" }}
           />
           <Chip
@@ -203,21 +216,38 @@ const Customer = () => {
             sx={{ cursor: "pointer" }}
           />
           <Chip
+            label="Credit"
+            size="small"
+            color="success"
+            icon={<CurrencyRupeeIcon />}
+            onClick={() => openModal("credit",params.row.id)}
+            sx={{ cursor: "pointer" }}
+          />
+          <Chip
+            label="Debit"
+            size="small"
+            color="secondary"
+            icon={<DoDisturbOnIcon />}
+            onClick={() => openModal("debit", params.row.id)}
+            sx={{ cursor: "pointer" }}
+          />
+
+          {/* <Chip
             label="Withdraw"
             size="small"
             color="warning"
             icon={<HistoryIcon />}
             onClick={() => handleOpenDialog("withdrawalHistory", params.row.id)}
             sx={{ cursor: "pointer" }}
-          />
-          <Chip
+          /> */}
+          {/* <Chip
             label="Bank"
             size="small"
             color="info"
             icon={<AccountBalanceIcon />}
             onClick={() => handleOpenDialog("bankDetails", params.row.id)}
             sx={{ cursor: "pointer" }}
-          />
+          /> */}
         </Stack>
       ),
     },
@@ -238,14 +268,26 @@ const Customer = () => {
         <Typography variant="h4" my={2} textAlign="center" fontWeight="bold">
           All Players
         </Typography>
-        <Box display="flex" alignItems="center" mb={2}>
+        <Box
+          display="flex"
+          alignItems="center"
+          mb={2}
+          flexWrap="wrap"
+          gap={2}
+          ml={1}
+        >
           <TextField
             label="Search by Mobile Number"
             variant="outlined"
             type="number"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ marginLeft: 16 }}
+          />
+          <TextField
+            label="Search by Name"
+            variant="outlined"
+            value={nameSearch}
+            onChange={(e) => setNameSearch(e.target.value)}
           />
           {/* <Button variant="contained" color="primary" onClick={fetchCustomers}>
                         Search
@@ -280,6 +322,15 @@ const Customer = () => {
         customerId={selectedCustomerId}
         open={dialogOpen}
         onClose={handleCloseDialog}
+      />
+         <TransactionModal
+         setSnackbarSeverity={setSnackbarSeverity}
+         setSnackbarMessage={setSnackbarMessage}
+         setSnackbarOpen={setSnackbarOpen}
+        open={open}
+        handleClose={() => setOpen(false)}
+        type={type}
+        id={customerId}
       />
     </ThemeProvider>
   );

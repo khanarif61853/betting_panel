@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { usePagination } from "../hooks/usePagination";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 import moment from "moment";
 import CustomSnackbar from "../component/CustomSnackbar";
 import { BASE_URL } from "../costants";
@@ -46,7 +47,7 @@ const theme = createTheme({
           "& .MuiDataGrid-cell": {
             display: "flex",
             alignItems: "center",
-            whiteSpace: "pre-line", // Maintain line breaks in text
+            whiteSpace: "pre-line",
           },
         },
       },
@@ -54,11 +55,11 @@ const theme = createTheme({
   },
 });
 
-const WithdrawalApprovedList = () => {
+const AddMoneyApprovedList = () => {
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [type, setType] = useState("Approved");
   const [gamesDate, setGamesDate] = useState(dayjs());
+  const [loading, setLoading] = useState(true);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
 
@@ -67,12 +68,6 @@ const WithdrawalApprovedList = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  const handleDateChange = (newDate) => {
-    setGamesDate(newDate);
-  };
-  const handleChange = (event) => {
-    setType(event.target.value);
-  };
   useEffect(() => {
     fetchRequests();
   }, [page, limit, type, gamesDate]);
@@ -81,21 +76,16 @@ const WithdrawalApprovedList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/web/retrieve/withdrawal-requests`,
+        `${BASE_URL}/api/web/retrieve/add-money`,
         {
-          params: {
-            limit,
-            page,
-            type,
-            date: gamesDate,
-          },
+          params: { limit, page, type, date: gamesDate },
           headers: {
             Authorization: localStorage.getItem("token"),
           },
         }
       );
-      console.log(response.data.data.request, "request");
-      setRequests(response.data.data.requests);
+      //   console.log(response.data.data);
+      setRequests(response.data.data.payment);
       changeTotal(response.data.data.count);
       setSnackbarSeverity("success");
       setSnackbarMessage(`Retrieved successfully`);
@@ -110,23 +100,44 @@ const WithdrawalApprovedList = () => {
     }
   };
 
+  const handleChange = (event) => {
+    setType(event.target.value);
+  };
+  const handleDateChange = (newDate) => {
+    setGamesDate(newDate);
+  };
+
   const columns = [
     { field: "customerName", headerName: "Customer Name", width: 150 },
     { field: "mobile", headerName: "Mobile", width: 110 },
     { field: "amount", headerName: "Amount", width: 120 },
     {
+      field: "amount_screenshot",
+      headerName: "Screenshot",
+      width: 200,
+      renderCell: ({ value }) => {
+        return (
+          <img
+            style={{
+              width: 100,
+              height: 100,
+              objectFit: "contain",
+            }}
+            src={value}
+          />
+        );
+      },
+    },
+    {
       field: "status",
       headerName: "Status",
       width: 120,
-      renderCell: () => (
+      renderCell: (params) => (
         <Chip
-          label={type === "Approved" ? "Approved" : "Rejected"}
-          size="small"
+          label={params.row.status}
           sx={{
-            background: type === "Approved" ? "green" : "#C70039",
+            background: params.row.status === "Approved" ? "green" : "#d9512c",
             color: "white",
-            mt: 1,
-            mb: 1,
           }}
         />
       ),
@@ -134,7 +145,7 @@ const WithdrawalApprovedList = () => {
     {
       field: "accountDetails",
       headerName: "Account details",
-      width: 300,
+      width: 200,
       renderCell: (params) => (
         <div style={{ whiteSpace: "pre-line" }}>{params.value}</div>
       ),
@@ -143,14 +154,15 @@ const WithdrawalApprovedList = () => {
   ];
 
   const rows = requests?.map((request) => {
+    // console.log(first)
     let accountDetails = "";
     if (request.accountDetails) {
       try {
         const parsedDetails = JSON.parse(request.accountDetails);
         accountDetails = `Account Holder Name: ${
-          parsedDetails?.accountHolderName || ""
-        }\nAccount Number: ${parsedDetails?.accountNumber || ""}\nIFSC Code: ${
-          parsedDetails?.ifscCode || ""
+          parsedDetails.accountHolderName || ""
+        }\nAccount Number: ${parsedDetails.accountNumber || ""}\nIFSC Code: ${
+          parsedDetails.ifscCode || ""
         }`;
       } catch (error) {
         console.error("Error parsing account details:", error);
@@ -161,18 +173,19 @@ const WithdrawalApprovedList = () => {
     }
     return {
       id: request.id,
-      customerName: request?.Customer?.name,
-      mobile: request?.Customer?.mobile,
-      amount: request?.amount,
-      status: request?.status,
+      customerName: request.Customer?.name || "N/A",
+      mobile: request.Customer?.mobile || "N/A",
+      amount: request.amount,
+      amount_screenshot: `${BASE_URL}/img/payments/${request.screenshot}`,
+      status: request.status,
+      // accountDetails,
+      accountDetails: request.upi,
       createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-      accountDetails,
     };
   });
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <Typography variant={"h4"} my={2} textAlign={"center"} fontWeight={"bold"}>Withdrawal Approved List</Typography> */}
       <Box
         sx={{
           display: "flex",
@@ -191,7 +204,7 @@ const WithdrawalApprovedList = () => {
             textAlign: "center",
           }}
         >
-          Withdrawal Approved List
+          Add Money List
         </Typography>
         <Box
           sx={{
@@ -242,7 +255,9 @@ const WithdrawalApprovedList = () => {
           paginationMode="server"
           rowCount={total}
           pageSize={limit}
+          checkboxSelection
           disableSelectionOnClick
+          onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
           onPaginationModelChange={(value) => {
             if (value.pageSize !== limit) {
               changeLimit(value.pageSize);
@@ -252,10 +267,11 @@ const WithdrawalApprovedList = () => {
             changeLimit(value.pageSize);
           }}
           loading={loading}
-          getRowHeight={() => "auto"}
+          getRowHeight={() => "auto"} // Adjust row height based on content
         />
       </Box>
 
+      {/* Render Snackbar */}
       <CustomSnackbar
         open={snackbarOpen}
         message={snackbarMessage}
@@ -266,4 +282,4 @@ const WithdrawalApprovedList = () => {
   );
 };
 
-export default WithdrawalApprovedList;
+export default AddMoneyApprovedList;

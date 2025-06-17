@@ -99,13 +99,13 @@ const Game = () => {
                     setOutsideNumbers(parsedOutside);
 
                     // Calculate Top 10 Max and Min Bids (multiply by 90)
-                    const sortedBids = [...bids].sort((a, b) => b.amount - a.amount);
+                    const sortedBids = [...bids]?.sort((a, b) => b.amount - a.amount);
                     const topMax = sortedBids.slice(0, 10).map(bid => ({
                         ...bid,
                         amountMultiplied: bid.amount * 90,
                     }));
 
-                    const sortedMinBids = [...bids].sort((a, b) => a.amount - b.amount);
+                    const sortedMinBids = [...bids]?.sort((a, b) => a.amount - b.amount);
                     const topMin = sortedMinBids.slice(0, 10).map(bid => ({
                         ...bid,
                         amountMultiplied: bid.amount * 90,
@@ -574,7 +574,7 @@ const Game = () => {
                             padding: '10px 20px',
                             fontWeight: 'bold',
                         }}
-                        disabled={bidDeclared}
+                        disabled={Boolean(bidDeclared)}
                     >
                         Edit Bid
                     </Button>

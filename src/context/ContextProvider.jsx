@@ -23,6 +23,7 @@ const ContextProvider = ({ children }) => {
   const [latestLastGameResult, setLatestLastGameResult] = useState("");
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const [games, setGames] = useState([]);
+  const [allGames, setAllGames] = useState([]);
   const [gamesDate, setGamesDate] = useState(dayjs());
   const [gamesTotal, setGamesTotal] = useState(0);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
@@ -37,7 +38,7 @@ const ContextProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        params: { date: selectedDate || undefined },
+        params: { date: selectedDate },
       });
       setDataRequest(data);
 
@@ -75,30 +76,65 @@ const ContextProvider = ({ children }) => {
     setLoading(true);
     try {
       const {
-        data: { data },
+        data: { data:{data} },
       } = await axios.get(`${BASE_URL}/api/web/retrieve/last-winner`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        params: { limit, page, date: selectedDateWinningUsers || undefined },
+        params: { limit, page, date: selectedDateWinningUsers },
       });
-      
-      const jantriData = (data.jantri || []).map((item) => ({
-        ...item,
-        remark: "Jantri",
-      }));
+      // console.log({data})
+      const jantriData = (data || [])?.map((item) => {
+const finalBidNumber = item.Game.finalBidNumber.toString(); // convert to string
+const firstDigit = finalBidNumber[0];
+const secondDigit = finalBidNumber[1];
 
-      const crossData = (data.cross || []).map((item) => ({
-        ...item,
-        remark: "Cross",
-      }));
+// Parse the JSON strings
+const bidNumbers = JSON.parse(item.bidNumbers || '[]');
+const insideNumbers = JSON.parse(item.insideNumbers || '[]');
+const outsideNumbers = JSON.parse(item.outsideNumbers || '[]');
 
-      const openPlayData = (data.openPlay || []).map((item) => ({
-        ...item,
-        remark: "Open Play",
-      }));
+const matchedNumbers = [];
 
-      const combinedData = [...jantriData, ...crossData, ...openPlayData];
+// Match in bidNumbers
+bidNumbers.forEach((bid) => {
+  if (bid.number.toString() === finalBidNumber) {
+    matchedNumbers.push(`${bid.number}J`);
+  }
+});
+
+// Match in insideNumbers
+insideNumbers.forEach((inside) => {
+  if (inside.number.toString() === firstDigit) {
+    matchedNumbers.push(`${inside.number}A`);
+  }
+});
+
+// Match in outsideNumbers
+outsideNumbers.forEach((outside) => {
+  if (outside.number.toString() === secondDigit.toString()) {
+    matchedNumbers.push(`${outside.number}B`);
+  }
+});
+        return({
+        ...item,
+        matchedNumbers
+        // bidNumber: arr.push()
+        // remark: "Jantri",
+      })});
+
+      // const crossData = (data.cross || []).map((item) => ({
+      //   ...item,
+      //   remark: "Cross",
+      // }));
+
+      // const openPlayData = (data.openPlay || []).map((item) => ({
+      //   ...item,
+      //   remark: "Open Play",
+      // }));
+
+      const combinedData = [...jantriData];
+      // console.log({combinedData})
       setRequests(combinedData);
       changeTotal(combinedData?.length || 0);
       setDashboardWinningUsers(combinedData?.length || 0);
@@ -116,7 +152,7 @@ const ContextProvider = ({ children }) => {
         const latestWinners = sortedData.filter(winner => 
           moment(winner.createdAt).isSame(moment(latestTimestamp))
         );
-
+// console.log(latestWinners,'lastWinner-')
         setLastGameWinners({
           winners: latestWinners,
           count: latestWinners.length,
@@ -172,23 +208,30 @@ const ContextProvider = ({ children }) => {
         status: game.status,
         finalBidNumber: game.finalBidNumber,
       }));
-
-      // Get current Indian time
-      const currentIndianTime = moment().tz('Asia/Kolkata');
-
-      // Find latest declared result
-      const declaredGames = gamesData.filter(game => {
-        const resultTime = moment(game.resultDateTime);
-        return game.finalBidNumber && resultTime.isBefore(currentIndianTime);
-      });
-
-      if (declaredGames.length > 0) {
-        // Sort by result datetime to get the latest
-        const latestDeclared = declaredGames.sort((a, b) => 
-          moment(b.resultDateTime).diff(moment(a.resultDateTime))
-        )[0];
-        setLatestLastGameResult(latestDeclared.finalBidNumber);
+      console.log(gamesData,'gam,e')
+      for (const gameData of gamesData) {
+        if (gameData.finalBidNumber) {
+          setLatestLastGameResult(gameData)
+          break;
+        }
       }
+      // Get current Indian time
+      // const currentIndianTime = moment().tz('Asia/Kolkata');
+
+      // // Find latest declared result
+      // const declaredGames = gamesData.filter(game => {
+      //   const resultTime = moment(game.resultDateTime);
+      //   return game.finalBidNumber && resultTime.isBefore(currentIndianTime);
+      // });
+
+      // if (declaredGames.length > 0) {
+      //   // Sort by result datetime to get the latest
+      //   const latestDeclared = declaredGames.sort((a, b) => 
+      //     moment(b.resultDateTime).diff(moment(a.resultDateTime))
+      //   )[0];
+      //   setLatestLastGameResult(latestDeclared.finalBidNumber);
+      // }
+
 
       setGames(gamesData);
       setGamesTotal(response.data.data.total);

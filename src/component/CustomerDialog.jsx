@@ -54,6 +54,7 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                     id: item.id,
                     customerId: item.customerId,
                     gameId: item.gameId,
+                    description: item.description ? item.description :'N/A',
                     walletAmount: item.walletAmount ? item.walletAmount :0,
                     addMoneyBonus: item.addMoneyBonus ? parseFloat(item.addMoneyBonus) : "NA",
                     type: item.type,
@@ -253,11 +254,23 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                             />
                                         )
                                     },
+                                      {
+                                        field: 'description',
+                                        headerName: 'Additional Type',
+                                        width: 200,
+                                        // renderCell: (params) => (
+                                        //     <Chip
+                                        //         label={params.value}
+                                        //         color={getTransactionChipColor(params.value)}
+                                        //         variant="filled"
+                                        //     />
+                                        // )
+                                    },
                                     {
                                         field: 'walletAmount',
                                         headerName: 'Wallet Amount',
                                         width: 150,
-                                        flex: 1,
+                                        // flex: 1,
                                         renderCell: (params) => (
                                             <strong style={{ color: params.value > 0 ? 'green' : 'red' }}>
                                                 {params.value}
