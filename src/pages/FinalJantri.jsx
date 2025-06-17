@@ -126,13 +126,13 @@ const FinalJantri = () => {
             >
               Top 10 Maximum Bid Amounts
             </Typography>
-            <Select sx={{ mt: 2, minWidth: 200 }} displayEmpty defaultValue="">
+            <Select sx={{ mt: 2, minWidth: 300 }} displayEmpty defaultValue="">
               <MenuItem value="" disabled>
                 Select a maximum bid
               </MenuItem>
               {topMaxBids.map((bid) => (
                 <MenuItem key={bid.number} value={bid.number}>
-                  {`Bid Number: ${bid.number}, Amount: ₹${bid.amount}, Multiplied Amount: ₹${bid.amountMultiplied}`}
+                  {`Number: ${bid.number} | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
                 </MenuItem>
               ))}
             </Select>
@@ -147,13 +147,13 @@ const FinalJantri = () => {
             >
               Top 10 Minimum Bid Amounts
             </Typography>
-            <Select sx={{ mt: 2, minWidth: 200 }} displayEmpty defaultValue="">
+            <Select sx={{ mt: 2, minWidth: 300 }} displayEmpty defaultValue="">
               <MenuItem value="" disabled>
                 Select a minimum bid
               </MenuItem>
-              {topMinBids.map((bid) => (
+              {topMinBids.map((bid, index) => (
                 <MenuItem key={bid.number} value={bid.number}>
-                  {`Bid Number: ${bid.number}, Amount: ₹${bid.amount}, Multiplied Amount: ₹${bid.amountMultiplied}`}
+                  {`${index + 1}. Number: ${bid.number} | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
                 </MenuItem>
               ))}
             </Select>

@@ -11,7 +11,7 @@ const LastGameResult = () => {
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "Game", flex: 1 },
-    { field: "finalBidNumber", headerName: "Bid Number", flex: 1 },
+    { field: "finalBidNumber", headerName: "Result Number", flex: 1 },
   ];
 
   const rows = (games || []).map((val, i) => ({
@@ -43,7 +43,7 @@ const LastGameResult = () => {
           <Box display="flex" alignItems="center" gap={1}>
             <EmojiEventsIcon color="primary" />
             <Typography variant="h5" fontWeight={600}>
-              Last Game Winners
+              Last Game Result
             </Typography>
           </Box>
         </Box>
