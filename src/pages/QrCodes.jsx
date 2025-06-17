@@ -129,7 +129,12 @@ const QrCodes = () => {
                     onChange={(e) => handleStatusChange(params.row.id, e.target.value)}
                     size="small"
                     fullWidth
-                    alignSelf={"center"}
+                    sx={{
+                        "& .MuiSelect-select": {
+                            textAlign: "center",
+                            alignSelf: "center",
+                        },
+                    }}
                 >
                     <MenuItem value={true}>Active</MenuItem>
                     <MenuItem value={false}>Inactive</MenuItem>

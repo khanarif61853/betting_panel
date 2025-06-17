@@ -460,7 +460,7 @@ const Allgames = () => {
     },
   ];
 
-  const CustomDataGrid = ({ rows }) => {
+  const CustomDataGrid = () => {
     return (
       <>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -478,7 +478,7 @@ const Allgames = () => {
           ></Grid>
           <div style={{ height: 450, width: "100%" }}>
             <DataGrid
-              rows={existingGames?.games}
+              rows={existingGames?.games || []}
               columns={columns}
               initialState={{
                 pagination: {
@@ -486,7 +486,8 @@ const Allgames = () => {
                 },
               }}
               paginationMode="server"
-              rowCount={existingGames.total}
+              rowCount={existingGames?.total || 0}
+              pageSizeOptions={[5, 10, 25, 50]}
               pageSize={limit}
               checkboxSelection
               onPaginationModelChange={(value) => {
@@ -507,14 +508,7 @@ const Allgames = () => {
   };
 
   CustomDataGrid.propTypes = {
-    rows: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-        finalBidNumber: PropTypes.string,
-        resultDateTime: PropTypes.string,
-      })
-    ).isRequired,
+    // Remove rows prop since we're using existingGames directly
   };
 
   return (
@@ -529,7 +523,7 @@ const Allgames = () => {
           position: "relative",
         }}
       >
-        <CustomDataGrid rows={existingGames?.games} />
+        <CustomDataGrid />
         {/* <CustomSnackbar
           open={snackbarOpen}
           onClose={handleCloseSnackbar}

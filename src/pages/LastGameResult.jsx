@@ -1,13 +1,12 @@
 import { Box, Typography, Paper, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 const LastGameResult = () => {
   const theme = useTheme();
   const { latestLastGameResult, loading } = useContextProvider();
-  console.log(latestLastGameResult, "---latestLastGameResult");
+//   console.log(latestLastGameResult, "---latestLastGameResult");
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "Game", flex: 1 },

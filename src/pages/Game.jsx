@@ -70,7 +70,9 @@ const Game = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${BASE_URL}/api/web/retrieve/bids`, {
-                    params: {id: searchParams.get("id"),resultDate},
+                    params: {id: searchParams.get("id")
+                        // ,resultDate
+                    },
                     headers: {
                         Authorization: localStorage.getItem('token'),
                         'ngrok-skip-browser-warning': true,
@@ -91,7 +93,7 @@ const Game = () => {
 
                     setBids(bids);
                     console.log(response.data?.data?.prevGame?.id)
-                    response?.data?.data?.prevGame?.id ? setSearchParams({"id":response?.data?.data?.prevGame?.id}) : null
+                    response?.data?.data?.prevGame?.id ? setSearchParams({"id":response?.data?.data?.prevGame?.id,"name":response?.data?.data?.prevGame?.name}) : null
                     response?.data?.data?.prevGame?.finalBidNumber ? setBidDeclared(response?.data?.data?.prevGame?.finalBidNumber): setBidDeclared(false)
                     const parsedInside = JSON.parse(inside || "[]");
                     const parsedOutside = JSON.parse(outside || "[]");
@@ -99,6 +101,7 @@ const Game = () => {
                     setOutsideNumbers(parsedOutside);
 
                     // Calculate Top 10 Max and Min Bids (multiply by 90)
+                    bids = Array.isArray(bids) ? bids : [];
                     const sortedBids = [...bids]?.sort((a, b) => b.amount - a.amount);
                     const topMax = sortedBids.slice(0, 10).map(bid => ({
                         ...bid,
@@ -208,6 +211,7 @@ const Game = () => {
             } else {
                 setBidDeclared(response.data.data.finalBidNumber); // Set bidDeclared to true on successful declaration
                 setSuccess('Bid declared successfully');
+                localStorage.removeItem('savedBid')
             }
             // Close the dialog and reset form or handle success
             setOpenConfirmDialog(false);
@@ -254,6 +258,13 @@ const Game = () => {
 
             <Grid container alignItems={"center"} spacing={2} justifyContent={"space-between"}>
                 <Grid item>
+                    <Box mt={2}>
+                        <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
+                            Name: {searchParams.get("name")}
+                        </Typography>
+                    </Box>
+                </Grid>
+                <Grid item>
                     <Box mt={2} display={"flex"}>
                         <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
                             Total collection: <span
@@ -299,7 +310,7 @@ const Game = () => {
                         </Select>
                     </Box>
                 </Grid>
-                <Grid item >
+                {/* <Grid item >
                     <Box mt={2}>
                         <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
                             Select Start Date
@@ -308,7 +319,7 @@ const Game = () => {
                             setResultDate(e.target.value)
                         }}  format="DD/MM/yyyy"/>
                     </Box>
-                </Grid>
+                </Grid> */}
                 {/*<Grid item>*/}
                 {/*    <Box mt={2}>*/}
                 {/*        <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>*/}

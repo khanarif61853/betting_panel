@@ -160,7 +160,7 @@ const FinalJantri = () => {
             </Select>
           </Box>
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <Box mt={2}>
             <Typography
               variant="h6"
@@ -178,7 +178,7 @@ const FinalJantri = () => {
               format="DD/MM/yyyy"
             />
           </Box>
-        </Grid>
+        </Grid> */}
       </Grid>
       <Box
         mt={2}

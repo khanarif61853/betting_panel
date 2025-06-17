@@ -369,7 +369,7 @@ const Games = () => {
             sx={{ color: "#4389A2" }}
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/game/?id=${row.id}`);
+              navigate(`/game?id=${row.id}&name=${row.name}`);
             }}
             aria-label="send"
           >
