@@ -90,38 +90,37 @@ const Games = () => {
     gamesDate,
     latestLastGameResult,
   } = useContextProvider();
-  
+
   const navigate = useNavigate();
-  
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  
-      useEffect(()=>{
-        fetchGames()
-      },[])
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-    const fetchGames = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}/api/web/retrieve/gamesName`,
-          {
-            headers: {
-              Authorization: localStorage.getItem("token"),
-              "ngrok-skip-browser-warning": true,
-            },
-          }
-        );
-        setExistingGames(response.data.data);
-      } catch (err) {
-        if (err.response) {
-          console.error("Error fetching data", err.response.data.message);
-          setError(err.response.data.message);
-        } else {
-          console.error("Error fetching data", err.message);
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  const fetchGames = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/web/retrieve/gamesName`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "ngrok-skip-browser-warning": true,
+          },
         }
+      );
+      setExistingGames(response.data.data);
+    } catch (err) {
+      if (err.response) {
+        console.error("Error fetching data", err.response.data.message);
+        setError(err.response.data.message);
+      } else {
+        console.error("Error fetching data", err.message);
       }
-    };
-
+    }
+  };
 
   const handleStatusChange = async (id) => {
     setLoading(true);
@@ -155,7 +154,7 @@ const Games = () => {
   };
 
   const showSnackbar = (message, severity) => {
-    if (severity === 'error') {
+    if (severity === "error") {
       setError(message);
     } else {
       setSuccess(message);
@@ -222,30 +221,34 @@ const Games = () => {
     formData.append("endDateTime", values.endDateTime);
     formData.append("resultDateTime", values.resultDateTime);
     if (values.image) formData.append("image", values.image);
-    
+
     try {
       if (editingGame) {
         try {
-          const response = await axios.put(`${BASE_URL}/api/web/update/game`, formData, {
-            params: { id: editingGame.id },
-            headers: {
-              Authorization: localStorage.getItem("token"),
-              "ngrok-skip-browser-warning": true,
-              "Content-Type": "multipart/form-data",
-            },
-          });
-          
+          const response = await axios.put(
+            `${BASE_URL}/api/web/update/game`,
+            formData,
+            {
+              params: { id: editingGame.id },
+              headers: {
+                Authorization: localStorage.getItem("token"),
+                "ngrok-skip-browser-warning": true,
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
           if (response.data.type === "error") {
-            showSnackbar(response.data.message, 'error');
+            showSnackbar(response.data.message, "error");
             return; // Keep dialog open on error
           }
-          
-          showSnackbar("Game updated successfully", 'success');
+
+          showSnackbar("Game updated successfully", "success");
           setOpenAddDialog(false); // Only close on success
           setEditingGame(null);
           formik.resetForm();
         } catch (err) {
-          showSnackbar(err.response?.data?.message || err.message, 'error');
+          showSnackbar(err.response?.data?.message || err.message, "error");
           return; // Keep dialog open on error
         }
       } else {
@@ -262,17 +265,18 @@ const Games = () => {
         );
 
         if (response.data.type === "error") {
-          showSnackbar(response.data.message, 'error');
+          showSnackbar(response.data.message, "error");
           return; // Keep dialog open on error
         }
-        
-        showSnackbar("Game added successfully", 'success');
+
+        showSnackbar("Game added successfully", "success");
         setOpenAddDialog(false); // Only close on success
         formik.resetForm();
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Failed to add/update game";
-      showSnackbar(errorMessage, 'error');
+      const errorMessage =
+        error.response?.data?.message || "Failed to add/update game";
+      showSnackbar(errorMessage, "error");
       return; // Keep dialog open on error
     } finally {
       setLoading(false);
@@ -417,19 +421,19 @@ const Games = () => {
   ];
 
   const CustomDataGrid = ({ rows }) => {
-// let oldDateTime = moment('2025-08-31 12:47:00', "YYYY-MM-DD HH:mm:ss");
-// console.log(oldDateTime,'oldDateTime---')
-// let today = moment();
-// console.log(today.month(),'today')
-// let mergedDateTime = oldDateTime
-//   .set({
-//     year: today.year(),
-//     month: today.month(),
-//     date: today.date()
-//   })
-//   .format();
+    // let oldDateTime = moment('2025-08-31 12:47:00', "YYYY-MM-DD HH:mm:ss");
+    // console.log(oldDateTime,'oldDateTime---')
+    // let today = moment();
+    // console.log(today.month(),'today')
+    // let mergedDateTime = oldDateTime
+    //   .set({
+    //     year: today.year(),
+    //     month: today.month(),
+    //     date: today.date()
+    //   })
+    //   .format();
 
-// console.log(mergedDateTime, 'mergedDateTime------------');
+    // console.log(mergedDateTime, 'mergedDateTime------------');
     const [filter, setFilter] = useState("all");
 
     const handleFilterChange = (event) => {
@@ -453,94 +457,94 @@ const Games = () => {
     return (
       <>
         {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
-          <ArrowBackIcon
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              navigate("/home");
-            }}
-          />
-          <Grid
-            container
-            alignItems={"center"}
-            mb={2}
-            justifyContent={"space-between"}
-          >
-            {latestLastGameResult && latestGame && (
-              <Grid item xs={12}>
-                <Box
-                  sx={{
-                    mb: 2,
-                    p: 2,
-                    bgcolor: "#f5f5f5",
-                    borderRadius: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
+        <ArrowBackIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            navigate("/home");
+          }}
+        />
+        <Grid
+          container
+          alignItems={"center"}
+          mb={2}
+          justifyContent={"space-between"}
+        >
+          {latestLastGameResult && latestGame && (
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  mb: 2,
+                  p: 2,
+                  bgcolor: "#f5f5f5",
+                  borderRadius: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  fontFamily={"Alegreya Sans SC, sans-serif"}
+                  fontWeight={500}
                 >
-                  <Typography
-                    variant="h6"
-                    fontFamily={"Alegreya Sans SC, sans-serif"}
-                    fontWeight={500}
-                  >
-                    Latest Result: {latestGame.name}
+                  Latest Result: {latestGame.name}
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Typography variant="subtitle1" sx={{ mr: 1 }}>
+                    {moment(latestGame.resultDateTime).format("DD/MM/YYYY")}
                   </Typography>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography variant="subtitle1" sx={{ mr: 1 }}>
-                      {moment(latestGame.resultDateTime).format("DD/MM/YYYY")}
-                    </Typography>
-                  </Box>
                 </Box>
-              </Grid>
-            )}
-            <Grid item xs={5} display={"flex"} alignItems={"center"}>
-              <Typography variant="h6" paddingX={1}>
-                Result:
-              </Typography>
-              <Select value={filter} onChange={handleFilterChange}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="declared">Declared</MenuItem>
-                <MenuItem value="notDeclared">Not Declared</MenuItem>
-              </Select>
+              </Box>
             </Grid>
-            <Grid item xs={5} display={"flex"} alignItems={"center"}>
-              <Typography variant="h6" paddingX={1}>
-                Start Date:
-              </Typography>
-              <DemoContainer components={["DatePicker"]}>
-                <DatePicker
-                  label="Basic date picker"
-                  value={gamesDate}
-                  onChange={handleDateChange}
-                />
-              </DemoContainer>
-            </Grid>
+          )}
+          <Grid item xs={5} display={"flex"} alignItems={"center"}>
+            <Typography variant="h6" paddingX={1}>
+              Result:
+            </Typography>
+            <Select value={filter} onChange={handleFilterChange}>
+              <MenuItem value="all">All</MenuItem>
+              <MenuItem value="declared">Declared</MenuItem>
+              <MenuItem value="notDeclared">Not Declared</MenuItem>
+            </Select>
           </Grid>
-          <div style={{ height: 450, width: "100%" }}>
-            <DataGrid
-              rows={filteredRows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: limit, page },
-                },
-              }}
-              paginationMode="server"
-              rowCount={gamesTotal}
-              pageSize={limit}
-              checkboxSelection
-              onPaginationModelChange={(value) => {
-                if (value.pageSize !== limit) {
-                  changeLimit(value.pageSize);
-                  return changePage(0);
-                }
-                changePage(value.page);
+          <Grid item xs={5} display={"flex"} alignItems={"center"}>
+            <Typography variant="h6" paddingX={1}>
+              Start Date:
+            </Typography>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                label="Basic date picker"
+                value={gamesDate}
+                onChange={handleDateChange}
+              />
+            </DemoContainer>
+          </Grid>
+        </Grid>
+        <div style={{ height: 450, width: "100%" }}>
+          <DataGrid
+            rows={filteredRows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: limit, page },
+              },
+            }}
+            paginationMode="server"
+            rowCount={gamesTotal}
+            pageSize={limit}
+            checkboxSelection
+            onPaginationModelChange={(value) => {
+              if (value.pageSize !== limit) {
                 changeLimit(value.pageSize);
-              }}
-              disableSelectionOnClick
-              loading={contextLoading || loading}
-            />
-          </div>
+                return changePage(0);
+              }
+              changePage(value.page);
+              changeLimit(value.pageSize);
+            }}
+            disableSelectionOnClick
+            loading={contextLoading || loading}
+          />
+        </div>
         {/* </LocalizationProvider> */}
       </>
     );

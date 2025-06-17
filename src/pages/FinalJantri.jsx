@@ -51,16 +51,38 @@ const FinalJantri = () => {
           const allBids = response.data.formatted.flatMap((item) => item.bids);
           const sortedBids = [...allBids].sort((a, b) => b.amount - a.amount);
           
-          const topMax = sortedBids.slice(0, 10).map((bid) => ({
-            ...bid,
-            amountMultiplied: bid.amount * 90,
-          }));
+          //  max bids
+          const maxBidsMap = new Map();
+          sortedBids.slice(0, 10).forEach(bid => {
+            const existingBid = maxBidsMap.get(bid.number);
+            if (existingBid) {
+              existingBid.amount += bid.amount;
+              existingBid.amountMultiplied = existingBid.amount * 90;
+            } else {
+              maxBidsMap.set(bid.number, {
+                ...bid,
+                amountMultiplied: bid.amount * 90
+              });
+            }
+          });
+          const topMax = Array.from(maxBidsMap.values()).sort((a, b) => b.amount - a.amount);
           
+          //  min bids
+          const minBidsMap = new Map();
           const sortedMinBids = [...allBids].sort((a, b) => a.amount - b.amount);
-          const topMin = sortedMinBids.slice(0, 10).map((bid) => ({
-            ...bid,
-            amountMultiplied: bid.amount * 90,
-          }));
+          sortedMinBids.slice(0, 10).forEach(bid => {
+            const existingBid = minBidsMap.get(bid.number);
+            if (existingBid) {
+              existingBid.amount += bid.amount;
+              existingBid.amountMultiplied = existingBid.amount * 90;
+            } else {
+              minBidsMap.set(bid.number, {
+                ...bid,
+                amountMultiplied: bid.amount * 90
+              });
+            }
+          });
+          const topMin = Array.from(minBidsMap.values()).sort((a, b) => a.amount - b.amount);
           
           setTopMaxBids(topMax);
           setTopMinBids(topMin);
