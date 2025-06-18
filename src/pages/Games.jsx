@@ -97,42 +97,42 @@ const Games = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   
-  const fetchGames = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/api/web/retrieve/gamesName`,
-        {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-            "ngrok-skip-browser-warning": true,
-          },
-          params: {
-            page,
-            limit
-          }
-        }
-      );
-      if (response.data) {
-        setExistingGames(response.data.data);
-      } else {
-        setError(response.data.message);
-      }
-    } catch (err) {
-      if (err.response) {
-        console.error("Error fetching data", err.response.data.message);
-        setError(err.response.data.message);
-      } else {
-        console.error("Error fetching data", err.message);
-        setError(err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchGames();
-  }, [page, limit]);
+  // const fetchGames = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.get(
+  //       `${BASE_URL}/api/web/retrieve/gamesName`,
+  //       {
+  //         headers: {
+  //           Authorization: localStorage.getItem("token"),
+  //           "ngrok-skip-browser-warning": true,
+  //         },
+  //         params: {
+  //           page,
+  //           limit
+  //         }
+  //       }
+  //     );
+  //     if (response.data) {
+  //       setExistingGames(response.data.data);
+  //     } else {
+  //       setError(response.data.message);
+  //     }
+  //   } catch (err) {
+  //     if (err.response) {
+  //       console.error("Error fetching data", err.response.data.message);
+  //       setError(err.response.data.message);
+  //     } else {
+  //       console.error("Error fetching data", err.message);
+  //       setError(err.message);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchGames();
+  // }, [page, limit]);
   
   const handleStatusChange = async (id) => {
     setLoading(true);

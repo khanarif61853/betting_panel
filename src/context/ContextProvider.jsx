@@ -45,11 +45,17 @@ const ContextProvider = ({ children }) => {
     return !!token;
   };
 
-  // Function to trigger data fetch after login
   const triggerDataFetch = () => {
     setIsAuthenticated(true);
     fetchAllData();
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // all bids api  ----------------------
   const allbids = async () => {
@@ -277,7 +283,6 @@ const ContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Only fetch data if authenticated
     if (isAuthenticated) {
       fetchAllData();
     }

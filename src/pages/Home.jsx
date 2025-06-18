@@ -13,6 +13,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { useContextProvider } from "../context/ContextProvider";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import moment from "moment";
 
 const theme = createTheme({
@@ -209,6 +210,13 @@ const Home = () => {
         </Box>
       ),
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+    },
+    {
+      title: "Players Commision",
+      icon: (
+        <MonetizationOnIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
+      onClick: () => navigate("/withdrawal-requests"),
     },
     {
       title: "Withdrawal Requests",
