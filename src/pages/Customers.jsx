@@ -97,7 +97,7 @@ const Customer = () => {
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setDialogType("");
+    setDialogType("bankDetails");
     setSelectedCustomerId(null);
   };
 
@@ -141,11 +141,6 @@ const Customer = () => {
   };
 
   const columns = [
-    {
-      field: "id",
-      headerName: "ID",
-      flex: 1,
-    },
     { field: "name", headerName: "Name", flex: 1 },
     {
       field: "mobile",
@@ -312,7 +307,7 @@ const Customer = () => {
         severity={snackbarSeverity}
       />
       <CustomerDialog
-        type={dialogType}
+        type={dialogType || "bankDetails"}
         customerId={selectedCustomerId}
         open={dialogOpen}
         onClose={handleCloseDialog}

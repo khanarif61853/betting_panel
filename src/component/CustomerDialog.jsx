@@ -90,13 +90,87 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                         description: item.description || 'N/A',
                         walletAmount: item.walletAmount || 0,
                         addMoneyBonus: item.addMoneyBonus ? parseFloat(item.addMoneyBonus) : "NA",
-                        referredId: item.referredId || 'N/A',
+                        referredby: item.referral?.name || 'N/A',
                         createdAt: moment(item.createdAt).format("DD/MM/YYYY"),
                         updatedAt: moment(item.updatedAt).format("DD/MM/YYYY")
                     }));
                     setData(formattedData);
                 }
                 changeTotal(referralTransactions.length);
+            } else if (type === 'fetchCustomerDetails') {
+                const gameData = response?.data?.data || [];
+                console.log('Game Data:', gameData); // For debugging
+                const formattedData = [];
+                
+                // Process each game's data
+                gameData.forEach((item) => {
+                    // Process Jantri Bids
+                    if (item.jantriBids && item.jantriBids.length > 0) {
+                        formattedData.push({
+                            id: `${item.gameId}-jantri`,
+                            gameName: item.Game.name,
+                            gameType: 'Jantri',
+                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
+                            finalBidNumber: item.Game.finalBidNumber,
+                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
+                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
+                            bidDetails: item.jantriBids.map(bid => ({
+                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
+                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
+                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
+                                bidAmount: bid.bidAmount,
+                                winningAmount: bid.winningAmount,
+                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
+                            }))
+                        });
+                    }
+
+                    // Process Cross Bids
+                    if (item.crossBids && item.crossBids.length > 0) {
+                        formattedData.push({
+                            id: `${item.gameId}-cross`,
+                            gameName: item.Game.name,
+                            gameType: 'Cross',
+                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
+                            finalBidNumber: item.Game.finalBidNumber,
+                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
+                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
+                            bidDetails: item.crossBids.map(bid => ({
+                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
+                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
+                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
+                                bidAmount: bid.bidAmount,
+                                winningAmount: bid.winningAmount,
+                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
+                            }))
+                        });
+                    }
+
+                    // Process Openplay Bids
+                    if (item.openplayBids && item.openplayBids.length > 0) {
+                        formattedData.push({
+                            id: `${item.gameId}-openplay`,
+                            gameName: item.Game.name,
+                            gameType: 'Openplay',
+                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
+                            finalBidNumber: item.Game.finalBidNumber,
+                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
+                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
+                            bidDetails: item.openplayBids.map(bid => ({
+                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
+                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
+                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
+                                bidAmount: bid.bidAmount,
+                                winningAmount: bid.winningAmount,
+                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
+                            }))
+                        });
+                    }
+                });
+
+                console.log('Formatted Data:', formattedData); // For debugging
+                setData(formattedData);
+                changeTotal(formattedData.length);
             }
 
         } catch (error) {
@@ -315,8 +389,8 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                             )
                                         },
                                         {
-                                            field: 'referredId',
-                                            headerName: 'Referred ID',
+                                            field: 'referredby',
+                                            headerName: 'Referred By',
                                             width: 150,
                                             valueFormatter: (value) => value || "N/A"
                                         },
@@ -369,7 +443,115 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                         )}
                     </>
                 );
-
+                case 'fetchCustomerDetails':
+                    return (
+                        <>
+                            {data.length > 0 ? (
+                                <Box style={{ height: 450, width: '100%', overflow: 'auto' }} p={2}>
+                                    <DataGrid
+                                        rows={data}
+                                        columns={[
+                                            {
+                                                field: 'gameName',
+                                                headerName: 'Game Name',
+                                                width: 120
+                                            },
+                                            {
+                                                field: 'gameType',
+                                                headerName: 'Game Type',
+                                                width: 100
+                                            },
+                                            {
+                                                field: 'startDateTime',
+                                                headerName: 'Start Time',
+                                                width: 160
+                                            },
+                                            {
+                                                field: 'endDateTime',
+                                                headerName: 'End Time',
+                                                width: 160
+                                            },
+                                            {
+                                                field: 'totalAmountSpentOnBid',
+                                                headerName: 'Amount Spent',
+                                                width: 120,
+                                                renderCell: (params) => (
+                                                    <strong style={{ color: params.value < 0 ? 'red' : 'green' }}>
+                                                        {Math.abs(params.value)}
+                                                    </strong>
+                                                )
+                                            },
+                                            {
+                                                field: 'finalBidNumber',
+                                                headerName: 'Result',
+                                                width: 100,
+                                                renderCell: (params) => (
+                                                    <strong>{params.value || 'Pending'}</strong>
+                                                )
+                                            },
+                                            {
+                                                field: 'bidDetails',
+                                                headerName: 'Bid Details',
+                                                width: 400,
+                                                renderCell: (params) => (
+                                                    <Box>
+                                                        {params.value.map((bid, index) => (
+                                                            <Box key={index} sx={{ mb: 1, p: 1, border: '1px solid #eee', borderRadius: 1 }}>
+                                                                {bid.bidNumbers.length > 0 && (
+                                                                    <Typography variant="body2">
+                                                                        <strong>Numbers:</strong> {bid.bidNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
+                                                                    </Typography>
+                                                                )}
+                                                                {bid.insideNumbers.length > 0 && (
+                                                                    <Typography variant="body2">
+                                                                        <strong>Inside:</strong> {bid.insideNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
+                                                                    </Typography>
+                                                                )}
+                                                                {bid.outsideNumbers.length > 0 && (
+                                                                    <Typography variant="body2">
+                                                                        <strong>Outside:</strong> {bid.outsideNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
+                                                                    </Typography>
+                                                                )}
+                                                                <Typography variant="body2">
+                                                                    <strong>Bid:</strong> ₹{bid.bidAmount},
+                                                                    <strong> Win:</strong> {bid.winningAmount ? `₹${bid.winningAmount}` : 'N/A'}
+                                                                </Typography>
+                                                                <Typography variant="caption" color="textSecondary">
+                                                                    {bid.createdAt}
+                                                                </Typography>
+                                                            </Box>
+                                                        ))}
+                                                    </Box>
+                                                )
+                                            }
+                                        ]}
+                                        pageSize={limit}
+                                        components={{ Toolbar: GridToolbar }}
+                                        disableRowSelectionOnClick
+                                        loading={loading}
+                                        sx={{
+                                            '& .MuiDataGrid-cell': {
+                                                borderBottom: '1px solid #ddd',
+                                            },
+                                            '& .MuiDataGrid-columnHeaders': {
+                                                backgroundColor: '#f5f5f5',
+                                                borderBottom: '2px solid #ddd',
+                                            }
+                                        }}
+                                    />
+                                </Box>
+                            ) : (
+                                <Box p={3} textAlign="center">
+                                    <Typography variant="h6" color="textSecondary">
+                                        No Game History Found
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        This customer hasn&apos;t played any games yet.
+                                    </Typography>
+                                </Box>
+                            )}
+                        </>
+                    );
             
             default:
                 return null;
@@ -382,7 +564,7 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
             onClose={onClose} 
             fullWidth 
             maxWidth={type === "walletStatement" || type === "fetchCustomerDetails" || type === "withdrawalHistory" || type === "commission" ? "xl" : "sm"}
-        >
+        >   
             <DialogTitle>
                 {type === 'bankDetails' ? 'Bank Details' : 
                  type === 'walletStatement' ? 'Wallet Statement' : 
@@ -399,8 +581,8 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
 };
 
 CustomerDialog.propTypes = {
-    type: PropTypes.oneOf(['bankDetails', 'walletStatement', 'fetchCustomerDetails', 'withdrawalHistory']).isRequired,
-    customerId: PropTypes.number.isRequired,
+    type: PropTypes.oneOf(['bankDetails', 'walletStatement', 'fetchCustomerDetails', 'withdrawalHistory', 'commission']).isRequired,
+    customerId: PropTypes.number,
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
 };
