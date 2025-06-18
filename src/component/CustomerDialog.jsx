@@ -387,6 +387,7 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                 {type === 'bankDetails' ? 'Bank Details' : 
                  type === 'walletStatement' ? 'Wallet Statement' : 
                  type === 'withdrawalHistory' ? 'Withdrawal History' :
+                 type === 'commission' ? 'Commission Details' :
                  'Customer Game Details'}
             </DialogTitle>
             <DialogContent>{loading ? 'Loading...' : renderContent()}</DialogContent>
