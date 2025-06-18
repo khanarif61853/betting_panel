@@ -12,9 +12,8 @@ import AddCardIcon from "@mui/icons-material/AddCard";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useContextProvider } from "../context/ContextProvider";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import moment from "moment";
 
 const theme = createTheme({
   palette: {
@@ -53,9 +52,7 @@ const Home = () => {
     dashboardWinningUsers,
     latestLastGameResult,
     lastGameTotalBid,
-    gamesTotal,
     lastGameWinners,
-    fetchAllCount
   } = useContextProvider();
 
   const { page, limit } = usePagination();
@@ -64,7 +61,6 @@ const Home = () => {
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
   const [totalAmount,setTotalAmount] = useState();
-  const [winAmount,setWinAmount] = useState();
   const navigate = useNavigate();
 
   // fetch data ---------------
@@ -91,7 +87,6 @@ const Home = () => {
       const winValue = data?.jantriWin;
       const totalValue = data?.jantriTotalAmount;
       setTotalAmount(totalAmount);
-      setWinAmount(winValue)
       let profitValue;
       let lossValue;
       if (winValue > 0) {
@@ -124,12 +119,6 @@ const Home = () => {
       icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/customers"),
     },
-    // {
-    //   title: "All Games",
-    //   value: fetchAllCount || 'N/A',
-    //   icon: <PeopleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-    //   onClick: () => navigate("/all-games"),
-    // },
     {
       title: "Live Games",
       value: dashboardData.liveGames,
@@ -140,12 +129,6 @@ const Home = () => {
       ),
       onClick: () => navigate("/games"),
     },
-    // {
-    //   title: "Total Games",
-    //   value: dashboardData.totalGames,
-    //   icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-    // },
-    // ------------------------------------------------------------
     {
       title: "Total Collection",
       value: -dashboardData.totalCollection,
@@ -165,7 +148,6 @@ const Home = () => {
         </Box>
       ),
       icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-      // onClick: () => navigate("/totalbid"),
     },
     {
       title: "Last Game Winners",
@@ -211,13 +193,13 @@ const Home = () => {
       ),
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
-    {
-      title: "Players Commision",
-      icon: (
-        <MonetizationOnIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
-      ),
-      onClick: () => navigate("/player-commision"),
-    },
+    // {
+    //   title: "Players Commision",
+    //   icon: (
+    //     <MonetizationOnIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+    //   ),
+    //   onClick: () => navigate("/player-commision"),
+    // },
     {
       title: "Withdrawal Requests",
       icon: (

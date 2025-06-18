@@ -11,9 +11,11 @@ export const useContextProvider = () => useContext(Context);
 const ContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [dataRequest, setDataRequest] = useState([]);
-  const [selectedDateAB, setSelectedDateAB] = useState(dayjs().format('YYYY-MM-DD'));
+  const [selectedDateAB, setSelectedDateAB] = useState(
+    dayjs().format("YYYY-MM-DD")
+  );
   const [abData, setAbData] = useState([]);
-  const [abDataShowNo, setAbDataShowNo] = useState(""); 
+  const [abDataShowNo, setAbDataShowNo] = useState("");
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
   const [lastGameTotalBid, setLastGameTotalBid] = useState({
@@ -21,23 +23,26 @@ const ContextProvider = ({ children }) => {
     timestamp: null,
   });
   const [lastGameWinners, setLastGameWinners] = useState({
-    winners: [],  
+    winners: [],
     count: 0,
     timestamp: null,
   });
-  const [selectedDate, setSelectDate] = useState(dayjs().format('YYYY-MM-DD'));
-  const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState(dayjs().format('YYYY-MM-DD'));
+  const [selectedDate, setSelectDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState(
+    dayjs().format("YYYY-MM-DD")
+  );
   const [latestLastGameResult, setLatestLastGameResult] = useState("");
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const [games, setGames] = useState([]);
   const [allGames, setAllGames] = useState([]);
-  const [gamesDate, setGamesDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [gamesDate, setGamesDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [existingGames, setExistingGames] = useState([]);
   const [fetchAllCount, setFetchAllCount] = useState(0);
   const [gamesTotal, setGamesTotal] = useState(0);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { page, limit, total, changePage, changeLimit, changeTotal } = usePagination();
+  const { page, limit, total, changePage, changeLimit, changeTotal } =
+    usePagination();
 
   // Helper function to check authentication
   const checkAuth = () => {
@@ -60,7 +65,7 @@ const ContextProvider = ({ children }) => {
   // all bids api  ----------------------
   const allbids = async () => {
     if (!isAuthenticated) return;
-    
+
     setLoading(true);
     try {
       const {
@@ -106,7 +111,7 @@ const ContextProvider = ({ children }) => {
   //  winning users api ---------------------
   const lastWinner = async () => {
     if (!isAuthenticated) return;
-    
+
     setLoading(true);
     try {
       const {
@@ -187,7 +192,7 @@ const ContextProvider = ({ children }) => {
   // andar bahar winners  -------------------------
   const abWinner = async () => {
     if (!isAuthenticated) return;
-    
+
     setLoading(true);
     try {
       const {
@@ -213,7 +218,7 @@ const ContextProvider = ({ children }) => {
   // Games API call
   const fetchGames = async () => {
     if (!isAuthenticated) return;
-    
+
     setLoading(true);
     try {
       const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {
@@ -266,15 +271,10 @@ const ContextProvider = ({ children }) => {
 
   const fetchAllData = async () => {
     if (!isAuthenticated) return;
-    
+
     setLoading(true);
     try {
-      await Promise.all([
-        allbids(),
-        lastWinner(),
-        abWinner(),
-        fetchGames(),
-      ]);
+      await Promise.all([allbids(), lastWinner(), abWinner(), fetchGames()]);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -293,7 +293,7 @@ const ContextProvider = ({ children }) => {
     selectedDateWinningUsers,
     selectedDate,
     gamesDate,
-    isAuthenticated
+    isAuthenticated,
   ]);
 
   return (
