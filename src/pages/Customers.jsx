@@ -15,8 +15,6 @@ import CustomerDialog from "../component/CustomerDialog";
 import { BASE_URL } from "../costants";
 import TransactionModal from "../component/TransactionModal";
 
-
-
 const theme = createTheme({
   palette: {
     primary: { main: "#1976d2" },
@@ -72,16 +70,15 @@ const Customer = () => {
     }
   };
 
-    const openModal = (t,id) => {
+  const openModal = (t, id) => {
     setType(t);
     setOpen(true);
-    setCustomerId(id)
+    setCustomerId(id);
   };
-
 
   useEffect(() => {
     fetchCustomers();
-  }, [page, limit,open]);
+  }, [page, limit, open]);
 
   useEffect(() => {
     const filtered = customers.filter(
@@ -144,6 +141,11 @@ const Customer = () => {
   };
 
   const columns = [
+    {
+      field: "id",
+      headerName: "ID",
+      flex: 1,
+    },
     { field: "name", headerName: "Name", flex: 1 },
     {
       field: "mobile",
@@ -220,7 +222,7 @@ const Customer = () => {
             size="small"
             color="success"
             icon={<CurrencyRupeeIcon />}
-            onClick={() => openModal("credit",params.row.id)}
+            onClick={() => openModal("credit", params.row.id)}
             sx={{ cursor: "pointer" }}
           />
           <Chip
@@ -240,7 +242,6 @@ const Customer = () => {
             onClick={() => handleOpenDialog("commission", params.row.id)}
             sx={{ cursor: "pointer" }}
           />
-
         </Stack>
       ),
     },
@@ -316,10 +317,10 @@ const Customer = () => {
         open={dialogOpen}
         onClose={handleCloseDialog}
       />
-         <TransactionModal
-         setSnackbarSeverity={setSnackbarSeverity}
-         setSnackbarMessage={setSnackbarMessage}
-         setSnackbarOpen={setSnackbarOpen}
+      <TransactionModal
+        setSnackbarSeverity={setSnackbarSeverity}
+        setSnackbarMessage={setSnackbarMessage}
+        setSnackbarOpen={setSnackbarOpen}
         open={open}
         handleClose={() => setOpen(false)}
         type={type}

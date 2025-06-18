@@ -315,16 +315,6 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                             )
                                         },
                                         {
-                                            field: 'addMoneyBonus',
-                                            headerName: 'Bonus',
-                                            width: 100,
-                                            renderCell: (params) => (
-                                                <span style={{ color: params.value !== "NA" ? 'blue' : 'grey' }}>
-                                                    {params.value}
-                                                </span>
-                                            )
-                                        },
-                                        {
                                             field: 'referredId',
                                             headerName: 'Referred ID',
                                             width: 150,
@@ -391,7 +381,7 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
             open={open} 
             onClose={onClose} 
             fullWidth 
-            maxWidth={type === "walletStatement" || type === "fetchCustomerDetails" || type === "withdrawalHistory" ? "xl" : "sm"}
+            maxWidth={type === "walletStatement" || type === "fetchCustomerDetails" || type === "withdrawalHistory" || type === "commission" ? "xl" : "sm"}
         >
             <DialogTitle>
                 {type === 'bankDetails' ? 'Bank Details' : 
