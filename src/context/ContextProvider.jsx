@@ -31,7 +31,7 @@ const ContextProvider = ({ children }) => {
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const [games, setGames] = useState([]);
   const [allGames, setAllGames] = useState([]);
-  const [gamesDate, setGamesDate] = useState(dayjs());
+  const [gamesDate, setGamesDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [existingGames, setExistingGames] = useState([]);
   const [fetchAllCount, setFetchAllCount] = useState(0);
   const [gamesTotal, setGamesTotal] = useState(0);

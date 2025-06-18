@@ -96,7 +96,6 @@ const Games = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  
   // const fetchGames = async () => {
   //   setLoading(true);
   //   try {
@@ -133,7 +132,7 @@ const Games = () => {
   // useEffect(() => {
   //   fetchGames();
   // }, [page, limit]);
-  
+
   const handleStatusChange = async (id) => {
     setLoading(true);
     try {
@@ -523,13 +522,17 @@ const Games = () => {
             <Typography variant="h6" paddingX={1}>
               Start Date:
             </Typography>
-            <DemoContainer components={["DatePicker"]}>
-              <DatePicker
-                label="Basic date picker"
-                value={gamesDate}
-                onChange={handleDateChange}
-              />
-            </DemoContainer>
+            <TextField
+              label="Filter by Date"
+              type="date"
+              size="small"
+              key={gamesDate}
+              value={gamesDate || ""}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(e) => setGamesDate(e.target.value)}
+            />
           </Grid>
         </Grid>
         <div style={{ height: 450, width: "100%" }}>
