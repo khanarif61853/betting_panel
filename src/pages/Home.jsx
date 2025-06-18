@@ -216,7 +216,7 @@ const Home = () => {
       icon: (
         <MonetizationOnIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
       ),
-      onClick: () => navigate("/withdrawal-requests"),
+      onClick: () => navigate("/player-commision"),
     },
     {
       title: "Withdrawal Requests",

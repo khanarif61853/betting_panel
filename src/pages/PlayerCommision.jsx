@@ -56,7 +56,7 @@ import {
             <Box display="flex" alignItems="center" gap={1}>
               <EmojiEventsIcon color="primary" />
               <Typography variant="h5" fontWeight={600}>
-                Last Game Winners: {lastGameWinners.count}
+                Player Commision: {lastGameWinners.count}
               </Typography>
             </Box>
           </Box>
