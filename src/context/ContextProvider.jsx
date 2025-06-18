@@ -11,9 +11,9 @@ export const useContextProvider = () => useContext(Context);
 const ContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [dataRequest, setDataRequest] = useState([]);
-  const [selectedDateAB, setSelectedDateAB] = useState("");
+  const [selectedDateAB, setSelectedDateAB] = useState(dayjs().format('YYYY-MM-DD'));
   const [abData, setAbData] = useState([]);
-  const [abDataShowNo, setAbDataShowNo] = useState("");
+  const [abDataShowNo, setAbDataShowNo] = useState(""); 
   const [requests, setRequests] = useState([]);
   const [dashboardTotalBid, setDashboardTotalBid] = useState(0);
   const [lastGameTotalBid, setLastGameTotalBid] = useState({
@@ -21,12 +21,12 @@ const ContextProvider = ({ children }) => {
     timestamp: null,
   });
   const [lastGameWinners, setLastGameWinners] = useState({
-    winners: [],
+    winners: [],  
     count: 0,
     timestamp: null,
   });
-  const [selectedDate, setSelectDate] = useState("");
-  const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState("");
+  const [selectedDate, setSelectDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const [selectedDateWinningUsers, setSelectedDateWinningUsers] = useState(dayjs().format('YYYY-MM-DD'));
   const [latestLastGameResult, setLatestLastGameResult] = useState("");
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const [games, setGames] = useState([]);
@@ -306,6 +306,7 @@ const ContextProvider = ({ children }) => {
         lastGameTotalBid,
         setDataRequest,
         setSelectDate,
+        selectedDate,
         dashboardWinningUsers,
         setSelectedDateWinningUsers,
         selectedDateWinningUsers,
@@ -313,6 +314,7 @@ const ContextProvider = ({ children }) => {
         requests,
         abData,
         setSelectedDateAB,
+        selectedDateAB,
         abDataShowNo,
         latestLastGameResult,
         setLatestLastGameResult,

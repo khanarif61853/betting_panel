@@ -16,6 +16,7 @@ const TotalBid = () => {
     dataRequest,
     setSelectDate,
     dashboardTotalBid,
+    selectedDate,
   } = useContextProvider();
 
   const bidcolumns = [
@@ -65,6 +66,8 @@ const TotalBid = () => {
           label="Filter by Date"
           type="date"
           size="small"
+          key={selectedDate}
+          value={selectedDate || ''}
           InputLabelProps={{
             shrink: true,
           }}

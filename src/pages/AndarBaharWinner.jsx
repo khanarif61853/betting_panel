@@ -11,7 +11,7 @@ import { useContextProvider } from "../context/ContextProvider";
 import CasinoIcon from "@mui/icons-material/Casino";
 
 const AndarBaharWinner = () => {
-  const { abData, loading, setSelectedDateAB } = useContextProvider();
+  const { abData, loading, setSelectedDateAB, selectedDateAB } = useContextProvider();
   const theme = useTheme();
 
   const columns = [
@@ -92,6 +92,8 @@ const AndarBaharWinner = () => {
           label="Filter by Date"
           type="date"
           size="small"
+          key={selectedDateAB}
+          value={selectedDateAB || ''}
           InputLabelProps={{
             shrink: true,
           }}

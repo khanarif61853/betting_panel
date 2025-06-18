@@ -6,7 +6,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
 import { usePagination } from "../hooks/usePagination";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
@@ -14,13 +13,15 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 const WinningUsers = () => {
   const theme = useTheme();
-  const { page, limit, total, changePage, changeLimit } = usePagination();
+  const { limit, total, changePage, changeLimit } = usePagination();
   const {
     requests,
     loading,
     setSelectedDateWinningUsers,
     dashboardWinningUsers,
+    selectedDateWinningUsers,
   } = useContextProvider();
+
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -80,6 +81,7 @@ const WinningUsers = () => {
           label="Filter by Date"
           type="date"
           size="small"
+          value={selectedDateWinningUsers}
           InputLabelProps={{
             shrink: true,
           }}
