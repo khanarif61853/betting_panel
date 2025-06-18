@@ -13,7 +13,6 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  Switch,
   IconButton,
   Avatar,
   Dialog,
@@ -25,19 +24,13 @@ import {
   TextField,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import gamesSchema from "../schema/gamesSchema";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BASE_URL } from "../costants";
 import moment from "moment-timezone";
 import { usePagination } from "../hooks/usePagination";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useContextProvider } from "../context/ContextProvider";
 import PropTypes from "prop-types";
@@ -73,7 +66,7 @@ const theme = createTheme({
 });
 
 const Games = () => {
-  const [existingGames, setExistingGames] = useState([]);
+  const [existingGames] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -95,43 +88,6 @@ const Games = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
-  // const fetchGames = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axios.get(
-  //       `${BASE_URL}/api/web/retrieve/gamesName`,
-  //       {
-  //         headers: {
-  //           Authorization: localStorage.getItem("token"),
-  //           "ngrok-skip-browser-warning": true,
-  //         },
-  //         params: {
-  //           page,
-  //           limit
-  //         }
-  //       }
-  //     );
-  //     if (response.data) {
-  //       setExistingGames(response.data.data);
-  //     } else {
-  //       setError(response.data.message);
-  //     }
-  //   } catch (err) {
-  //     if (err.response) {
-  //       console.error("Error fetching data", err.response.data.message);
-  //       setError(err.response.data.message);
-  //     } else {
-  //       console.error("Error fetching data", err.message);
-  //       setError(err.message);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchGames();
-  // }, [page, limit]);
 
   const handleStatusChange = async (id) => {
     setLoading(true);
@@ -213,11 +169,6 @@ const Games = () => {
       setDeleteId(null);
     }
   };
-
-  // const handleOpenDialog = (id) => {
-  //   setDeleteId(id);
-  //   setOpenDialog(true);
-  // };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -525,7 +476,7 @@ const Games = () => {
             <TextField
               label="Filter by Date"
               type="date"
-              size="small"
+              size="small"  
               key={gamesDate}
               value={gamesDate || ""}
               InputLabelProps={{
@@ -570,7 +521,7 @@ const Games = () => {
       PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
-        finalBidNumber: PropTypes.string,
+        finalBidNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         resultDateTime: PropTypes.string,
       })
     ).isRequired,
