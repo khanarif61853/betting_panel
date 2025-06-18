@@ -184,7 +184,7 @@ const Customer = () => {
       field: "actions",
       headerName: "Actions",
       flex: 2,
-      minWidth: 350,
+      minWidth: 480,
       renderCell: (params) => (
         <Stack
           direction="row"
@@ -232,22 +232,15 @@ const Customer = () => {
             sx={{ cursor: "pointer" }}
           />
 
-          {/* <Chip
-            label="Withdraw"
+          <Chip
+            label="Commission"
             size="small"
             color="warning"
             icon={<HistoryIcon />}
-            onClick={() => handleOpenDialog("withdrawalHistory", params.row.id)}
+            onClick={() => handleOpenDialog("commission", params.row.id)}
             sx={{ cursor: "pointer" }}
-          /> */}
-          {/* <Chip
-            label="Bank"
-            size="small"
-            color="info"
-            icon={<AccountBalanceIcon />}
-            onClick={() => handleOpenDialog("bankDetails", params.row.id)}
-            sx={{ cursor: "pointer" }}
-          /> */}
+          />
+
         </Stack>
       ),
     },

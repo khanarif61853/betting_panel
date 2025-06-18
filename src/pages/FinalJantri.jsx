@@ -7,7 +7,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../costants";
@@ -22,7 +22,9 @@ const FinalJantri = () => {
   const [formattedRows, setFormattedRows] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [resultDate, setResultDate] = useState(new Date().toISOString().split('T')[0]);
+  const [resultDate, setResultDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [topMaxBids, setTopMaxBids] = useState([]);
   const [topMinBids, setTopMinBids] = useState([]);
   const [gameDetails, setGameDetails] = useState(null);
@@ -48,15 +50,18 @@ const FinalJantri = () => {
             },
           }
         );
-          setFormattedRows(response.data.formatted);
-          setGameDetails(response.data.gameDetails);
-          
-          const allBids = response.data.formatted.flatMap((item) => item.bids);
+        if (response?.data?.data) {
+          setFormattedRows(response?.data?.data);
+          setGameDetails(response?.data?.gameDetails);
+
+          const allBids = response?.data?.data?.flatMap(
+            (item) => item.bids || []
+          );
           const sortedBids = [...allBids].sort((a, b) => b.amount - a.amount);
-          
+
           //  max bids
           const maxBidsMap = new Map();
-          sortedBids.slice(0, 10).forEach(bid => {
+          sortedBids.slice(0, 10).forEach((bid) => {
             const existingBid = maxBidsMap.get(bid.number);
             if (existingBid) {
               existingBid.amount += bid.amount;
@@ -64,16 +69,20 @@ const FinalJantri = () => {
             } else {
               maxBidsMap.set(bid.number, {
                 ...bid,
-                amountMultiplied: bid.amount * 90
+                amountMultiplied: bid.amount * 90,
               });
             }
           });
-          const topMax = Array.from(maxBidsMap.values()).sort((a, b) => b.amount - a.amount);
-          
+          const topMax = Array.from(maxBidsMap.values()).sort(
+            (a, b) => b.amount - a.amount
+          );
+
           //  min bids
           const minBidsMap = new Map();
-          const sortedMinBids = [...allBids].sort((a, b) => a.amount - b.amount);
-          sortedMinBids.slice(0, 10).forEach(bid => {
+          const sortedMinBids = [...allBids].sort(
+            (a, b) => a.amount - b.amount
+          );
+          sortedMinBids.slice(0, 10).forEach((bid) => {
             const existingBid = minBidsMap.get(bid.number);
             if (existingBid) {
               existingBid.amount += bid.amount;
@@ -81,15 +90,17 @@ const FinalJantri = () => {
             } else {
               minBidsMap.set(bid.number, {
                 ...bid,
-                amountMultiplied: bid.amount * 90
+                amountMultiplied: bid.amount * 90,
               });
             }
           });
-          const topMin = Array.from(minBidsMap.values()).sort((a, b) => a.amount - b.amount);
-          
+          const topMin = Array.from(minBidsMap.values()).sort(
+            (a, b) => a.amount - b.amount
+          );
+
           setTopMaxBids(topMax);
           setTopMinBids(topMin);
-        
+        }
       } catch (error) {
         setError("Failed to fetch game data");
         console.error("Error fetching games:", error);
@@ -98,19 +109,18 @@ const FinalJantri = () => {
     fetchGames();
   }, [resultDate]);
 
-  const allBids = formattedRows.flatMap((item) => item.bids);
-  console.log(allBids);
+  const allBids = formattedRows?.flatMap((item) => item?.bids || []) || [];
   const bidMap = allBids.reduce((acc, bid) => {
     acc[bid.number] = (acc[bid.number] || 0) + bid.amount;
     return acc;
   }, {});
-   const totalAmount = allBids.reduce((sum, bid) => sum + bid.amount, 0);
+  const totalAmount = allBids.reduce((sum, bid) => sum + bid.amount, 0);
 
   const rows = Array.from({ length: 100 }, (_, i) => i);
 
   const formatDateTime = (dateTimeStr) => {
-    if (!dateTimeStr) return '';
-    return moment(dateTimeStr).format('DD MMM YYYY, hh:mm A');
+    if (!dateTimeStr) return "";
+    return moment(dateTimeStr).format("DD MMM YYYY, hh:mm A");
   };
 
   return (
@@ -132,36 +142,54 @@ const FinalJantri = () => {
       {gameDetails && (
         <Grid container spacing={2} sx={{ mt: 2, mb: 3 }}>
           <Grid item xs={12} md={4}>
-            <Box sx={{ 
-              p: 2, 
-              backgroundColor: '#f5f5f5', 
-              borderRadius: 1,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}>
-              <Typography variant="subtitle2" color="text.secondary">Start Time</Typography>
-              <Typography variant="h6">{formatDateTime(gameDetails.startTime)}</Typography>
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 1,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Typography variant="subtitle2" color="text.secondary">
+                Start Time
+              </Typography>
+              <Typography variant="h6">
+                {formatDateTime(gameDetails.startTime)}
+              </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Box sx={{ 
-              p: 2, 
-              backgroundColor: '#f5f5f5', 
-              borderRadius: 1,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}>
-              <Typography variant="subtitle2" color="text.secondary">End Time</Typography>
-              <Typography variant="h6">{formatDateTime(gameDetails.endTime)}</Typography>
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 1,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Typography variant="subtitle2" color="text.secondary">
+                End Time
+              </Typography>
+              <Typography variant="h6">
+                {formatDateTime(gameDetails.endTime)}
+              </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Box sx={{ 
-              p: 2, 
-              backgroundColor: '#f5f5f5', 
-              borderRadius: 1,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}>
-              <Typography variant="subtitle2" color="text.secondary">Result Time</Typography>
-              <Typography variant="h6">{formatDateTime(gameDetails.resultTime)}</Typography>
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 1,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Typography variant="subtitle2" color="text.secondary">
+                Result Time
+              </Typography>
+              <Typography variant="h6">
+                {formatDateTime(gameDetails.resultTime)}
+              </Typography>
             </Box>
           </Grid>
         </Grid>
@@ -179,8 +207,7 @@ const FinalJantri = () => {
               fontFamily={"Alegreya Sans SC, sans-serif"}
               fontWeight={500}
             >
-              Total collection:{" "}
-              {totalAmount}
+              Total collection: {totalAmount}
             </Typography>
           </Box>
         </Grid>
@@ -199,7 +226,9 @@ const FinalJantri = () => {
               </MenuItem>
               {topMaxBids.map((bid) => (
                 <MenuItem key={bid.number} value={bid.number}>
-                  {`Number: ${bid.number} | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
+                  {`Number: ${
+                    bid.number
+                  } | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
                 </MenuItem>
               ))}
             </Select>
@@ -220,7 +249,9 @@ const FinalJantri = () => {
               </MenuItem>
               {topMinBids.map((bid, index) => (
                 <MenuItem key={bid.number} value={bid.number}>
-                  {`${index + 1}. Number: ${bid.number} | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
+                  {`${index + 1}. Number: ${
+                    bid.number
+                  } | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
                 </MenuItem>
               ))}
             </Select>

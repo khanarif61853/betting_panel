@@ -21,7 +21,6 @@ import LastGameWinner from "../pages/LastGameWinner.jsx";
 import Allgames from "../pages/Allgames.jsx";
 import AddMoneyApprovedList from "../pages/AddMoneyApprovedList.jsx";
 import LastGameResult from "../pages/LastGameResult.jsx";
-import PlayerCommision from "../pages/PlayerCommision.jsx";
 
 const Routing = () => {
   return (
@@ -46,7 +45,7 @@ const Routing = () => {
               element={<WithdrawalApprovedList />}
             />
             <Route path="/last-game-winners" element={<LastGameWinner />} />
-            <Route path="/player-commision" element={<PlayerCommision />} />
+            {/* <Route path="/player-commision" element={<PlayerCommision />} /> */}
             <Route
               path="/withdrawal-requests"
               element={<WithdrawalRequests />}

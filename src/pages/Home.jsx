@@ -12,8 +12,9 @@ import AddCardIcon from "@mui/icons-material/AddCard";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useContextProvider } from "../context/ContextProvider";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import moment from "moment";
 
 const theme = createTheme({
   palette: {
@@ -46,13 +47,15 @@ const Home = () => {
     totalGames: "",
     totalUsers: "",
   });
-  const { 
-    dashboardTotalBid, 
-    abDataShowNo, 
+  const {
+    dashboardTotalBid,
+    abDataShowNo,
     dashboardWinningUsers,
     latestLastGameResult,
     lastGameTotalBid,
+    gamesTotal,
     lastGameWinners,
+    fetchAllCount,
   } = useContextProvider();
 
   const { page, limit } = usePagination();
@@ -60,7 +63,9 @@ const Home = () => {
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
-  const [totalAmount,setTotalAmount] = useState();
+  const [totalAmount, setTotalAmount] = useState("");
+  const [winAmount, setWinAmount] = useState();
+
   const navigate = useNavigate();
 
   // fetch data ---------------
@@ -86,7 +91,8 @@ const Home = () => {
       });
       const winValue = data?.jantriWin;
       const totalValue = data?.jantriTotalAmount;
-      setTotalAmount(totalAmount);
+      setTotalAmount(totalValue);
+      setWinAmount(winValue);
       let profitValue;
       let lossValue;
       if (winValue > 0) {
@@ -136,9 +142,13 @@ const Home = () => {
     },
     {
       title: "Last Game Result",
-      value: (latestLastGameResult ? `${latestLastGameResult.finalBidNumber} (${latestLastGameResult.name})` : "N/A"),
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
-      onClick:()=> navigate('/last-game-result')
+      value: latestLastGameResult
+        ? `${latestLastGameResult.finalBidNumber} (${latestLastGameResult.name})`
+        : "N/A",
+      icon: (
+        <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
+      onClick: () => navigate("/last-game-result"),
     },
     {
       title: "Last Game Total Bid",
@@ -147,7 +157,10 @@ const Home = () => {
           <Typography variant="h4">{lastGameTotalBid.amount}</Typography>
         </Box>
       ),
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      icon: (
+        <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
+      // onClick: () => navigate("/totalbid"),
     },
     {
       title: "Last Game Winners",
@@ -156,7 +169,9 @@ const Home = () => {
           <Typography variant="h4">{lastGameWinners.count}</Typography>
         </Box>
       ),
-      icon: <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
+      icon: (
+        <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
+      ),
       onClick: () => navigate("/last-game-winners"),
     },
     {
@@ -191,15 +206,22 @@ const Home = () => {
           </Typography>
         </Box>
       ),
+      custom: (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography color="primary">
+            {`Total Amt : ${totalAmount}`}
+          </Typography>
+          <Typography color="primary">{`Win Amt : ${winAmount}`}</Typography>
+        </Box>
+      ),
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
     },
-    // {
-    //   title: "Players Commision",
-    //   icon: (
-    //     <MonetizationOnIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
-    //   ),
-    //   onClick: () => navigate("/player-commision"),
-    // },
     {
       title: "Withdrawal Requests",
       icon: (
@@ -249,6 +271,11 @@ const Home = () => {
                     <Typography variant="h4">{item.value}</Typography>
                   )
                 )}
+                {loading ? (
+                  <Skeleton variant="text" width="60%" height={50} />
+                ) : item.custom ? (
+                  item.custom
+                ) : null}
               </Paper>
             </Grid>
           ))}

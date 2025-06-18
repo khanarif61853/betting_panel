@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, DialogContentText, Box, Typography, Chip } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -33,8 +33,8 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                 case 'fetchCustomerDetails':
                     endpoint = `${BASE_URL}/api/web/retrieve/bid-history`;
                     break;
-                case 'withdrawalHistory':
-                    endpoint = `${BASE_URL}/api/web/retrieve/withdrawal-history`;
+                case 'commission':
+                    endpoint = `${BASE_URL}/api/web/retrieve/statement`;
                     break;
                 default:
                     throw new Error(`Unknown type: ${type}`);
@@ -72,100 +72,31 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                 changeTotal(totalItems);
             } else if (type === 'bankDetails') {
                 setData(response?.data?.data);
-            } else if (type === 'withdrawalHistory') {
-                const withdrawalData = response?.data?.data?.data || [];
-                const totalItems = response?.data?.data?.count || 0;
+            } else if (type === 'commission') {
+                const withdrawalData = response?.data?.data?.transactions || [];
                 
-                if (withdrawalData.length === 0) {
+                const referralTransactions = withdrawalData.filter(item => 
+                    item.type === 'credit' && 
+                    item.description && 
+                    item.description.toLowerCase().includes('referral')
+                );
+                
+                if (referralTransactions.length === 0) {
                     setData([]);
                 } else {
-                    const formattedData = withdrawalData.map((item) => ({
+                    const formattedData = referralTransactions.map((item) => ({
                         id: item.id,
-                        amount: parseFloat(item.amount).toFixed(2),
-                        status: item.status,
-                        upiId: item.upiId || 'N/A',
-                        customerName: item.Customer?.name || 'N/A',
-                        customerMobile: item.Customer?.mobile || 'N/A',
-                        createdAt: item.createdAt,
-                        updatedAt: item.updatedAt
+                        type: item.type,
+                        description: item.description || 'N/A',
+                        walletAmount: item.walletAmount || 0,
+                        addMoneyBonus: item.addMoneyBonus ? parseFloat(item.addMoneyBonus) : "NA",
+                        referredId: item.referredId || 'N/A',
+                        createdAt: moment(item.createdAt).format("DD/MM/YYYY"),
+                        updatedAt: moment(item.updatedAt).format("DD/MM/YYYY")
                     }));
                     setData(formattedData);
                 }
-                changeTotal(totalItems);
-            } else if (type === 'fetchCustomerDetails') {
-                const gameData = response?.data?.data || [];
-                console.log('Game Data:', gameData); // For debugging
-                const formattedData = [];
-                
-                // Process each game's data
-                gameData.forEach((item) => {
-                    // Process Jantri Bids
-                    if (item.jantriBids && item.jantriBids.length > 0) {
-                        formattedData.push({
-                            id: `${item.gameId}-jantri`,
-                            gameName: item.Game.name,
-                            gameType: 'Jantri',
-                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
-                            finalBidNumber: item.Game.finalBidNumber,
-                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
-                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
-                            bidDetails: item.jantriBids.map(bid => ({
-                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
-                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
-                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
-                                bidAmount: bid.bidAmount,
-                                winningAmount: bid.winningAmount,
-                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
-                            }))
-                        });
-                    }
-
-                    // Process Cross Bids
-                    if (item.crossBids && item.crossBids.length > 0) {
-                        formattedData.push({
-                            id: `${item.gameId}-cross`,
-                            gameName: item.Game.name,
-                            gameType: 'Cross',
-                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
-                            finalBidNumber: item.Game.finalBidNumber,
-                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
-                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
-                            bidDetails: item.crossBids.map(bid => ({
-                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
-                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
-                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
-                                bidAmount: bid.bidAmount,
-                                winningAmount: bid.winningAmount,
-                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
-                            }))
-                        });
-                    }
-
-                    // Process Openplay Bids
-                    if (item.openplayBids && item.openplayBids.length > 0) {
-                        formattedData.push({
-                            id: `${item.gameId}-openplay`,
-                            gameName: item.Game.name,
-                            gameType: 'Openplay',
-                            totalAmountSpentOnBid: item.totalAmountSpentOnBid,
-                            finalBidNumber: item.Game.finalBidNumber,
-                            startDateTime: moment(item.Game.startDateTime).format("DD/MM/YYYY HH:mm"),
-                            endDateTime: moment(item.Game.endDateTime).format("DD/MM/YYYY HH:mm"),
-                            bidDetails: item.openplayBids.map(bid => ({
-                                bidNumbers: JSON.parse(bid.bidNumbers || '[]'),
-                                insideNumbers: JSON.parse(bid.insideNumbers || '[]'),
-                                outsideNumbers: JSON.parse(bid.outsideNumbers || '[]'),
-                                bidAmount: bid.bidAmount,
-                                winningAmount: bid.winningAmount,
-                                createdAt: moment(bid.createdAt).format("DD/MM/YYYY HH:mm")
-                            }))
-                        });
-                    }
-                });
-
-                console.log('Formatted Data:', formattedData); // For debugging
-                setData(formattedData);
-                changeTotal(formattedData.length);
+                changeTotal(referralTransactions.length);
             }
 
         } catch (error) {
@@ -294,12 +225,6 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                         width: 150
                                     },
                                     {
-                                        field: 'gameId',
-                                        headerName: 'Game ID',
-                                        valueFormatter: (value) => value ? value : "NA",
-                                        width: 150
-                                    },
-                                    {
                                         field: 'createdAt',
                                         headerName: 'Date',
                                         width: 200
@@ -354,7 +279,7 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                     </>
                 );
 
-            case 'withdrawalHistory':
+            case 'commission':
                 return (
                     <>
                         {data.length > 0 ? (
@@ -363,9 +288,26 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                     rows={data}
                                     columns={[
                                         {
-                                            field: 'amount',
-                                            headerName: 'Amount',
-                                            width: 120,
+                                            field: 'type',
+                                            headerName: 'Transaction Type',
+                                            width: 150,
+                                            renderCell: (params) => (
+                                                <Chip
+                                                    label={params.value}
+                                                    color="success"
+                                                    variant="filled"
+                                                />
+                                            )
+                                        },
+                                        {
+                                            field: 'description',
+                                            headerName: 'Description',
+                                            width: 200,
+                                        },
+                                        {
+                                            field: 'walletAmount',
+                                            headerName: 'Commission Amount',
+                                            width: 150,
                                             renderCell: (params) => (
                                                 <strong style={{ color: 'green' }}>
                                                     ₹{params.value}
@@ -373,47 +315,26 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                             )
                                         },
                                         {
-                                            field: 'upiId',
-                                            headerName: 'UPI ID',
-                                            width: 200,
-                                        },
-                                        {
-                                            field: 'customerName',
-                                            headerName: 'Name',
-                                            width: 150,
-                                        },
-                                        {
-                                            field: 'customerMobile',
-                                            headerName: 'Mobile',
-                                            width: 150,
-                                        },
-                                        {
-                                            field: 'status',
-                                            headerName: 'Status',
-                                            width: 130,
+                                            field: 'addMoneyBonus',
+                                            headerName: 'Bonus',
+                                            width: 100,
                                             renderCell: (params) => (
-                                                <Chip
-                                                    label={params.value}
-                                                    color={params.value === 'Completed' ? 'success' : 
-                                                           params.value === 'Pending' ? 'warning' : 'error'}
-                                                    variant="filled"
-                                                />
+                                                <span style={{ color: params.value !== "NA" ? 'blue' : 'grey' }}>
+                                                    {params.value}
+                                                </span>
                                             )
                                         },
                                         {
-                                            field: 'createdAt',
-                                            headerName: 'Requested On',
-                                            width: 180,
-                                            valueFormatter: (params) => 
-                                                moment(params.value).format("DD/MM/YYYY HH:mm")
+                                            field: 'referredId',
+                                            headerName: 'Referred ID',
+                                            width: 150,
+                                            valueFormatter: (value) => value || "N/A"
                                         },
                                         {
-                                            field: 'updatedAt',
-                                            headerName: 'Last Updated',
-                                            width: 180,
-                                            valueFormatter: (params) => 
-                                                moment(params.value).format("DD/MM/YYYY HH:mm")
-                                        }
+                                            field: 'createdAt',
+                                            headerName: 'Date',
+                                            width: 150
+                                        },
                                     ]}
                                     initialState={{
                                         pagination: {
@@ -423,6 +344,7 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                     paginationMode="server"
                                     rowCount={total}
                                     pageSize={limit}
+                                    checkboxSelection
                                     components={{ Toolbar: GridToolbar }}
                                     onPaginationModelChange={(pagination) => {
                                         const { pageSize, page } = pagination;
@@ -441,133 +363,24 @@ const CustomerDialog = ({ type, customerId, open, onClose }) => {
                                         '& .MuiDataGrid-columnHeaders': {
                                             backgroundColor: '#f5f5f5',
                                             borderBottom: '2px solid #ddd',
-                                        }
+                                        },
                                     }}
                                 />
                             </Box>
                         ) : (
                             <Box p={3} textAlign="center">
                                 <Typography variant="h6" color="textSecondary">
-                                    No Withdrawal History Found
+                                    No Commission History Found
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
-                                    This customer hasn't made any withdrawal requests yet.
+                                    This customer hasn&apos;t earned any referral commission.
                                 </Typography>
                             </Box>
                         )}
                     </>
                 );
 
-            case 'fetchCustomerDetails':
-                return (
-                    <>
-                        {data.length > 0 ? (
-                            <Box style={{ height: 450, width: '100%', overflow: 'auto' }} p={2}>
-                                <DataGrid
-                                    rows={data}
-                                    columns={[
-                                        {
-                                            field: 'gameName',
-                                            headerName: 'Game Name',
-                                            width: 120
-                                        },
-                                        {
-                                            field: 'gameType',
-                                            headerName: 'Game Type',
-                                            width: 100
-                                        },
-                                        {
-                                            field: 'startDateTime',
-                                            headerName: 'Start Time',
-                                            width: 160
-                                        },
-                                        {
-                                            field: 'endDateTime',
-                                            headerName: 'End Time',
-                                            width: 160
-                                        },
-                                        {
-                                            field: 'totalAmountSpentOnBid',
-                                            headerName: 'Amount Spent',
-                                            width: 120,
-                                            renderCell: (params) => (
-                                                <strong style={{ color: params.value < 0 ? 'red' : 'green' }}>
-                                                    {Math.abs(params.value)}
-                                                </strong>
-                                            )
-                                        },
-                                        {
-                                            field: 'finalBidNumber',
-                                            headerName: 'Result',
-                                            width: 100,
-                                            renderCell: (params) => (
-                                                <strong>{params.value || 'Pending'}</strong>
-                                            )
-                                        },
-                                        {
-                                            field: 'bidDetails',
-                                            headerName: 'Bid Details',
-                                            width: 400,
-                                            renderCell: (params) => (
-                                                <Box>
-                                                    {params.value.map((bid, index) => (
-                                                        <Box key={index} sx={{ mb: 1, p: 1, border: '1px solid #eee', borderRadius: 1 }}>
-                                                            {bid.bidNumbers.length > 0 && (
-                                                                <Typography variant="body2">
-                                                                    <strong>Numbers:</strong> {bid.bidNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
-                                                                </Typography>
-                                                            )}
-                                                            {bid.insideNumbers.length > 0 && (
-                                                                <Typography variant="body2">
-                                                                    <strong>Inside:</strong> {bid.insideNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
-                                                                </Typography>
-                                                            )}
-                                                            {bid.outsideNumbers.length > 0 && (
-                                                                <Typography variant="body2">
-                                                                    <strong>Outside:</strong> {bid.outsideNumbers.map(n => `${n.number}(₹${n.amount})`).join(', ')}
-                                                                </Typography>
-                                                            )}
-                                                            <Typography variant="body2">
-                                                                <strong>Bid:</strong> ₹{bid.bidAmount},
-                                                                <strong> Win:</strong> {bid.winningAmount ? `₹${bid.winningAmount}` : 'N/A'}
-                                                            </Typography>
-                                                            <Typography variant="caption" color="textSecondary">
-                                                                {bid.createdAt}
-                                                            </Typography>
-                                                        </Box>
-                                                    ))}
-                                                </Box>
-                                            )
-                                        }
-                                    ]}
-                                    pageSize={limit}
-                                    components={{ Toolbar: GridToolbar }}
-                                    disableRowSelectionOnClick
-                                    loading={loading}
-                                    sx={{
-                                        '& .MuiDataGrid-cell': {
-                                            borderBottom: '1px solid #ddd',
-                                        },
-                                        '& .MuiDataGrid-columnHeaders': {
-                                            backgroundColor: '#f5f5f5',
-                                            borderBottom: '2px solid #ddd',
-                                        }
-                                    }}
-                                />
-                            </Box>
-                        ) : (
-                            <Box p={3} textAlign="center">
-                                <Typography variant="h6" color="textSecondary">
-                                    No Game History Found
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    This customer hasn't played any games yet.
-                                </Typography>
-                            </Box>
-                        )}
-                    </>
-                );
-
+            
             default:
                 return null;
         }
