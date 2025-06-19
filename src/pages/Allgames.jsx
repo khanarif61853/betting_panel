@@ -76,7 +76,7 @@ const theme = createTheme({
 });
 
 const Allgames = () => {
-  const [existingGames, setExistingGames] = useState([]);
+  const [existingGames, setExistingGames] = useState({ games: [], total: 0 });
   const [openAddDialog1, setOpenAddDialog1] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
