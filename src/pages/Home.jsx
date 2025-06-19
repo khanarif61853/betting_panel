@@ -116,7 +116,6 @@ const Home = () => {
   useEffect(() => {
     fetchData();
     profitLoss();
-
   }, [page, limit, selectedDate]);
 
   const dashboardItems = [

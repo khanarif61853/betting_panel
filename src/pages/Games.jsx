@@ -34,6 +34,7 @@ import { usePagination } from "../hooks/usePagination";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useContextProvider } from "../context/ContextProvider";
 import PropTypes from "prop-types";
+import dayjs from "dayjs";
 
 const theme = createTheme({
   palette: {
@@ -82,14 +83,18 @@ const Games = () => {
     setGamesDate,
     gamesDate,
     latestLastGameResult,
-    setAllApiUnMount,
-    allApiUnMount,
   } = useContextProvider();
 
   const navigate = useNavigate();
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  useEffect(() => {
+    return () => {
+      setGamesDate(dayjs().format("YYYY-MM-DD")); 
+    };
+  }, []);
 
   const handleStatusChange = async (id) => {
     setLoading(true);
