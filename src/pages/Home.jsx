@@ -13,7 +13,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { useContextProvider } from "../context/ContextProvider";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import moment from "moment";
 
 const theme = createTheme({
@@ -73,7 +73,7 @@ const Home = () => {
     const {
       data: { data },
     } = await axios.get(`${BASE_URL}/api/web/retrieve/dashboard`, {
-      headers: localStorage.getItem("token"),
+      headers: { Authorization: localStorage.getItem("token") },
       params: { page: page + 1, limit },
     });
     setDashboardData(data);
