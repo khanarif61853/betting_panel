@@ -295,7 +295,6 @@ const ContextProvider = ({ children }) => {
     selectedDate,
     gamesDate,
     allApiUnMount,  
-    isAuthenticated,
   ]);
 
   return (
@@ -333,8 +332,6 @@ const ContextProvider = ({ children }) => {
         fetchAllCount,
         triggerDataFetch,
         isAuthenticated,
-        setAllApiUnMount,
-        allApiUnMount
       }}
     >
       {children}

@@ -423,7 +423,7 @@ const Games = () => {
         {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
         <ArrowBackIcon
           style={{ cursor: "pointer" }}
-          onClick={() => (navigate("/home"), setAllApiUnMount(!allApiUnMount))}
+          onClick={() => navigate("/home")}
         />
         <Grid
           container
