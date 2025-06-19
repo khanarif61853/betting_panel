@@ -285,7 +285,7 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchAllData();
-    }
+    } 
   }, [
     page,
     limit,

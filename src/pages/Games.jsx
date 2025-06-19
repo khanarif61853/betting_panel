@@ -27,7 +27,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import gamesSchema from "../schema/gamesSchema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BASE_URL } from "../costants";
 import moment from "moment-timezone";
 import { usePagination } from "../hooks/usePagination";
@@ -86,6 +86,10 @@ const Games = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    return () => console.log("called :");
+  }, []);
+  
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
@@ -476,7 +480,7 @@ const Games = () => {
             <TextField
               label="Filter by Date"
               type="date"
-              size="small"  
+              size="small"
               key={gamesDate}
               value={gamesDate || ""}
               InputLabelProps={{
@@ -521,7 +525,10 @@ const Games = () => {
       PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
-        finalBidNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        finalBidNumber: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.number,
+        ]),
         resultDateTime: PropTypes.string,
       })
     ).isRequired,
