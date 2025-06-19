@@ -41,6 +41,7 @@ const ContextProvider = ({ children }) => {
   const [gamesTotal, setGamesTotal] = useState(0);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [allApiUnMount,setAllApiUnMount] = useState(false)
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
 
@@ -293,6 +294,7 @@ const ContextProvider = ({ children }) => {
     selectedDateWinningUsers,
     selectedDate,
     gamesDate,
+    allApiUnMount,  
     isAuthenticated,
   ]);
 
@@ -331,6 +333,8 @@ const ContextProvider = ({ children }) => {
         fetchAllCount,
         triggerDataFetch,
         isAuthenticated,
+        setAllApiUnMount,
+        allApiUnMount
       }}
     >
       {children}

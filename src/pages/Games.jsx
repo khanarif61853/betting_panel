@@ -82,14 +82,12 @@ const Games = () => {
     setGamesDate,
     gamesDate,
     latestLastGameResult,
+    setAllApiUnMount,
+    allApiUnMount,
   } = useContextProvider();
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    return () => console.log("called :");
-  }, []);
-  
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
@@ -425,9 +423,7 @@ const Games = () => {
         {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
         <ArrowBackIcon
           style={{ cursor: "pointer" }}
-          onClick={() => {
-            navigate("/home");
-          }}
+          onClick={() => (navigate("/home"), setAllApiUnMount(!allApiUnMount))}
         />
         <Grid
           container
