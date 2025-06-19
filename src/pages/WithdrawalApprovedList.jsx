@@ -94,7 +94,6 @@ const WithdrawalApprovedList = () => {
           },
         }
       );
-      console.log(response.data.data.request, "request");
       setRequests(response.data.data.requests);
       changeTotal(response.data.data.count);
       setSnackbarSeverity("success");

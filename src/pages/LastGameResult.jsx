@@ -6,8 +6,6 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 const LastGameResult = () => {
   const theme = useTheme();
   const { games, loading } = useContextProvider();
-  console.log(games, "---games");
-//   console.log(latestLastGameResult, "---latestLastGameResult");
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "Game", flex: 1 },
