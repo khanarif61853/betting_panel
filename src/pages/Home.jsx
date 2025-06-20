@@ -53,15 +53,25 @@ const Home = () => {
     latestLastGameResult,
     lastGameTotalBid,
     lastGameWinners,
+    selectedDateAB,
+    selectedDate,
+    selectedDateWinningUsers,
   } = useContextProvider();
 
+  console.log(
+    selectedDate,
+    selectedDateAB,
+    "---selectedDateAB",
+    selectedDateWinningUsers
+  );
+
   const { page, limit } = usePagination();
-  const [selectedDate] = useState("");
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
   const [loading, setLoading] = useState(true);
   const [totalAmount, setTotalAmount] = useState("");
   const [winAmount, setWinAmount] = useState();
+  const [todayDate, setTodayDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const navigate = useNavigate();
 
@@ -162,7 +172,11 @@ const Home = () => {
       title: "Last Game Winners",
       customContent: (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography variant="h4">{lastGameWinners.count}</Typography>
+          <Typography variant="h4">
+            {selectedDate == dayjs().format("YYYY-MM-DD")
+              ? (lastGameWinners.count || 0)
+              : 0}
+          </Typography>
         </Box>
       ),
       icon: (
@@ -173,8 +187,8 @@ const Home = () => {
     {
       title: "Winning Users",
       value:
-        dashboardWinningUsers === dayjs().format("YYYY-MM-DD")
-          ? dashboardWinningUsers
+        selectedDateWinningUsers === dayjs().format("YYYY-MM-DD")
+          ? (dashboardWinningUsers || 0)
           : 0,
       icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/winning-users"),
@@ -182,15 +196,16 @@ const Home = () => {
     {
       title: "Total Bid",
       value:
-        dashboardTotalBid === dayjs().format("YYYY-MM-DD")
-          ? dashboardTotalBid
+        selectedDate === dayjs().format("YYYY-MM-DD")
+          ? dashboardTotalBid || 0
           : 0,
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/totalbid"),
     },
     {
       title: "Andar Bahar Winners",
-      value: abDataShowNo,
+      value:
+        selectedDateAB === dayjs().format("YYYY-MM-DD") ? abDataShowNo || 0 : 0,
       icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/andar-bahar-winner"),
     },

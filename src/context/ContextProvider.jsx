@@ -175,7 +175,7 @@ const ContextProvider = ({ children }) => {
 
         setLastGameWinners({
           winners: latestWinners,
-          count: latestWinners.length,
+          count:latestWinners.length,
           timestamp: latestTimestamp,
         });
       }
