@@ -127,7 +127,7 @@ const AndarBaharWinner = () => {
             "& .MuiDataGrid-row:nth-of-type(odd)": {
               backgroundColor: "#f3f6f9",
             },
-              height:450
+              height:550
           }}
         >
           <DataGrid

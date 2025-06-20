@@ -294,6 +294,7 @@ const ContextProvider = ({ children }) => {
     selectedDateWinningUsers,
     selectedDate,
     gamesDate,
+    
   ]);
 
   return (

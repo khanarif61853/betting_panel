@@ -58,12 +58,6 @@ const Home = () => {
     selectedDateWinningUsers,
   } = useContextProvider();
 
-  console.log(
-    selectedDate,
-    selectedDateAB,
-    "---selectedDateAB",
-    selectedDateWinningUsers
-  );
 
   const { page, limit } = usePagination();
   const [profitValue, setProfitValue] = useState();
@@ -173,7 +167,7 @@ const Home = () => {
       customContent: (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Typography variant="h4">
-            {selectedDate == dayjs().format("YYYY-MM-DD")
+            {selectedDateWinningUsers == dayjs().format("YYYY-MM-DD")
               ? (lastGameWinners.count || 0)
               : 0}
           </Typography>
