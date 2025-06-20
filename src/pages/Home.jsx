@@ -54,12 +54,7 @@ const Home = () => {
     dashboardWinningUsers,
     latestLastGameResult,
     lastGameTotalBid,
-    gamesTotal,
     lastGameWinners,
-    fetchAllCount,
-    setLatestLastGameResult,
-    fetchGames,
-    setGamesDate,
   } = useContextProvider();
 
   const { page, limit } = usePagination();
@@ -72,12 +67,6 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    return () => {
-      setGamesDate(dayjs().format("YYYY-MM-DD"));
-      fetchGames();
-    };
-  }, []);
   // fetch data ---------------
   const fetchData = async () => {
     const {

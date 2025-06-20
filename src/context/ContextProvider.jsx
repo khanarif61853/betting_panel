@@ -253,6 +253,7 @@ const ContextProvider = ({ children }) => {
 
       for (const gameData of gamesData) {
         if (gameData.finalBidNumber) {
+          if(gamesDate == dayjs().format("YYYY-MM-DD"))
           setLatestLastGameResult(gameData);
           break;
         }
