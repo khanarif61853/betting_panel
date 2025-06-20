@@ -9,6 +9,7 @@ const App = () => {
     (response) => response,
     (error) => {  
       if (error.response && error.response.status === 401) {
+        localStorage.removeItem("token")
         window.location.href = "/sign-in";
       }
       return Promise.reject(error);
