@@ -301,7 +301,6 @@ const Customer = () => {
               changeLimit(model.pageSize);
             }}
             loading={loading}
-            checkboxSelection
             disableSelectionOnClick
             disableRowSelectionOnClick
           />

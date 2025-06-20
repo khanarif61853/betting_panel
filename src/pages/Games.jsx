@@ -500,7 +500,6 @@ const Games = () => {
             paginationMode="server"
             rowCount={gamesTotal}
             pageSize={limit}
-            checkboxSelection
             onPaginationModelChange={(value) => {
               if (value.pageSize !== limit) {
                 changeLimit(value.pageSize);
