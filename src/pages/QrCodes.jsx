@@ -17,6 +17,8 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { BASE_URL } from "../costants";
 import upiqr from "upiqr";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object({
   platform: Yup.string().required("Platform is required"),
@@ -31,6 +33,7 @@ const QrCodes = () => {
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   const fetchCodes = async () => {
     setLoading(true);
@@ -187,6 +190,10 @@ const QrCodes = () => {
       <Typography variant="h4" textAlign="center" mb={3}>
         QR Code Generator
       </Typography>
+      <ArrowBackIcon
+        style={{ cursor: "pointer", marginBottom: 16 }}
+        onClick={() => navigate("/home")}
+      />
       <Box textAlign="center" mb={3}>
         <Button
           variant="contained"

@@ -13,6 +13,8 @@ import { usePagination } from "../hooks/usePagination";
 import CustomSnackbar from "../component/CustomSnackbar";
 import CustomerDialog from "../component/CustomerDialog";
 import { BASE_URL } from "../costants";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 import TransactionModal from "../component/TransactionModal";
 
 const theme = createTheme({
@@ -44,6 +46,7 @@ const Customer = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const navigate = useNavigate();
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -257,6 +260,10 @@ const Customer = () => {
         <Typography variant="h4" my={2} textAlign="center" fontWeight="bold">
           All Players
         </Typography>
+        <ArrowBackIcon
+          style={{ cursor: "pointer", marginBottom: 16 }}
+          onClick={() => navigate("/home")}
+        />
         <Box
           display="flex"
           alignItems="center"

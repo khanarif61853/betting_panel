@@ -8,6 +8,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import moment from 'moment';
 import CustomSnackbar from '../component/CustomSnackbar'; // Import the Snackbar component
 import { BASE_URL } from '../costants';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -57,7 +59,7 @@ const WithdrawalRequest = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchRequests();
   }, [page, limit]);
@@ -222,6 +224,10 @@ const WithdrawalRequest = () => {
   return (
     <ThemeProvider theme={theme}>
       <Typography variant={"h4"} my={2} textAlign={"center"} fontWeight={"bold"}>Withdrawal requests</Typography>
+      <ArrowBackIcon
+        style={{ cursor: "pointer", marginBottom: 16 }}
+        onClick={() => navigate("/home")}
+      />
       <Box style={{ height: 450, width: '100%' }} p={2}>
         <DataGrid
           rows={rows}
