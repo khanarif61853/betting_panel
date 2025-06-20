@@ -6,7 +6,6 @@ import Home from "../pages/Home";
 import Header from "../component/Header";
 import Games from "../pages/Games";
 import Game from "../pages/Game";
-import Profile from "../pages/Profile";
 import QrCodes from "../pages/QrCodes";
 import WithdrawalRequests from "../pages/WithdrawalRequests";
 import Customers from "../pages/Customers";
@@ -38,7 +37,6 @@ const Routing = () => {
             <Route path="/game" element={<Game />} />
             <Route path="/all-games" element={<Allgames />} />
             <Route path="/final-jantri" element={<FinalJantri />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="/andar-bahar-winner" element={<AndarBaharWinner />} />
             <Route
               path="/withdrawal-approved"
