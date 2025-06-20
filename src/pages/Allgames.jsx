@@ -4,13 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import CustomSnackbar from "../component/CustomSnackbar";
 import {
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Chip,
   Grid,
-  Typography,
   Fab,
 } from "@mui/material";
 import {
@@ -36,13 +30,10 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../costants";
 import moment from "moment-timezone";
 import { usePagination } from "../hooks/usePagination";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useContextProvider } from "../context/ContextProvider";
 import PropTypes from "prop-types";
 
 const theme = createTheme({
@@ -218,21 +209,6 @@ const Allgames = () => {
     }
   };
 
-  // const handleCloseSnackbar = () => {
-  //   setError(null);
-  //   setSuccess(null);
-  //   setSnackbarOpen(false);
-  // };
-
-  // const showSnackbar = (message, severity) => {
-  //   if (severity === "error") {
-  //     setError(message);
-  //   } else {
-  //     setSuccess(message);
-  //   }
-  //   setSnackbarSeverity(severity);
-  //   setSnackbarOpen(true);
-  // };
 
   const handleEdit = (id) => {
     const gameToEdit = existingGames?.games?.find((row) => row.id === id);

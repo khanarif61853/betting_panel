@@ -84,7 +84,6 @@ const AddMoneyApprovedList = () => {
           },
         }
       );
-      //   console.log(response.data.data);
       setRequests(response.data.data.payment);
       changeTotal(response.data.data.count);
       setSnackbarSeverity("success");

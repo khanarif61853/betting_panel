@@ -171,7 +171,6 @@ const WithdrawalApprovedList = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <Typography variant={"h4"} my={2} textAlign={"center"} fontWeight={"bold"}>Withdrawal Approved List</Typography> */}
       <Box
         sx={{
           display: "flex",

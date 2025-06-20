@@ -46,7 +46,7 @@ const theme = createTheme({
           "& .MuiDataGrid-cell": {
             display: "flex",
             alignItems: "center",
-            whiteSpace: "pre-line", // Maintain line breaks in text
+            whiteSpace: "pre-line", 
           },
         },
       },
@@ -138,13 +138,7 @@ const AddMoney = () => {
     setOpen(false);
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
+
 
   const handleBlur = () => {
     const newErrors = {};
@@ -224,9 +218,6 @@ const AddMoney = () => {
   ];
 
   const rows = requests?.map((request) => {
-    // console.log(request.screenshot,'re------')
-    // console.log(`${BASE_URL}/img/payments/${request.screenshot}`)
-    // console.log(first)
     let accountDetails = "";
     if (request.accountDetails) {
       try {

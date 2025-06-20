@@ -285,9 +285,6 @@ const Customer = () => {
             value={nameSearch}
             onChange={(e) => setNameSearch(e.target.value)}
           />
-          {/* <Button variant="contained" color="primary" onClick={fetchCustomers}>
-                        Search
-                    </Button> */}
         </Box>
         <Box style={{ height: 450, width: "100%", overflow: "auto" }} p={2}>
           <DataGrid

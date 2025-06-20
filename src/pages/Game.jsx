@@ -4,12 +4,9 @@ import {
     Typography,
     useTheme,
     useMediaQuery,
-    Dialog,
     Grid,
     Select,
     MenuItem,
-    Tooltip,
-    TextField
 } from '@mui/material';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import axios from 'axios';
@@ -78,7 +75,6 @@ const Game = () => {
                         'ngrok-skip-browser-warning': true,
                     },
                 });
-                // console.log(response.data.data,"---response");
                 if (response.data.type === "success") {
                     let {bids, inside, outside, finalBidNumber, collectedAmount: amountCollection} = response.data.data;
                     if (finalBidNumber == 0) {
@@ -308,39 +304,6 @@ const Game = () => {
                         </Select>
                     </Box>
                 </Grid>
-                {/* <Grid item >
-                    <Box mt={2}>
-                        <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
-                            Select Start Date
-                        </Typography>
-                        <TextField type={"date"} value={resultDate} onChange={(e)=>{
-                            setResultDate(e.target.value)
-                        }}  format="DD/MM/yyyy"/>
-                    </Box>
-                </Grid> */}
-                {/*<Grid item>*/}
-                {/*    <Box mt={2}>*/}
-                {/*        <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>*/}
-                {/*            Select Game*/}
-                {/*        </Typography>*/}
-                {/*        <Select*/}
-                {/*            sx={{mt: 2, minWidth: 200}}*/}
-                {/*            displayEmpty*/}
-
-                {/*            value={selectedName}*/}
-                {/*            onChange={(e)=>{*/}
-                {/*                setSelectedName(e.target.value)*/}
-                {/*            }}*/}
-                {/*        >*/}
-                {/*            <MenuItem value="" disabled>Select Game</MenuItem>*/}
-                {/*            {games.map((game, index) => (*/}
-                {/*                <MenuItem key={index} value={game.name}>*/}
-                {/*                    {game.name}*/}
-                {/*                </MenuItem>*/}
-                {/*            ))}*/}
-                {/*        </Select>*/}
-                {/*    </Box>*/}
-                {/*</Grid>*/}
 
             </Grid>
             <Box mt={2} display="flex" alignItems={"center"} justifyContent={"space-between"} mb={2}>
@@ -486,7 +449,6 @@ const Game = () => {
 
             {/* Display Outside Numbers */}
             <Box mt={4}>
-                {/*<Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>Outside Bid Numbers</Typography>*/}
                 <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>Bahar</Typography>
                 <Box
                     sx={{

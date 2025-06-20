@@ -257,25 +257,6 @@ const FinalJantri = () => {
             </Select>
           </Box>
         </Grid>
-        {/* <Grid item>
-          <Box mt={2}>
-            <Typography
-              variant="h6"
-              fontFamily={"Alegreya Sans SC, sans-serif"}
-              fontWeight={500}
-            >
-              Select Start Date
-            </Typography>
-            <TextField
-              type={"date"}
-              value={resultDate}
-              onChange={(e) => {
-                setResultDate(e.target.value);
-              }}
-              format="DD/MM/yyyy"
-            />
-          </Box>
-        </Grid> */}
       </Grid>
       <Box
         mt={2}

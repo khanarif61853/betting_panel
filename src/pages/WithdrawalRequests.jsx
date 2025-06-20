@@ -73,7 +73,6 @@ const WithdrawalRequest = () => {
           "Authorization":localStorage.getItem("token")
         }
       });
-      // console.log(response.data.data)
       setRequests(response.data.data.requests);
       changeTotal(response.data.data.count);
       setSnackbarSeverity('success');
