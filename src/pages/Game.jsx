@@ -85,14 +85,12 @@ const Game = () => {
                         finalBidNumber = "0"
                     }
                     setCollectedAmount(amountCollection)
-                    console.log(collectedAmount)
                     if (finalBidNumber) {
                         setBidDeclared(finalBidNumber);
                         clearInterval(intervalId);
                     }
 
                     setBids(bids);
-                    console.log(response.data?.data?.prevGame?.id)
                     response?.data?.data?.prevGame?.id ? setSearchParams({"id":response?.data?.data?.prevGame?.id,"name":response?.data?.data?.prevGame?.name}) : null
                     response?.data?.data?.prevGame?.finalBidNumber ? setBidDeclared(response?.data?.data?.prevGame?.finalBidNumber): setBidDeclared(false)
                     const parsedInside = JSON.parse(inside || "[]");

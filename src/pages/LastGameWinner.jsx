@@ -1,20 +1,18 @@
-import {
-  Box,
-  Typography,
-  Paper,
-  useTheme,
-} from "@mui/material";
+import { Box, Typography, Paper, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 const LastGameWinner = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { lastGameWinners, loading } = useContextProvider();
+  const { lastGameWinners, loading } =
+    useContextProvider();
+  const todayDate = dayjs().format("YYYY-MM-DD");
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -31,7 +29,7 @@ const LastGameWinner = () => {
     customerName: winner?.customer?.name || "N/A",
     game: winner?.Game?.name || "N/A",
     finalBidNumber: winner?.Game?.finalBidNumber || "N/A",
-     matchedNumbers: winner?.matchedNumbers || "N/A",
+    matchedNumbers: winner?.matchedNumbers || "N/A",
     winningAmount: winner?.winningAmount || "0",
     gameCategory: winner?.remark || "N/A",
   }));
@@ -49,7 +47,7 @@ const LastGameWinner = () => {
           borderRadius: 3,
           backgroundColor: "#f9fafc",
           width: "100%",
-          height: "calc(100vh - 150px)",  
+          height: "calc(100vh - 150px)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -88,9 +86,8 @@ const LastGameWinner = () => {
             "& .MuiDataGrid-row:nth-of-type(odd)": {
               backgroundColor: "#f3f6f9",
             },
-            height:450
+            height: 450,
           }}
-
         >
           <DataGrid
             rows={rows}
