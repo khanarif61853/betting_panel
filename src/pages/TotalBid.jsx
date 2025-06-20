@@ -9,8 +9,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const TotalBid = () => {
+  const navigate = useNavigate();
   const {
     loading,
     dataRequest,
@@ -38,72 +41,78 @@ const TotalBid = () => {
   const theme = useTheme();
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        p: 3,
-        borderRadius: 3,
-        backgroundColor: "#f9fafc",
-        width: "100%",
-        height: "calc(100vh - 150px)",  
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box
-        mb={2}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Box display="flex" alignItems="center" gap={1}>
-          <StackedBarChartIcon color="primary" />
-          <Typography variant="h5" fontWeight={600}>
-            Total Bid: {dashboardTotalBid}
-          </Typography>
-        </Box>
-        <TextField
-          label="Filter by Date"
-          type="date"
-          size="small"
-          key={selectedDate}
-          value={selectedDate || ''}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={(e) => setSelectDate(e.target.value)}
-        />
-      </Box>
-
-      <Box
+    <>
+      <ArrowBackIcon
+        style={{ cursor: "pointer", marginBottom: 16 }}
+        onClick={() => navigate("/home")}
+      />
+      <Paper
+        elevation={3}
         sx={{
-          height: 450,
+          p: 3,
+          borderRadius: 3,
+          backgroundColor: "#f9fafc",
           width: "100%",
-          "& .MuiDataGrid-root": {
-            border: "none",
-            fontSize: 14,
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.grey[200],
-            fontWeight: "bold",
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
-          },
-          "& .MuiDataGrid-row:nth-of-type(odd)": {
-            backgroundColor: "#f3f6f9",
-          },
+          height: "calc(100vh - 150px)",  
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <DataGrid
-          rows={bidrows}
-          columns={bidcolumns}
-          loading={loading}
-          getRowHeight={() => "auto"}
-          disableSelectionOnClick
-        />
-      </Box>
-    </Paper>
+        <Box
+          mb={2}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Box display="flex" alignItems="center" gap={1}>
+            <StackedBarChartIcon color="primary" />
+            <Typography variant="h5" fontWeight={600}>
+              Total Bid: {dashboardTotalBid}
+            </Typography>
+          </Box>
+          <TextField
+            label="Filter by Date"
+            type="date"
+            size="small"
+            key={selectedDate}
+            value={selectedDate || ''}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) => setSelectDate(e.target.value)}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            height: 450,
+            width: "100%",
+            "& .MuiDataGrid-root": {
+              border: "none",
+              fontSize: 14,
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: theme.palette.grey[200],
+              fontWeight: "bold",
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+            },
+            "& .MuiDataGrid-row:nth-of-type(odd)": {
+              backgroundColor: "#f3f6f9",
+            },
+          }}
+        >
+          <DataGrid
+            rows={bidrows}
+            columns={bidcolumns}
+            loading={loading}
+            getRowHeight={() => "auto"}
+            disableSelectionOnClick
+          />
+        </Box>
+      </Paper>
+    </>
   );
 };
 

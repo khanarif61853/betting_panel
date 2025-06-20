@@ -217,6 +217,7 @@ const ContextProvider = ({ children }) => {
 
   // Games API call
   const fetchGames = async () => {
+    // console.log('API')
     if (!isAuthenticated) return;
 
     setLoading(true);
@@ -285,7 +286,7 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchAllData();
-    } 
+    }
   }, [
     page,
     limit,
@@ -330,6 +331,11 @@ const ContextProvider = ({ children }) => {
         fetchAllCount,
         triggerDataFetch,
         isAuthenticated,
+        fetchGames,
+        setGames,
+        setGamesTotal,
+        setIsAuthenticated,
+        // setLatestLastGameResult
       }}
     >
       {children}
@@ -338,4 +344,3 @@ const ContextProvider = ({ children }) => {
 };
 
 export default ContextProvider;
-

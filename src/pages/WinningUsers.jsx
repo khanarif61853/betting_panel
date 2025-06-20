@@ -10,9 +10,12 @@ import { usePagination } from "../hooks/usePagination";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const WinningUsers = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { limit, total, changePage, changeLimit } = usePagination();
   const {
     requests,
@@ -48,88 +51,94 @@ const WinningUsers = () => {
   }));
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        p: 3,
-        borderRadius: 3,
-        backgroundColor: "#f9fafc",
-        width: "100%",
-        height: "calc(100vh - 150px)",  
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box
-        mb={2}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Box display="flex" alignItems="center" gap={1}>
-          <EmojiEventsIcon color="primary" />
-          <Typography variant="h5" fontWeight={600}>
-            Winning Users: {dashboardWinningUsers}
-          </Typography>
-        </Box>
-        <Box display="flex" alignItems="center" gap={1}>
-          <Typography variant="h5" fontWeight={600}>
-            Jodi:J, Ander:A, Bahar:B
-          </Typography>
-        </Box>
-        <TextField
-          label="Filter by Date"
-          type="date"
-          size="small"
-          value={selectedDateWinningUsers}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={(e) => setSelectedDateWinningUsers(e.target.value)}
-        />
-      </Box>
-
-      <Box
+    <>
+      <ArrowBackIcon
+        style={{ cursor: "pointer", marginBottom: 16 }}
+        onClick={() => navigate("/home")}
+      />
+      <Paper
+        elevation={3}
         sx={{
-          flex: 1,
-          overflow: "auto",
-          "& .MuiDataGrid-root": {
-            border: "none",
-            fontSize: 14,
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.grey[200],
-            fontWeight: "bold",
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
-          },
-          "& .MuiDataGrid-row:nth-of-type(odd)": {
-            backgroundColor: "#f3f6f9",
-          },
+          p: 3,
+          borderRadius: 3,
+          backgroundColor: "#f9fafc",
+          width: "100%",
+          height: "calc(100vh - 150px)",  
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          paginationMode="server"
-          rowCount={total}
-          pageSize={limit}
-          loading={loading}
-          disableRowSelectionOnClick
-          onPaginationModelChange={(value) => {
-            if (value.pageSize !== limit) {
-              changeLimit(value.pageSize);
-              return changePage(0);
-            }
-            changePage(value.page);
-            changeLimit(value.pageSize);
+        <Box
+          mb={2}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Box display="flex" alignItems="center" gap={1}>
+            <EmojiEventsIcon color="primary" />
+            <Typography variant="h5" fontWeight={600}>
+              Winning Users: {dashboardWinningUsers}
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography variant="h5" fontWeight={600}>
+              Jodi:J, Ander:A, Bahar:B
+            </Typography>
+          </Box>
+          <TextField
+            label="Filter by Date"
+            type="date"
+            size="small"
+            value={selectedDateWinningUsers}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) => setSelectedDateWinningUsers(e.target.value)}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            flex: 1,
+            overflow: "auto",
+            "& .MuiDataGrid-root": {
+              border: "none",
+              fontSize: 14,
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: theme.palette.grey[200],
+              fontWeight: "bold",
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+            },
+            "& .MuiDataGrid-row:nth-of-type(odd)": {
+              backgroundColor: "#f3f6f9",
+            },
           }}
-          autoHeight={false}
-          density="comfortable"
-        />
-      </Box>
-    </Paper>
+        >
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            paginationMode="server"
+            rowCount={total}
+            pageSize={limit}
+            loading={loading}
+            disableRowSelectionOnClick
+            onPaginationModelChange={(value) => {
+              if (value.pageSize !== limit) {
+                changeLimit(value.pageSize);
+                return changePage(0);
+              }
+              changePage(value.page);
+              changeLimit(value.pageSize);
+            }}
+            autoHeight={false}
+            density="comfortable"
+          />
+        </Box>
+      </Paper>
+    </>
   );
 };
 

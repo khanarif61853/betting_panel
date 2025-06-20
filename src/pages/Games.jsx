@@ -82,19 +82,16 @@ const Games = () => {
     loading: contextLoading,
     setGamesDate,
     gamesDate,
+    fetchGames,
     latestLastGameResult,
+
+    // setLatestLastGameResult
   } = useContextProvider();
 
   const navigate = useNavigate();
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  useEffect(() => {
-    return () => {
-      setGamesDate(dayjs().format("YYYY-MM-DD")); 
-    };
-  }, []);
 
   const handleStatusChange = async (id) => {
     setLoading(true);

@@ -9,8 +9,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import CasinoIcon from "@mui/icons-material/Casino";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const AndarBaharWinner = () => {
+  const navigate = useNavigate();
   const { abData, loading, setSelectedDateAB, selectedDateAB } = useContextProvider();
   const theme = useTheme();
 
@@ -64,72 +67,78 @@ const AndarBaharWinner = () => {
   });
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        p: 3,
-        borderRadius: 3,
-        backgroundColor: "#f9fafc",
-        width: "100%",
-        height: "calc(100vh - 150px)",  
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box
-        mb={2}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Box display="flex" alignItems="center" gap={1}>
-          <CasinoIcon color="primary" />
-          <Typography variant="h5" fontWeight={600}>
-            Andar Bahar Winners
-          </Typography>
-        </Box>
-        <TextField
-          label="Filter by Date"
-          type="date"
-          size="small"
-          key={selectedDateAB}
-          value={selectedDateAB || ''}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          onChange={(e) => setSelectedDateAB(e.target.value)}
-        />
-      </Box>
-
-      <Box
+    <>
+      <ArrowBackIcon
+        style={{ cursor: "pointer", marginBottom: 16 }}
+        onClick={() => navigate("/home")}
+      />
+      <Paper
+        elevation={3}
         sx={{
-          height: 450,
+          p: 3,
+          borderRadius: 3,
+          backgroundColor: "#f9fafc",
           width: "100%",
-          "& .MuiDataGrid-root": {
-            border: "none",
-            fontSize: 14,
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.grey[200],
-            fontWeight: "bold",
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
-          },
-          "& .MuiDataGrid-row:nth-of-type(odd)": {
-            backgroundColor: "#f3f6f9",
-          },
+          height: "calc(100vh - 150px)",  
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          loading={loading}
-          disableSelectionOnClick
-          getRowHeight={() => "auto"}
-        />
-      </Box>
-    </Paper>
+        <Box
+          mb={2}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Box display="flex" alignItems="center" gap={1}>
+            <CasinoIcon color="primary" />
+            <Typography variant="h5" fontWeight={600}>
+              Andar Bahar Winners
+            </Typography>
+          </Box>
+          <TextField
+            label="Filter by Date"
+            type="date"
+            size="small"
+            key={selectedDateAB}
+            value={selectedDateAB || ''}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) => setSelectedDateAB(e.target.value)}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            height: 450,
+            width: "100%",
+            "& .MuiDataGrid-root": {
+              border: "none",
+              fontSize: 14,
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: theme.palette.grey[200],
+              fontWeight: "bold",
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+            },
+            "& .MuiDataGrid-row:nth-of-type(odd)": {
+              backgroundColor: "#f3f6f9",
+            },
+          }}
+        >
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            loading={loading}
+            disableSelectionOnClick
+            getRowHeight={() => "auto"}
+          />
+        </Box>
+      </Paper>
+    </>
   );
 };
 

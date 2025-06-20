@@ -15,6 +15,7 @@ import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { useContextProvider } from "../context/ContextProvider";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import moment from "moment";
+import dayjs from "dayjs";
 
 const theme = createTheme({
   palette: {
@@ -56,6 +57,9 @@ const Home = () => {
     gamesTotal,
     lastGameWinners,
     fetchAllCount,
+    setLatestLastGameResult,
+    fetchGames,
+    setGamesDate,
   } = useContextProvider();
 
   const { page, limit } = usePagination();
@@ -68,6 +72,12 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    return () => {
+      setGamesDate(dayjs().format("YYYY-MM-DD"));
+      fetchGames();
+    };
+  }, []);
   // fetch data ---------------
   const fetchData = async () => {
     const {
