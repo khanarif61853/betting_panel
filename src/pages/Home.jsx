@@ -13,8 +13,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { useContextProvider } from "../context/ContextProvider";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import moment from "moment";
 import dayjs from "dayjs";
 
 const theme = createTheme({
@@ -159,7 +157,6 @@ const Home = () => {
       icon: (
         <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
       ),
-      // onClick: () => navigate("/totalbid"),
     },
     {
       title: "Last Game Winners",
@@ -175,13 +172,19 @@ const Home = () => {
     },
     {
       title: "Winning Users",
-      value: dashboardWinningUsers,
+      value:
+        dashboardWinningUsers === dayjs().format("YYYY-MM-DD")
+          ? dashboardWinningUsers
+          : 0,
       icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/winning-users"),
     },
     {
       title: "Total Bid",
-      value: dashboardTotalBid,
+      value:
+        dashboardTotalBid === dayjs().format("YYYY-MM-DD")
+          ? dashboardTotalBid
+          : 0,
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/totalbid"),
     },

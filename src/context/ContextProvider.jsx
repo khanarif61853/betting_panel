@@ -34,7 +34,6 @@ const ContextProvider = ({ children }) => {
   const [latestLastGameResult, setLatestLastGameResult] = useState("");
   const [dashboardWinningUsers, setDashboardWinningUsers] = useState(0);
   const [games, setGames] = useState([]);
-  const [allGames, setAllGames] = useState([]);
   const [gamesDate, setGamesDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [existingGames, setExistingGames] = useState([]);
   const [fetchAllCount, setFetchAllCount] = useState(0);
@@ -258,7 +257,7 @@ const ContextProvider = ({ children }) => {
           break;
         }
       }
-
+      
       setGames(gamesData);
       setGamesTotal(response.data.data.total);
     } catch (error) {
