@@ -93,6 +93,9 @@ const Games = () => {
 
   useEffect(()=>{
     fetchGames()
+    return ()=>{
+      setGamesDate(dayjs().format("YYYY-MM-DD"))
+    }
   },[])
 
   const handleStatusChange = async (id) => {

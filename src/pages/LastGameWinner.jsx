@@ -40,6 +40,7 @@ const LastGameWinner = () => {
         style={{ cursor: "pointer", marginBottom: 16 }}
         onClick={() => navigate("/home")}
       />
+
       <Paper
         elevation={3}
         sx={{

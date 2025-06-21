@@ -40,6 +40,7 @@ const ContextProvider = ({ children }) => {
   const [gamesTotal, setGamesTotal] = useState(0);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [reset,setReset] = useState(false)
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
 
@@ -48,6 +49,10 @@ const ContextProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     return !!token;
   };
+
+  const allReset = ()=>{
+   setReset(!reset)
+  }
 
   const triggerDataFetch = () => {
     setIsAuthenticated(true);
@@ -77,13 +82,12 @@ const ContextProvider = ({ children }) => {
       });
       setDataRequest(data);
 
-      // Calculate total bids 
+      // Calculate total bids
       const totalbids = (data || []).reduce(
         (sum, item) => sum + (Number(item.total_bid) || 0),
         0
       );
       setDashboardTotalBid(totalbids);
-
 
       if (data && data.length > 0) {
         const sortedData = [...data].sort((a, b) =>
@@ -93,7 +97,7 @@ const ContextProvider = ({ children }) => {
         const lastBid = sortedData[0];
         if (lastBid) {
           setLastGameTotalBid({
-            amount: selectedDate == dayjs().format("YYYY-MM-DD") ? (lastBid.total_bid || 0) : 0,
+            amount: lastBid.total_bid || 0,
             timestamp: lastBid.createdAt,
           });
         }
@@ -175,7 +179,7 @@ const ContextProvider = ({ children }) => {
 
         setLastGameWinners({
           winners: latestWinners,
-          count:latestWinners.length,
+          count: latestWinners.length,
           timestamp: latestTimestamp,
         });
       }
@@ -250,12 +254,12 @@ const ContextProvider = ({ children }) => {
 
       for (const gameData of gamesData) {
         if (gameData.finalBidNumber) {
-          if(gamesDate == dayjs().format("YYYY-MM-DD"))
-          setLatestLastGameResult(gameData);
+          if (gamesDate == dayjs().format("YYYY-MM-DD"))
+            setLatestLastGameResult(gameData);
           break;
         }
       }
-      
+
       setGames(gamesData);
       setGamesTotal(response.data.data.total);
     } catch (error) {
@@ -292,7 +296,7 @@ const ContextProvider = ({ children }) => {
     selectedDateWinningUsers,
     selectedDate,
     gamesDate,
-    
+    isAuthenticated
   ]);
 
   return (
@@ -334,6 +338,7 @@ const ContextProvider = ({ children }) => {
         setGames,
         setGamesTotal,
         setIsAuthenticated,
+        allReset
         // setLatestLastGameResult
       }}
     >

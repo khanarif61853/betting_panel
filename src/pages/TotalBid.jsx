@@ -12,6 +12,7 @@ import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
+
 const TotalBid = () => {
   const navigate = useNavigate();
   const {
@@ -21,6 +22,7 @@ const TotalBid = () => {
     dashboardTotalBid,
     selectedDate,
   } = useContextProvider();
+
 
   const bidcolumns = [
     { field: "id", headerName: "ID", width: 70 },

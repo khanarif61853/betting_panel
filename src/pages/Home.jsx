@@ -58,7 +58,6 @@ const Home = () => {
     selectedDateWinningUsers,
   } = useContextProvider();
 
-
   const { page, limit } = usePagination();
   const [profitValue, setProfitValue] = useState();
   const [lossValue, setLossValue] = useState();
@@ -149,7 +148,7 @@ const Home = () => {
       icon: (
         <SportsEsportsIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
       ),
-      onClick: () => navigate("/last-game-result")
+      onClick: () => navigate("/last-game-result"),
     },
     {
       title: "Last Game Total Bid",
@@ -166,11 +165,7 @@ const Home = () => {
       title: "Last Game Winners",
       customContent: (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography variant="h4">
-            {selectedDateWinningUsers == dayjs().format("YYYY-MM-DD")
-              ? (lastGameWinners.count || 0)
-              : 0}
-          </Typography>
+          <Typography variant="h4">{lastGameWinners.count}</Typography>
         </Box>
       ),
       icon: (
@@ -180,26 +175,19 @@ const Home = () => {
     },
     {
       title: "Winning Users",
-      value:
-        selectedDateWinningUsers === dayjs().format("YYYY-MM-DD")
-          ? (dashboardWinningUsers || 0)
-          : 0,
+      value: dashboardWinningUsers,
       icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/winning-users"),
     },
     {
       title: "Total Bid",
-      value:
-        selectedDate === dayjs().format("YYYY-MM-DD")
-          ? dashboardTotalBid || 0
-          : 0,
+      value: dashboardTotalBid,
       icon: <EqualizerIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/totalbid"),
     },
     {
       title: "Andar Bahar Winners",
-      value:
-        selectedDateAB === dayjs().format("YYYY-MM-DD") ? abDataShowNo || 0 : 0,
+      value: abDataShowNo,
       icon: <GroupIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />,
       onClick: () => navigate("/andar-bahar-winner"),
     },

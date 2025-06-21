@@ -1,14 +1,23 @@
-import { Box, Typography, Paper, useTheme } from "@mui/material";
+import { Box, Typography, Paper, useTheme, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useContextProvider } from "../context/ContextProvider";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const LastGameResult = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { games, loading } = useContextProvider();
+  const {
+    games,
+    loading,
+    gamesDate,
+    setGamesDate,
+    fetchGames
+  } = useContextProvider();
+
+
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "game", headerName: "Game", flex: 1 },
@@ -17,16 +26,29 @@ const LastGameResult = () => {
 
   const rows = (games || []).map((val, i) => ({
     id: i + 1,
-    game:  val?.name || "N/A",
+    game: val?.name || "N/A",
     finalBidNumber: val?.finalBidNumber || "N/A",
   }));
 
+
   return (
     <>
-      <ArrowBackIcon
-        style={{ cursor: "pointer", marginBottom: 16 }}
-        onClick={() => navigate("/home")}
-      />
+      <Box sx={{ display: "flex", justifyContent: "space-between",mb:2 }}>
+        <ArrowBackIcon
+          style={{ cursor: "pointer", marginBottom: 16 }}
+          onClick={() => navigate("/home")}
+        />
+        <TextField
+          label="Filter by Date"
+          type="date"
+          size="small"
+          value={gamesDate}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          onChange={(e) => setGamesDate(e.target.value)}
+        />
+      </Box>
       <Paper
         elevation={3}
         sx={{
