@@ -252,7 +252,7 @@ const AddMoneyApprovedList = () => {
             },
           }}
           paginationMode="server"
-          rowCount={total}
+          rowCount={total}  
           pageSize={limit}
           checkboxSelection
           disableSelectionOnClick

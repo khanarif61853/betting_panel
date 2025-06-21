@@ -77,7 +77,7 @@ const ContextProvider = ({ children }) => {
       });
       setDataRequest(data);
 
-      // Calculate total bids
+      // Calculate total bids 
       const totalbids = (data || []).reduce(
         (sum, item) => sum + (Number(item.total_bid) || 0),
         0
@@ -216,9 +216,7 @@ const ContextProvider = ({ children }) => {
 
   // Games API call
   const fetchGames = async () => {
-    // console.log('API')
     if (!isAuthenticated) return;
-
     setLoading(true);
     try {
       const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {

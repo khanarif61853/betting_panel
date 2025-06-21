@@ -87,11 +87,13 @@ const Games = () => {
 
     // setLatestLastGameResult
   } = useContextProvider();
-
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  useEffect(()=>{
+    fetchGames()
+  },[])
 
   const handleStatusChange = async (id) => {
     setLoading(true);
