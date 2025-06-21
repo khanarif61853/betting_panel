@@ -1,10 +1,4 @@
-import {
-  Box,
-  TextField,
-  Typography,
-  Paper,
-  useTheme,
-} from "@mui/material";
+import { Box, TextField, Typography, Paper, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { usePagination } from "../hooks/usePagination";
 import moment from "moment";
@@ -12,6 +6,8 @@ import { useContextProvider } from "../context/ContextProvider";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import dayjs from "dayjs";
 
 const WinningUsers = () => {
   const theme = useTheme();
@@ -23,8 +19,15 @@ const WinningUsers = () => {
     setSelectedDateWinningUsers,
     dashboardWinningUsers,
     selectedDateWinningUsers,
+    lastWinner,
   } = useContextProvider();
 
+  useEffect(() => {
+    lastWinner();
+    return () => {
+      setSelectedDateWinningUsers(dayjs().format("YYYY-MM-DD"));
+    };
+  }, []);
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -63,7 +66,7 @@ const WinningUsers = () => {
           borderRadius: 3,
           backgroundColor: "#f9fafc",
           width: "100%",
-          height: "calc(100vh - 150px)",  
+          height: "calc(100vh - 150px)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -115,7 +118,7 @@ const WinningUsers = () => {
             "& .MuiDataGrid-row:nth-of-type(odd)": {
               backgroundColor: "#f3f6f9",
             },
-              height:450
+            height: 450,
           }}
         >
           <DataGrid

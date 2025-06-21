@@ -11,6 +11,8 @@ import { useContextProvider } from "../context/ContextProvider";
 import StackedBarChartIcon from "@mui/icons-material/StackedBarChart";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import dayjs from "dayjs";
 
 
 const TotalBid = () => {
@@ -21,7 +23,15 @@ const TotalBid = () => {
     setSelectDate,
     dashboardTotalBid,
     selectedDate,
+    allbids
   } = useContextProvider();
+
+  useEffect(()=> {
+    allbids()
+    return (()=> {
+      setSelectDate(dayjs().format("YYYY-MM-DD"))
+    })
+  },[] )
 
 
   const bidcolumns = [
@@ -46,7 +56,7 @@ const TotalBid = () => {
     <>
       <ArrowBackIcon
         style={{ cursor: "pointer", marginBottom: 16 }}
-        onClick={() => navigate("/home")}
+        onClick={() => {navigate("/home")}}
       />
       <Paper
         elevation={3}

@@ -40,7 +40,7 @@ const ContextProvider = ({ children }) => {
   const [gamesTotal, setGamesTotal] = useState(0);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [reset,setReset] = useState(false)
+  const [reset, setReset] = useState(false);
   const { page, limit, total, changePage, changeLimit, changeTotal } =
     usePagination();
 
@@ -50,9 +50,9 @@ const ContextProvider = ({ children }) => {
     return !!token;
   };
 
-  const allReset = ()=>{
-   setReset(!reset)
-  }
+  const allReset = () => {
+    setReset(!reset);
+  };
 
   const triggerDataFetch = () => {
     setIsAuthenticated(true);
@@ -296,7 +296,7 @@ const ContextProvider = ({ children }) => {
     selectedDateWinningUsers,
     selectedDate,
     gamesDate,
-    isAuthenticated
+    isAuthenticated,
   ]);
 
   return (
@@ -338,7 +338,9 @@ const ContextProvider = ({ children }) => {
         setGames,
         setGamesTotal,
         setIsAuthenticated,
-        allReset
+        allbids,
+        abWinner,
+        lastWinner
         // setLatestLastGameResult
       }}
     >

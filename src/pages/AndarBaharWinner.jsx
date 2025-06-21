@@ -1,21 +1,23 @@
-import {
-  Box,
-  TextField,
-  Typography,
-  Paper,
-  useTheme,
-} from "@mui/material";
+import { Box, TextField, Typography, Paper, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { useContextProvider } from "../context/ContextProvider";
 import CasinoIcon from "@mui/icons-material/Casino";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import dayjs from "dayjs";
 
 const AndarBaharWinner = () => {
   const navigate = useNavigate();
-  const { abData, loading, setSelectedDateAB, selectedDateAB } = useContextProvider();
+  const { abData, loading, setSelectedDateAB, selectedDateAB, abWinner } =
+    useContextProvider();
   const theme = useTheme();
+
+  useEffect(() => {
+    abWinner();
+    return () => {setSelectedDateAB(dayjs().format("YYYY-MM-DD"))};
+  }, []);
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -79,7 +81,7 @@ const AndarBaharWinner = () => {
           borderRadius: 3,
           backgroundColor: "#f9fafc",
           width: "100%",
-          height: "calc(100vh - 150px)",  
+          height: "calc(100vh - 150px)",
           display: "flex",
           flexDirection: "column",
         }}
@@ -101,7 +103,7 @@ const AndarBaharWinner = () => {
             type="date"
             size="small"
             key={selectedDateAB}
-            value={selectedDateAB || ''}
+            value={selectedDateAB || ""}
             InputLabelProps={{
               shrink: true,
             }}
@@ -127,7 +129,7 @@ const AndarBaharWinner = () => {
             "& .MuiDataGrid-row:nth-of-type(odd)": {
               backgroundColor: "#f3f6f9",
             },
-              height:550
+            height: 550,
           }}
         >
           <DataGrid
