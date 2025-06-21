@@ -216,9 +216,7 @@ const ContextProvider = ({ children }) => {
 
   // Games API call
   const fetchGames = async () => {
-    // console.log('API')
     if (!isAuthenticated) return;
-
     setLoading(true);
     try {
       const response = await axios.get(`${BASE_URL}/api/web/retrieve/games`, {
