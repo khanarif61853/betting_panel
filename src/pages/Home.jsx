@@ -155,7 +155,7 @@ const Home = () => {
       title: "Last Game Total Bid",
       customContent: (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography variant="h4">{selectedDate === dayjs().format("YYYY-MM-DD") ? lastGameTotalBid.amount : 0}</Typography>
+          <Typography variant="h4">{lastGameTotalBid.amount}</Typography>
         </Box>
       ),
       icon: (

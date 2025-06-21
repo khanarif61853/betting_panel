@@ -84,7 +84,7 @@ const ContextProvider = ({ children }) => {
       );
       setDashboardTotalBid(totalbids);
 
-      // Find the last game's total bid based on date/time
+
       if (data && data.length > 0) {
         const sortedData = [...data].sort((a, b) =>
           moment(b.createdAt).diff(moment(a.createdAt))
@@ -93,7 +93,7 @@ const ContextProvider = ({ children }) => {
         const lastBid = sortedData[0];
         if (lastBid) {
           setLastGameTotalBid({
-            amount: Number(lastBid.total_bid || 0),
+            amount: selectedDate == dayjs().format("YYYY-MM-DD") ? (lastBid.total_bid || 0) : 0,
             timestamp: lastBid.createdAt,
           });
         }
