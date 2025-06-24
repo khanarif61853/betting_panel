@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -6,11 +6,11 @@ import {
     Select,
     MenuItem,
 } from '@mui/material';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import {ToastContainer} from "react-toastify"
-import {BASE_URL} from '../costants';
-import {useFormik} from 'formik';
+import { ToastContainer } from "react-toastify"
+import { BASE_URL } from '../costants';
+import { useFormik } from 'formik';
 import Button from '@mui/joy/Button';
 import Divider from '@mui/joy/Divider';
 import DialogTitle from '@mui/joy/DialogTitle';
@@ -27,7 +27,7 @@ const Game = () => {
     const [bids, setBids] = useState([]);
     const [insideNumbers, setInsideNumbers] = useState([]);
     const [outsideNumbers, setOutsideNumbers] = useState([]);
-    const [searchParams,setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
     const [selectedBid, setSelectedBid] = useState(null);
     const [error, setError] = useState(null);
@@ -46,8 +46,8 @@ const Game = () => {
     const [topMinBids, setTopMinBids] = useState([]);
 
     useEffect(() => {
-        const fetchGames =async () => {
-            const response = await  axios.get(BASE_URL + '/api/web/retrieve/games', {
+        const fetchGames = async () => {
+            const response = await axios.get(BASE_URL + '/api/web/retrieve/games', {
                 headers: {
                     "Authorization": localStorage.getItem('token'),
                 }
@@ -57,12 +57,13 @@ const Game = () => {
         fetchGames()
     }, []);
 
-        useEffect(() => {
+    useEffect(() => {
         let intervalId;
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${BASE_URL}/api/web/retrieve/bids`, {
-                    params: {id: searchParams.get("id")
+                    params: {
+                        id: searchParams.get("id")
                         // ,resultDate
                     },
                     headers: {
@@ -71,7 +72,7 @@ const Game = () => {
                     },
                 });
                 if (response.data.type === "success") {
-                    let {bids, inside, outside, finalBidNumber, collectedAmount: amountCollection} = response.data.data;
+                    let { bids, inside, outside, finalBidNumber, collectedAmount: amountCollection } = response.data.data;
                     if (finalBidNumber == 0) {
                         finalBidNumber = "0"
                     }
@@ -82,8 +83,8 @@ const Game = () => {
                     }
 
                     setBids(bids);
-                    response?.data?.data?.prevGame?.id ? setSearchParams({"id":response?.data?.data?.prevGame?.id,"name":response?.data?.data?.prevGame?.name}) : null
-                    response?.data?.data?.prevGame?.finalBidNumber ? setBidDeclared(response?.data?.data?.prevGame?.finalBidNumber): setBidDeclared(false)
+                    response?.data?.data?.prevGame?.id ? setSearchParams({ "id": response?.data?.data?.prevGame?.id, "name": response?.data?.data?.prevGame?.name }) : null
+                    response?.data?.data?.prevGame?.finalBidNumber ? setBidDeclared(response?.data?.data?.prevGame?.finalBidNumber) : setBidDeclared(false)
                     const parsedInside = JSON.parse(inside || "[]");
                     const parsedOutside = JSON.parse(outside || "[]");
                     setInsideNumbers(parsedInside);
@@ -123,7 +124,7 @@ const Game = () => {
         return () => {
             clearInterval(intervalId);
         };
-    }, [searchParams,resultDate]);
+    }, [searchParams, resultDate]);
 
     const bidMap = (bids || []).reduce((acc, bid) => {
         const key = bid.number === 0 ? "00" : bid.number;
@@ -137,7 +138,7 @@ const Game = () => {
     const minOutsideBidAmount = outsideNumbers?.length > 0 ? Math.min(...outsideNumbers.map(bid => bid.amount)) : 0;
 
     const rows = [...Array.from({ length: 99 }, (_, i) => i + 1), "00"];
-    const insideOutsideRow = Array.from({length: 10}, (_, i) => i);
+    const insideOutsideRow = Array.from({ length: 10 }, (_, i) => i);
     const insideBidMap = insideNumbers?.reduce((acc, bid) => {
         acc[parseInt(bid.number, 10)] = bid.amount;
         return acc;
@@ -157,60 +158,118 @@ const Game = () => {
             // no-op
         },
     });
-
     const handleBidNumberClick = (number) => {
-        // console.log(formik.values.bidNumber.number)
-        if (bidDeclared) return; // Prevent clicking if bid is declared
+        if (bidDeclared) return;
 
-        let insideBidNumber = {number: 0, amount: 0};
-        let outsideBidNumber = {number, amount: bidMap[number] || 0};
+        let normalizedNumber = number === "00" ? 0 : number;
+        const numberStr = normalizedNumber.toString().padStart(2, '0');
 
-        if (number < 10) {
-            insideBidNumber = {number: 0, amount: insideBidMap[0] || 0};
-            outsideBidNumber = {number, amount: bidMap[number] || 0};
-        } else {
-            const numberStr = number.toString();
-            const insideNumber = parseInt(numberStr[0], 10);
-            const outsideNumber = parseInt(numberStr[numberStr.length - 1], 10);
+        const insideNumber = parseInt(numberStr[0], 10);
+        const outsideNumber = parseInt(numberStr[1], 10);
 
-            insideBidNumber = {number: insideNumber, amount: insideBidMap[insideNumber] || 0};
-            outsideBidNumber = {number: outsideNumber, amount: outsideBidMap[outsideNumber] || 0};
-        }
+        const insideBidNumber = { number: insideNumber, amount: insideBidMap[insideNumber] || 0 };
+        const outsideBidNumber = { number: outsideNumber, amount: outsideBidMap[outsideNumber] || 0 };
 
-        formik.setFieldValue('bidNumber', {number, amount: bidMap[number] || 0});
+        formik.setFieldValue('bidNumber', { number: number, amount: bidMap[normalizedNumber] || 0 }); // Keep "00" in UI
         formik.setFieldValue('insideBidNumber', insideBidNumber);
         formik.setFieldValue('outsideBidNumber', outsideBidNumber);
 
-        setSelectedBid({number, amount: bidMap[number] || 0});
+        setSelectedBid({ number: number, amount: bidMap[normalizedNumber] || 0 }); // Keep "00" in state
     };
+
+
+    // const handleBidNumberClick = (number) => {
+    //     // console.log(formik.values.bidNumber.number)
+    //     if (bidDeclared) return; // Prevent clicking if bid is declared
+
+    //     if (number === "00" || number === 0) {
+    //         formik.setFieldValue('bidNumber', { number: 0, amount: bidMap[0] || 0 });
+    //         formik.setFieldValue('insideBidNumber', { number: 0, amount: 0 });
+    //         formik.setFieldValue('outsideBidNumber', { number: 0, amount: 0 });
+    //         setSelectedBid({ number: 0, amount: bidMap[0] || 0 });
+    //         return;
+    //     }
+
+    //     let insideBidNumber = { number: 0, amount: 0 };
+    //     let outsideBidNumber = { number, amount: bidMap[number] || 0 };
+
+
+    //     if (number < 10) {
+    //         insideBidNumber = { number: 0, amount: insideBidMap[0] || 0 };
+    //         outsideBidNumber = { number, amount: bidMap[number] || 0 };
+    //     } else {
+    //         const numberStr = number.toString();
+    //         const insideNumber = parseInt(numberStr[0], 10);
+    //         const outsideNumber = parseInt(numberStr[numberStr.length - 1], 10);
+
+    //         insideBidNumber = { number: insideNumber, amount: insideBidMap[insideNumber] || 0 };
+    //         outsideBidNumber = { number: outsideNumber, amount: outsideBidMap[outsideNumber] || 0 };
+    //     }
+
+    //     formik.setFieldValue('bidNumber', { number, amount: bidMap[number] || 0 });
+    //     formik.setFieldValue('insideBidNumber', insideBidNumber);
+    //     formik.setFieldValue('outsideBidNumber', outsideBidNumber);
+
+    //     setSelectedBid({ number, amount: bidMap[number] || 0 });
+    // };
+
+    // const handleConfirm = async () => {
+    //     try {
+    //         const apiBidNumber = formik.values.bidNumber.number === "00" ? 0 : formik.values.bidNumber.number;
+    //         const response = await axios.put(`${BASE_URL}/api/web/update/gameResult`, {
+    //             bidNumber: apiBidNumber,
+    //             bidAmount: formik.values.bidNumber.amount
+    //         }, {
+    //             params: { id: searchParams.get("id"), gameName: games },
+    //             headers: {
+    //                 Authorization: localStorage.getItem('token'),
+    //                 'ngrok-skip-browser-warning': true,
+    //             },
+    //         });
+    //         if (response.data.type == "error") {
+    //             setError(response.data.message)
+    //         } else {
+    //             setBidDeclared(response.data.data.finalBidNumber); // Set bidDeclared to true on successful declaration
+    //             setSuccess('Bid declared successfully');
+    //             localStorage.removeItem('savedBid')
+    //         }
+    //         // Close the dialog and reset form or handle success
+    //         setOpenConfirmDialog(false);
+    //         formik.resetForm();
+    //     } catch (error) {
+    //         console.error('Error declaring bid:', error);
+    //     }
+    // };
 
     const handleConfirm = async () => {
         try {
-            const apiBidNumber = formik.values.bidNumber.number === "00" ? 0 : formik.values.bidNumber.number;
+            const apiBidNumber = selectedBid.number === "00" ? 0 : selectedBid.number;
             const response = await axios.put(`${BASE_URL}/api/web/update/gameResult`, {
                 bidNumber: apiBidNumber,
-                bidAmount: formik.values.bidNumber.amount
+                bidAmount: selectedBid.amount
             }, {
-                params: {id: searchParams.get("id"), gameName: games},
+                params: { id: searchParams.get("id"), gameName: games },
                 headers: {
                     Authorization: localStorage.getItem('token'),
                     'ngrok-skip-browser-warning': true,
                 },
             });
-            if (response.data.type == "error") {
-                setError(response.data.message)
+
+            if (response.data.type === "error") {
+                setError(response.data.message);
             } else {
-                setBidDeclared(response.data.data.finalBidNumber); // Set bidDeclared to true on successful declaration
+                setBidDeclared(response.data.data.finalBidNumber);
                 setSuccess('Bid declared successfully');
-                localStorage.removeItem('savedBid')
+                localStorage.removeItem('savedBid');
             }
-            // Close the dialog and reset form or handle success
+
             setOpenConfirmDialog(false);
             formik.resetForm();
         } catch (error) {
             console.error('Error declaring bid:', error);
         }
     };
+
 
     const handleCancel = () => {
         setOpenConfirmDialog(false);
@@ -253,9 +312,9 @@ const Game = () => {
 
     return (
         <Box padding={3}>
-            <ArrowBackIcon style={{cursor:"pointer"}} onClick={()=>{
+            <ArrowBackIcon style={{ cursor: "pointer" }} onClick={() => {
                 navigate("/games")
-            }}/>
+            }} />
 
             <Grid container alignItems={"center"} spacing={2} justifyContent={"space-between"}>
                 <Grid item>
@@ -269,7 +328,7 @@ const Game = () => {
                     <Box mt={2} display={"flex"}>
                         <Typography variant="h6" fontFamily={"Alegreya Sans SC, sans-serif"} fontWeight={500}>
                             Total collection: <span
-                            style={{color: "#28a745"}}>{collectedAmount ? "+" + -collectedAmount : 0}</span>
+                                style={{ color: "#28a745" }}>{collectedAmount ? "+" + -collectedAmount : 0}</span>
                         </Typography>
                     </Box>
                 </Grid>
@@ -279,7 +338,7 @@ const Game = () => {
                             Top 10 Maximum Bid Amounts
                         </Typography>
                         <Select
-                            sx={{mt: 2, minWidth: 200}}
+                            sx={{ mt: 2, minWidth: 200 }}
                             displayEmpty
                             defaultValue=""
                         >
@@ -298,7 +357,7 @@ const Game = () => {
                             Top 10 Minimum Bid Amounts
                         </Typography>
                         <Select
-                            sx={{mt: 2, minWidth: 200}}
+                            sx={{ mt: 2, minWidth: 200 }}
                             displayEmpty
                             defaultValue=""
                         >
@@ -320,15 +379,15 @@ const Game = () => {
                 <Box display="flex" gap={2}>
                     {savedBid && (
                         <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"}
-                                backgroundColor="#4CAF50" borderRadius={"10px"}
-                                color={"white"} p={1} fontWeight={500}>
+                            backgroundColor="#4CAF50" borderRadius={"10px"}
+                            color={"white"} p={1} fontWeight={500}>
                             Saved: {savedBid.number}
                         </Typography>
                     )}
                     {bidDeclared && (
                         <Typography variant="h4" fontFamily={"Alegreya Sans SC, sans-serif"}
-                                backgroundColor="red" borderRadius={"10px"}
-                                color={"white"} p={1} fontWeight={500}>
+                            backgroundColor="red" borderRadius={"10px"}
+                            color={"white"} p={1} fontWeight={500}>
                             {bidDeclared}
                         </Typography>
                     )}
@@ -369,7 +428,10 @@ const Game = () => {
                                 borderTopRightRadius: '4px',
                             }}
                         >
-                            <Typography variant="body2">{number}</Typography>
+                            <Typography variant="body2">
+                                {number.toString().padStart(2, '0')}
+                            </Typography>
+
                         </Box>
                         <Box
                             sx={{
@@ -495,7 +557,7 @@ const Game = () => {
                                 sx={{
                                     width: '100%',
                                     height: 30,
-                                    backgroundColor: bidDeclared ? '#BEB8D1' : '#eceaf6', // Change background color if bid is declared
+                                    backgroundColor: bidDeclared ? '#BEB8D1' : '#eceaf6',
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -556,7 +618,7 @@ const Game = () => {
                         Edit Bid
                     </Button>
                 )}
-                
+
                 <Button
                     variant='contained'
                     onClick={() => setOpenConfirmDialog(true)}
@@ -583,14 +645,14 @@ const Game = () => {
 
             {/* Confirmation Dialog */}
             <Modal open={openConfirmDialog}
-                   onClose={() => setOpenConfirmDialog(false)}
+                onClose={() => setOpenConfirmDialog(false)}
             >
                 <ModalDialog variant="outlined" role="alertdialog">
-                    <DialogTitle sx={{color: "#636b74"}}>
-                        <WarningRoundedIcon/>
+                    <DialogTitle sx={{ color: "#636b74" }}>
+                        <WarningRoundedIcon />
                         Confirmation
                     </DialogTitle>
-                    <Divider/>
+                    <Divider />
                     <DialogContent>
                         <Typography variant="body1">
                             Are you sure you want to declare the bid number <strong>{selectedBid?.number}</strong> with
@@ -614,7 +676,7 @@ const Game = () => {
                 message={error || success}
                 severity={error ? "error" : "success"}
             />
-            <ToastContainer/>
+            <ToastContainer />
         </Box>
     );
 };
