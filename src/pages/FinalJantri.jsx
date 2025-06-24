@@ -5,16 +5,12 @@ import {
   Grid,
   Select,
   MenuItem,
-  TextField,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL } from "../costants";
-import { useFormik } from "formik";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CustomSnackbar from "../component/CustomSnackbar";
-import { ElectricalServices, RsvpOutlined } from "@mui/icons-material";
 import moment from "moment-timezone";
 
 const FinalJantri = () => {
@@ -22,7 +18,7 @@ const FinalJantri = () => {
   const [formattedRows, setFormattedRows] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [resultDate, setResultDate] = useState(
+  const [resultDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [topMaxBids, setTopMaxBids] = useState([]);
@@ -111,17 +107,28 @@ const FinalJantri = () => {
 
   const allBids = formattedRows?.flatMap((item) => item?.bids || []) || [];
   const bidMap = allBids.reduce((acc, bid) => {
-    acc[bid.number] = (acc[bid.number] || 0) + bid.amount;
+    const key = bid.number === 0 ? "00" : bid.number;
+    acc[key] = (acc[key] || 0) + bid.amount;
     return acc;
   }, {});
   const totalAmount = allBids.reduce((sum, bid) => sum + bid.amount, 0);
 
-  const rows = Array.from({ length: 100 }, (_, i) => i);
+  const rows = [...Array.from({ length: 99 }, (_, i) => i + 1), "00"];
 
   const formatDateTime = (dateTimeStr) => {
     if (!dateTimeStr) return "";
     return moment(dateTimeStr).format("DD MMM YYYY, hh:mm A");
   };
+
+  // Map topMaxBids and topMinBids for display
+  const displayTopMaxBids = topMaxBids.map(bid => ({
+    ...bid,
+    number: bid.number === 0 ? "00" : bid.number
+  }));
+  const displayTopMinBids = topMinBids.map(bid => ({
+    ...bid,
+    number: bid.number === 0 ? "00" : bid.number
+  }));
 
   return (
     <Box padding={3}>
@@ -224,11 +231,9 @@ const FinalJantri = () => {
               <MenuItem value="" disabled>
                 Select a maximum bid
               </MenuItem>
-              {topMaxBids.map((bid) => (
+              {displayTopMaxBids.map((bid) => (
                 <MenuItem key={bid.number} value={bid.number}>
-                  {`Number: ${
-                    bid.number
-                  } | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
+                  {`Number: ${bid.number} | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
                 </MenuItem>
               ))}
             </Select>
@@ -247,11 +252,9 @@ const FinalJantri = () => {
               <MenuItem value="" disabled>
                 Select a minimum bid
               </MenuItem>
-              {topMinBids.map((bid, index) => (
+              {displayTopMinBids.map((bid, index) => (
                 <MenuItem key={bid.number} value={bid.number}>
-                  {`${index + 1}. Number: ${
-                    bid.number
-                  } | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
+                  {`${index + 1}. Number: ${bid.number} | Bid: ₹${bid.amount.toLocaleString()} | Win: ₹${bid.amountMultiplied.toLocaleString()}`}
                 </MenuItem>
               ))}
             </Select>
@@ -332,7 +335,6 @@ const FinalJantri = () => {
         message={error || success}
         severity={error ? "error" : "success"}
       />
-      <ToastContainer />
     </Box>
   );
 };

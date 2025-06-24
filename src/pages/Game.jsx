@@ -1,16 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
     Box,
     Typography,
-    useTheme,
-    useMediaQuery,
     Grid,
     Select,
     MenuItem,
 } from '@mui/material';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import axios from 'axios';
-import {toast, ToastContainer} from "react-toastify"
+import {ToastContainer} from "react-toastify"
 import {BASE_URL} from '../costants';
 import {useFormik} from 'formik';
 import Button from '@mui/joy/Button';
@@ -34,14 +32,11 @@ const Game = () => {
     const [selectedBid, setSelectedBid] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const [resultDate, setResultDate] = useState(new Date());
+    const [resultDate] = useState(new Date());
     const [bidDeclared, setBidDeclared] = useState(false);
     const [savedBid, setSavedBid] = useState(null);
     const [collectedAmount, setCollectedAmount] = useState();
     const [games, setGames] = useState([]);
-    const [selectedName, setSelectedName] = useState("");
-    const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleCloseSnackbar = () => {
         setError(null);
@@ -130,8 +125,9 @@ const Game = () => {
         };
     }, [searchParams,resultDate]);
 
-    const bidMap = (bids || [])?.reduce((acc, bid) => {
-        acc[parseInt(bid.number, 10)] = bid.amount;
+    const bidMap = (bids || []).reduce((acc, bid) => {
+        const key = bid.number === 0 ? "00" : bid.number;
+        acc[key] = bid.amount;
         return acc;
     }, {});
 
@@ -140,7 +136,7 @@ const Game = () => {
     const minInsideBidAmount = insideNumbers?.length > 0 ? Math.min(...insideNumbers.map(bid => bid.amount)) : 0;
     const minOutsideBidAmount = outsideNumbers?.length > 0 ? Math.min(...outsideNumbers.map(bid => bid.amount)) : 0;
 
-    const rows = Array.from({length: 100}, (_, i) => i);
+    const rows = [...Array.from({ length: 99 }, (_, i) => i + 1), "00"];
     const insideOutsideRow = Array.from({length: 10}, (_, i) => i);
     const insideBidMap = insideNumbers?.reduce((acc, bid) => {
         acc[parseInt(bid.number, 10)] = bid.amount;
@@ -157,8 +153,8 @@ const Game = () => {
             insideBidNumber: {},
             outsideBidNumber: {},
         },
-        onSubmit: values => {
-            // console.log(values);
+        onSubmit: () => {
+            // no-op
         },
     });
 
@@ -190,8 +186,9 @@ const Game = () => {
 
     const handleConfirm = async () => {
         try {
+            const apiBidNumber = formik.values.bidNumber.number === "00" ? 0 : formik.values.bidNumber.number;
             const response = await axios.put(`${BASE_URL}/api/web/update/gameResult`, {
-                bidNumber: formik.values.bidNumber.number,
+                bidNumber: apiBidNumber,
                 bidAmount: formik.values.bidNumber.amount
             }, {
                 params: {id: searchParams.get("id"), gameName: games},
@@ -244,6 +241,16 @@ const Game = () => {
         setSuccess('You can now select a new bid');
     };
 
+    // Map topMaxBids and topMinBids for display
+    const displayTopMaxBids = topMaxBids.map(bid => ({
+        ...bid,
+        number: bid.number === 0 ? "00" : bid.number
+    }));
+    const displayTopMinBids = topMinBids.map(bid => ({
+        ...bid,
+        number: bid.number === 0 ? "00" : bid.number
+    }));
+
     return (
         <Box padding={3}>
             <ArrowBackIcon style={{cursor:"pointer"}} onClick={()=>{
@@ -277,7 +284,7 @@ const Game = () => {
                             defaultValue=""
                         >
                             <MenuItem value="" disabled>Select a maximum bid</MenuItem>
-                            {topMaxBids.map((bid) => (
+                            {displayTopMaxBids.map((bid) => (
                                 <MenuItem key={bid.number} value={bid.number}>
                                     {`Bid Number: ${bid.number}, Amount: ₹${bid.amount}, Multiplied Amount: ₹${bid.amountMultiplied}`}
                                 </MenuItem>
@@ -296,7 +303,7 @@ const Game = () => {
                             defaultValue=""
                         >
                             <MenuItem value="" disabled>Select a minimum bid</MenuItem>
-                            {topMinBids.map((bid) => (
+                            {displayTopMinBids.map((bid) => (
                                 <MenuItem key={bid.number} value={bid.number}>
                                     {`Bid Number: ${bid.number}, Amount: ₹${bid.amount}, Multiplied Amount: ₹${bid.amountMultiplied}`}
                                 </MenuItem>
@@ -366,10 +373,9 @@ const Game = () => {
                         </Box>
                         <Box
                             sx={{
-                                // backgroundColor: '#eceaf6',
                                 width: '100%',
                                 height: 30,
-                                backgroundColor: bidDeclared ? '#BEB8D1' : '#eceaf6', // Change background color if bid is declared
+                                backgroundColor: bidDeclared ? '#BEB8D1' : '#eceaf6',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
