@@ -380,7 +380,7 @@ const Allgames = () => {
       width: 100,
       renderCell: ({ row }) => (
         <Avatar src={`${BASE_URL}/img/game/` + row.image} variant="rounded">
-          {row.name[0]}
+          {row.name[0]+row.name[1]}
         </Avatar>
       ),
     },
