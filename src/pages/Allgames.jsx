@@ -313,7 +313,7 @@ const Allgames = () => {
             err.response?.data?.message || err.message,
             "error"
           );
-          return; // Keep dialog open on error
+          return; 
         }
       }
     } catch (error) {
@@ -321,7 +321,7 @@ const Allgames = () => {
         error.response?.data?.message || "Failed to add/update game";
       setSnackbarOpen(true);
       setSnackbarMessage(errorMessage, "error");
-      return; // Keep dialog open on error
+      return; 
     } finally {
       setLoading(false);
     }
