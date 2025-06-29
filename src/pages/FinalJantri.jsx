@@ -120,7 +120,6 @@ const FinalJantri = () => {
     return moment(dateTimeStr).format("DD MMM YYYY, hh:mm A");
   };
 
-  // Map topMaxBids and topMinBids for display
   const displayTopMaxBids = topMaxBids.map(bid => ({
     ...bid,
     number: bid.number === 0 ? "00" : bid.number
