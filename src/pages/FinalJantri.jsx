@@ -113,7 +113,6 @@ const FinalJantri = () => {
   }, {});
   const totalAmount = allBids.reduce((sum, bid) => sum + bid.amount, 0);
 
-  // Prepare a 2D array for column-wise (vertical) fill: columns[col][row]
   const bidColumns = [];
   for (let col = 0; col < 10; col++) {
     const column = [];
