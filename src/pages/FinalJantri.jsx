@@ -113,7 +113,17 @@ const FinalJantri = () => {
   }, {});
   const totalAmount = allBids.reduce((sum, bid) => sum + bid.amount, 0);
 
-  const rows = [...Array.from({ length: 99 }, (_, i) => i + 1), "00"];
+  // Prepare a 2D array for column-wise (vertical) fill: columns[col][row]
+  const bidColumns = [];
+  for (let col = 0; col < 10; col++) {
+    const column = [];
+    for (let row = 1; row <= 10; row++) {
+      let num = col * 10 + row;
+      if (col === 9 && row === 10) num = "00";
+      column.push(num);
+    }
+    bidColumns.push(column);
+  }
 
   const formatDateTime = (dateTimeStr) => {
     if (!dateTimeStr) return "";
@@ -278,55 +288,67 @@ const FinalJantri = () => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(60px, 1fr))",
-          gap: 2,
+          gridTemplateColumns: "repeat(10, 1fr)",
+          gap: { xs: 0.5, sm: 1, md: 2, lg: 3 },
+          width: "100%",
         }}
       >
-        {rows.map((number) => (
-          <Box
-            key={number}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              border: "1px solid #ddd",
-              borderRadius: 1,
-            }}
-          >
-            <Box
-              sx={{
-                width: "100%",
-                padding: 0.5,
-                backgroundColor: "#6f6bb7",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "white",
-                borderTopLeftRadius: "4px",
-                borderTopRightRadius: "4px",
-              }}
-            >
-              <Typography variant="body2">{number}</Typography>
-            </Box>
-            <Box
-              sx={{
-                width: "100%",
-                height: 30,
-                backgroundColor: "#eceaf6",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderBottomLeftRadius: "4px",
-                borderBottomRightRadius: "4px",
-                color: "black",
-              }}
-            >
-              <Typography variant="body2" fontWeight={"bold"}>
-                {bidMap[number] ? `₹${bidMap[number]}` : ""}
-              </Typography>
-            </Box>
-          </Box>
-        ))}
+        {/* Render numbers truly column-wise: for each row, render all columns' row-th element */}
+        {Array.from({ length: 10 }).map((_, rowIdx) =>
+          bidColumns.map((column) => {
+            const number = column[rowIdx];
+            return (
+              <Box
+                key={number}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  border: "1px solid #ddd",
+                  borderRadius: 1,
+                  width: { xs: 28, sm: 36, md: 48, lg: 60 },
+                  minWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
+                  maxWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "100%",
+                    padding: 0.5,
+                    backgroundColor: "#6f6bb7",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
+                    borderTopLeftRadius: "4px",
+                    borderTopRightRadius: "4px",
+                  }}
+                >
+                  <Typography variant="body2" fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}>
+                    {number === "00" ? "00" : number < 10 ? `0${number}` : number}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: { xs: 18, sm: 22, md: 26, lg: 30 },
+                    backgroundColor: "#eceaf6",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderBottomLeftRadius: "4px",
+                    borderBottomRightRadius: "4px",
+                    color: "black",
+                  }}
+                >
+                  <Typography variant="body2" fontWeight={"bold"} fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}>
+                    {bidMap[number] ? `₹${bidMap[number]}` : ""}
+                  </Typography>
+                </Box>
+              </Box>
+            );
+          })
+        )}
       </Box>
       <CustomSnackbar
         open={!!error || !!success}
