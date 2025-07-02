@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { PublicRoute } from "../helpers/PublicRoute";
 import { ProtectedRoute } from "../helpers/ProtectedRoute";
-import { SignIn, PageNotFound } from "../pages"; // Adjust the path if needed
+import { SignIn, PageNotFound } from "../pages"; 
 import Home from "../pages/Home";
 import Header from "../component/Header";
 import Games from "../pages/Games";
@@ -43,7 +43,6 @@ const Routing = () => {
               element={<WithdrawalApprovedList />}
             />
             <Route path="/last-game-winners" element={<LastGameWinner />} />
-            {/* <Route path="/player-commision" element={<PlayerCommision />} /> */}
             <Route
               path="/withdrawal-requests"
               element={<WithdrawalRequests />}
@@ -63,7 +62,6 @@ const Routing = () => {
           </Route>
         </Route>
       </Routes>
-      {/* <Route path="/verify-payments" element={<VerifyPayment />} /> */}
     </>
   );
 };

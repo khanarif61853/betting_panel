@@ -241,7 +241,7 @@ const WithdrawalRequest = () => {
           pageSize={limit}
           checkboxSelection
           disableSelectionOnClick
-          onRowSelectionModelChange={() => { }}  // No-op to prevent default selection behavior
+          onRowSelectionModelChange={() => { }} 
           onPaginationModelChange={(value) => {
             if (value.pageSize !== limit) {
               changeLimit(value.pageSize);
@@ -251,7 +251,7 @@ const WithdrawalRequest = () => {
             changeLimit(value.pageSize);
           }}
           loading={loading}
-          getRowHeight={() => 'auto'}  // Adjust row height based on content
+          getRowHeight={() => 'auto'}
         />
       </Box>
 

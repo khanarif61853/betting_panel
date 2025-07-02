@@ -41,13 +41,12 @@ const Rules = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
-  const [saving, setSaving] = useState(false); // State for save button loading
+  const [saving, setSaving] = useState(false); 
   const [editingRule, setEditingRule] = useState(null);
-  const navigate = useNavigate(); // State for editing a specific rule
+  const navigate = useNavigate(); 
 
-  // Fetch the rules data from the API
   const fetchRules = async () => {
-    setLoading(true); // Set loading to true when fetching data
+    setLoading(true); 
     try {
       const { data } = await axios.get(`${BASE_URL}/api/web/retrieve/rules`, {
         headers: {
@@ -55,14 +54,11 @@ const Rules = () => {
         },
       });
       if (data.type === "success" && data.data) {
-        setRules(data.data); // Set the rules data received from the API
+        setRules(data.data); 
       } else {
-        setRules([]); // If no rules data exists, set rules to empty array
+        setRules([]);
       }
     } catch (err) {
-      console.error("Error fetching rules:", err);
-    } finally {
-      setLoading(false); // Set loading to false once the fetch is complete
     }
   };
 
@@ -71,14 +67,14 @@ const Rules = () => {
   }, []);
 
   const handleAddEditClick = (rule = null) => {
-    setEditingRule(rule); // Set the rule being edited
-    setDescription(rule ? rule.description : ""); // Set description if editing
-    setImage(null); // Reset image input
-    setOpenDialog(true); // Open dialog to add or edit rule
+    setEditingRule(rule); 
+    setDescription(rule ? rule.description : ""); 
+    setImage(null);
+    setOpenDialog(true); 
   };
 
   const handleSaveRule = async () => {
-    setSaving(true); // Set saving state to true
+    setSaving(true); 
     try {
       const formData = new FormData();
       formData.append("description", description);
@@ -106,21 +102,18 @@ const Rules = () => {
         setDescription("");
         setImage(null);
         setEditingRule(null);
-        fetchRules(); // Re-fetch rules data to update the UI
-        // Optionally show success message in snackbar
+        fetchRules();
       } else {
-        // Optionally handle unsuccessful response (e.g., show an error message in snackbar)
       }
     } catch (err) {
       console.error("Error saving rule:", err);
-      // Optionally show an error message in snackbar
     } finally {
-      setSaving(false); // Set saving state to false once the request is complete
+      setSaving(false); 
     }
   };
 
   const handleDeleteRule = async (ruleId) => {
-    setLoading(true); // Show loading indicator during deletion
+    setLoading(true); 
     try {
       const { data } = await axios.delete(
         `${BASE_URL}/api/web/delete/rule/${ruleId}`,
@@ -131,16 +124,12 @@ const Rules = () => {
         }
       );
       if (data.type === "success") {
-        fetchRules(); // Re-fetch rules data to update the UI
-        // Optionally show success message in snackbar
-      } else {
-        // Optionally handle unsuccessful response (e.g., show an error message in snackbar)
-      }
+        fetchRules();
+      } 
     } catch (err) {
       console.error("Error deleting rule:", err);
-      // Optionally show an error message in snackbar
     } finally {
-      setLoading(false); // Hide loading indicator after deletion
+      setLoading(false); 
     }
   };
 

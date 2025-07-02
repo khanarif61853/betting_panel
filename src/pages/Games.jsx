@@ -393,7 +393,6 @@ const Games = () => {
 
     return (
       <>
-        {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
         <ArrowBackIcon
           style={{ cursor: "pointer" }}
           onClick={() => navigate("/home")}
