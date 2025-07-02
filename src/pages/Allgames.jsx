@@ -505,12 +505,7 @@ const Allgames = () => {
         }}
       >
         <CustomDataGrid rows={existingGames?.games} />
-        {/* <CustomSnackbar
-          open={snackbarOpen}
-          onClose={handleCloseSnackbar}
-          message={error || success}
-          severity={snackbarSeverity}
-        /> */}
+
       </Box>
       <Dialog
         open={openDialog}

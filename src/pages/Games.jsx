@@ -282,7 +282,6 @@ const Games = () => {
   };
 
   const columns = [
-    // { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Name", width: 150 },
     { field: "startDateTime", headerName: "Start Time", width: 150 },
     { field: "endDateTime", headerName: "End Time", width: 150 },
@@ -320,27 +319,7 @@ const Games = () => {
       width: 130,
       renderCell: ({ row }) => (
         <div>
-          {/* <IconButton
-            color="primary"
-            sx={{ color: "purple" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEdit(row.id);
-            }}
-            aria-label="edit"
-          >
-            <EditIcon />
-          </IconButton> */}
-          {/* <IconButton
-            color="secondary"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleOpenDialog(row.id);
-            }}
-            aria-label="delete"
-          >
-            <DeleteIcon />
-          </IconButton> */}
+      
           <IconButton
             sx={{ color: "#4389A2" }}
             onClick={(e) => {
@@ -377,7 +356,6 @@ const Games = () => {
       textAlign: "center",
       renderCell: ({ row }) => (
         <div>
-          {/* {console.log(row)} */}
           {row.finalBidNumber != null ? (
             <Chip
               label={row.finalBidNumber}
@@ -392,19 +370,7 @@ const Games = () => {
   ];
 
   const CustomDataGrid = ({ rows }) => {
-    // let oldDateTime = moment('2025-08-31 12:47:00', "YYYY-MM-DD HH:mm:ss");
-    // console.log(oldDateTime,'oldDateTime---')
-    // let today = moment();
-    // console.log(today.month(),'today')
-    // let mergedDateTime = oldDateTime
-    //   .set({
-    //     year: today.year(),
-    //     month: today.month(),
-    //     date: today.date()
-    //   })
-    //   .format();
-
-    // console.log(mergedDateTime, 'mergedDateTime------------');
+ 
     const [filter, setFilter] = useState("all");
 
     const handleFilterChange = (event) => {
