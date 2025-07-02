@@ -419,7 +419,6 @@ const Game = () => {
           width: "100%",
         }}
       >
-        {/* Render numbers truly column-wise: for each row, render all columns' row-th element */}
         {Array.from({ length: 10 }).map((_, rowIdx) =>
           bidColumns.map((column) => {
             const number = column[rowIdx];

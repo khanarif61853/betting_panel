@@ -19,7 +19,6 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useFormik } from "formik";
@@ -654,7 +653,7 @@ const Allgames = () => {
             <TextField
               margin="dense"
               name="startTime"
-              label="Start Date Time"
+              label="Start Time"
               type="datetime-local"
               fullWidth
               InputLabelProps={{
@@ -673,7 +672,7 @@ const Allgames = () => {
             />
             <TextField
               margin="dense"
-              label="End Date Time"
+              label="End Time"
               name="endTime"
               type="datetime-local"
               fullWidth
@@ -690,7 +689,7 @@ const Allgames = () => {
             />
             <TextField
               margin="dense"
-              label="Result Date Time"
+              label="Result Time"
               name="resultTime"
               type="datetime-local"
               fullWidth
