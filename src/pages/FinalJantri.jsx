@@ -288,11 +288,10 @@ const FinalJantri = () => {
         sx={{
           display: "grid",
           gridTemplateColumns: "repeat(10, 1fr)",
-          gap: { xs: 0.5, sm: 1, md: 2, lg: 3 },
+          border: "1px solid black",
           width: "100%",
         }}
       >
-        {/* Render numbers truly column-wise: for each row, render all columns' row-th element */}
         {Array.from({ length: 10 }).map((_, rowIdx) =>
           bidColumns.map((column) => {
             const number = column[rowIdx];
@@ -301,46 +300,33 @@ const FinalJantri = () => {
                 key={number}
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
                   border: "1px solid #ddd",
                   borderRadius: 1,
-                  width: { xs: 28, sm: 36, md: 48, lg: 60 },
-                  minWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
-                  maxWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
                 }}
               >
                 <Box
                   sx={{
-                    width: "100%",
-                    padding: 0.5,
+                    padding: { sm:1,md:0.5, lg: 1 },
                     backgroundColor: "#6f6bb7",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
                     color: "white",
-                    borderTopLeftRadius: "4px",
-                    borderTopRightRadius: "4px",
                   }}
                 >
-                  <Typography variant="body2" fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}>
+                  <Typography variant="body2" fontSize={{ xs: 8, sm: 10, lg: 10 }}>
                     {number === "00" ? "00" : number < 10 ? `0${number}` : number}
                   </Typography>
                 </Box>
                 <Box
                   sx={{
                     width: "100%",
-                    height: { xs: 18, sm: 22, md: 26, lg: 30 },
                     backgroundColor: "#eceaf6",
+                     padding: { sm:1,md:0.5, lg: 1 },
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    borderBottomLeftRadius: "4px",
-                    borderBottomRightRadius: "4px",
                     color: "black",
                   }}
                 >
-                  <Typography variant="body2" fontWeight={"bold"} fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}>
+                  <Typography variant="body2" fontWeight={"bold"} fontSize={{ xs: 8, sm: 10, lg: 10 }}>
                     {bidMap[number] ? `₹${bidMap[number]}` : ""}
                   </Typography>
                 </Box>

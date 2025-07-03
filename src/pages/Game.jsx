@@ -435,7 +435,7 @@ const Game = () => {
               >
                 <Box
                   sx={{
-                    padding: { sx: 0.5, lg: 1 },
+                    padding: { sm:1,md:0.5, lg: 1 },
                     backgroundColor: bidDeclared
                       ? "grey"
                       : bidMap
@@ -453,7 +453,7 @@ const Game = () => {
                 >
                   <Typography
                     variant="body2"
-                    fontSize={{ xs: 8, sm: 10,lg: 10 }}
+                    fontSize={{ xs: 8, sm: 10, lg: 10 }}
                   >
                     {number === "00"
                       ? "00"
@@ -465,7 +465,7 @@ const Game = () => {
                 <Box
                   sx={{
                     width: "100%",
-                    padding: { sx: 0.5, lg: 1},
+                    padding: { sm:1,md:0.5, lg: 1 },
                     backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
                     display: "flex",
                     justifyContent: "center",
@@ -476,9 +476,8 @@ const Game = () => {
                   <Typography
                     variant="body2"
                     fontWeight={"bold"}
-                    fontSize={{  xs: 8, sm: 10, lg: 10 }}
+                    fontSize={{ xs: 8, sm: 10, lg: 10 }}
                     sx={{ flexGrow: 1, textAlign: "center" }}
-
                   >
                     {bidMap
                       ? bidMap[number] !== undefined
@@ -516,13 +515,13 @@ const Game = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                border: "1px solid lightgrey",
+                border: "1px solid black",
                 cursor: "not-allowed",
               }}
             >
               <Box
                 sx={{
-                  padding: { sx: 0.5, lg: 1 },
+                  padding: { sm: 1,md:0.8, lg: 1 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : insideBidMap[number] === minInsideBidAmount
@@ -536,33 +535,36 @@ const Game = () => {
                   color: "white",
                 }}
               >
-                <Typography variant="body2" fontSize={{ xs: 8, sm: 10, lg: 10 }}>
+                <Typography
+                  variant="body2"
+                  fontSize={{ xs: 8, sm: 10, lg: 10 }}
+                >
                   {number}
                 </Typography>
               </Box>
-              <Box
-                sx={{
-                  padding: { sx: 0.5, lg: 1 },
-                  width: "100%",
-                  backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
-                  display: "flex",
-                  color: "black",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={"bold"}
-                  fontSize={{ xs: 8, sm: 10, lg: 10}}
-                  sx={{ flexGrow: 1, textAlign: "center" }}
-                 
 
+              <Box>
+                <Box
+                  sx={{
+                    padding: { sm:1,md:0.8, lg: 1 },
+                    width: "100%",
+                    display: "flex",
+                    color: "black",
+                  }}
                 >
-                  {insideBidMap
-                    ? insideBidMap[number] !== undefined
-                      ? `₹${insideBidMap[number]}`
-                      : ""
-                    : ""}
-                </Typography>
+                  <Typography
+                    variant="body2"
+                    fontWeight={"bold"}
+                    fontSize={{ xs: 8, sm: 10, lg: 10 }}
+                    sx={{ flexGrow: 1, textAlign: "center" }}
+                  >
+                    {insideBidMap
+                      ? insideBidMap[number] !== undefined
+                        ? `₹${insideBidMap[number]}`
+                        : ""
+                      : ""}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           ))}
@@ -592,13 +594,13 @@ const Game = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                border: "1px solid lightgrey",
+                border: "1px solid black",
                 cursor: "not-allowed",
               }}
             >
               <Box
                 sx={{
-                  padding: { sx: 0.5, lg: 1 },
+                  padding: { sm: 1,md:0.8, lg: 1 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : formik.values.bidNumber.number === "00" && number === 0
@@ -614,15 +616,18 @@ const Game = () => {
                   color: "white",
                 }}
               >
-                <Typography variant="body2" fontSize={{ xs: 8, sm: 10, lg: 10 }}>
+                <Typography
+                  variant="body2"
+                  fontSize={{ xs: 8, sm: 10, lg: 10 }}
+                >
                   {number}
                 </Typography>
               </Box>
+              <Box>
               <Box
                 sx={{
                   width: "100%",
-                  padding: { sx: 0.5, lg: 1 },
-                  backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
+                  padding: { sm: 1, lg: 1 },
                   display: "flex",
                   color: "black",
                 }}
@@ -639,6 +644,7 @@ const Game = () => {
                       : ""
                     : ""}
                 </Typography>
+              </Box>
               </Box>
             </Box>
           ))}
