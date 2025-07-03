@@ -300,18 +300,18 @@ const FinalJantri = () => {
                 key={number}
                 sx={{
                   display: "flex",
-                  border: "1px solid #ddd",
+                  border: "1px solid lightgray",
                   borderRadius: 1,
                 }}
               >
                 <Box
                   sx={{
-                    padding: { sm:1,md:0.5, lg: 1 },
+                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 1 },
                     backgroundColor: "#6f6bb7",
                     color: "white",
                   }}
                 >
-                  <Typography variant="body2" fontSize={{ xs: 8, sm: 10, lg: 10 }}>
+                  <Typography variant="body2" fontSize={{ xs: 8, sm: 8, lg: 10 }}>
                     {number === "00" ? "00" : number < 10 ? `0${number}` : number}
                   </Typography>
                 </Box>
@@ -319,14 +319,14 @@ const FinalJantri = () => {
                   sx={{
                     width: "100%",
                     backgroundColor: "#eceaf6",
-                     padding: { sm:1,md:0.5, lg: 1 },
+                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 1 },
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     color: "black",
                   }}
                 >
-                  <Typography variant="body2" fontWeight={"bold"} fontSize={{ xs: 8, sm: 10, lg: 10 }}>
+                  <Typography variant="body2" fontWeight={"bold"} fontSize={{ xs: 8, sm: 8, lg: 10 }}>
                     {bidMap[number] ? `₹${bidMap[number]}` : ""}
                   </Typography>
                 </Box>
