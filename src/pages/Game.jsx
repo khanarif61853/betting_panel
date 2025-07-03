@@ -426,7 +426,7 @@ const Game = () => {
                 key={number}
                 onClick={() => handleBidNumberClick(number)}
                 sx={{
-                  border: "1px solid black",
+                  border: "1px solid lightgrey",
                   cursor: bidDeclared ? "not-allowed" : "pointer",
                   boxShadow:
                     formik.values.bidNumber.number === number
@@ -434,16 +434,17 @@ const Game = () => {
                       : "none",
                   backgroundColor: bidDeclared ? "#BEB8D1" : "inherit",
                   display: "flex",
-                  width: { xs: 45, md: 60, lg: 60 },
-                  minWidth: { xs: 45, md: 60, lg: 60 },
-                  maxWidth: { xs: 45,  md: 60, lg: 60 },
+                  // width: { xs: 45, md: 60, lg: 60 },
+                  // minWidth: { xs: 45, md: 60, lg: 60 },
+                  // maxWidth: { xs: 45,  md: 60, lg: 60 },
                 }}
               >
                 <Box
                   sx={{
-                    width: "100%",
+                    // width: "70%",
+                    padding: 0.5,
                     backgroundColor: bidDeclared
-                      ? "gray"
+                      ? "grey"
                       : bidMap
                       ? bidMap[number] === minBidAmount
                         ? "#ffa500"
@@ -453,16 +454,13 @@ const Game = () => {
                         ? "green"
                         : "#6f6bb7"
                       : "#6f6bb7",
-                    border: "1px solid black",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
                     color: "white",
+                    fontWeight: "bold",
                   }}
                 >
                   <Typography
                     variant="body2"
-                    fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}
+                    fontSize={{ xs:12 }}
                   >
                     {number === "00"
                       ? "00"
