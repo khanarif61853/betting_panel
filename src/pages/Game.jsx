@@ -429,10 +429,6 @@ const Game = () => {
                 sx={{
                   border: "1px solid lightgrey",
                   cursor: bidDeclared ? "not-allowed" : "pointer",
-                  boxShadow:
-                    formik.values.bidNumber.number === number
-                      ? "0px 4px 10px rgba(0, 0, 0, 1)"
-                      : "none",
                   backgroundColor: bidDeclared ? "#BEB8D1" : "inherit",
                   display: "flex",
                 }}
@@ -480,7 +476,7 @@ const Game = () => {
                   <Typography
                     variant="body2"
                     fontWeight={"bold"}
-                    fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}
+                    fontSize={{  xs: 8, sm: 10, lg: 10 }}
                     sx={{ flexGrow: 1, textAlign: "center" }}
 
                   >
@@ -522,10 +518,6 @@ const Game = () => {
                 alignItems: "center",
                 border: "1px solid lightgrey",
                 cursor: "not-allowed",
-                boxShadow:
-                  formik.values.insideBidNumber.number === number
-                    ? "0px 4px 10px rgba(0, 0, 0, 1)"
-                    : "none",
               }}
             >
               <Box
@@ -560,7 +552,7 @@ const Game = () => {
                 <Typography
                   variant="body2"
                   fontWeight={"bold"}
-                  fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}
+                  fontSize={{ xs: 8, sm: 10, lg: 10}}
                   sx={{ flexGrow: 1, textAlign: "center" }}
                  
 
@@ -602,16 +594,11 @@ const Game = () => {
                 alignItems: "center",
                 border: "1px solid lightgrey",
                 cursor: "not-allowed",
-                boxShadow:
-                  formik.values.outsideBidNumber.number === number ||
-                  (formik.values.bidNumber.number === "00" && number === 0)
-                    ? "0px 4px 10px rgba(0, 0, 0, 1)"
-                    : "none",
               }}
             >
               <Box
                 sx={{
-                  padding: { sx: 0.5,lg: 1 },
+                  padding: { sx: 0.5, lg: 1 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : formik.values.bidNumber.number === "00" && number === 0
@@ -643,9 +630,8 @@ const Game = () => {
                 <Typography
                   variant="body2"
                   fontWeight={"bold"}
-                  fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}
+                  fontSize={{ xs: 8, sm: 10, lg: 10 }}
                   sx={{ flexGrow: 1, textAlign: "center" }}
-
                 >
                   {outsideBidMap
                     ? outsideBidMap[number] !== undefined
