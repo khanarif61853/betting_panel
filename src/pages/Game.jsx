@@ -409,6 +409,7 @@ const Game = () => {
           )}
         </Box>
       </Box>
+      {/* bid Numbers */}
       <Box
         mt={2}
         sx={{
@@ -434,15 +435,11 @@ const Game = () => {
                       : "none",
                   backgroundColor: bidDeclared ? "#BEB8D1" : "inherit",
                   display: "flex",
-                  // width: { xs: 45, md: 60, lg: 60 },
-                  // minWidth: { xs: 45, md: 60, lg: 60 },
-                  // maxWidth: { xs: 45,  md: 60, lg: 60 },
                 }}
               >
                 <Box
                   sx={{
-                    // width: "70%",
-                    padding: 0.5,
+                    padding: { sx: 0.5, sm: 0.75, md: 1, lg: 1.25 },
                     backgroundColor: bidDeclared
                       ? "grey"
                       : bidMap
@@ -460,7 +457,7 @@ const Game = () => {
                 >
                   <Typography
                     variant="body2"
-                    fontSize={{ xs:12 }}
+                    fontSize={{ xs: 8, sm: 10,lg: 10 }}
                   >
                     {number === "00"
                       ? "00"
@@ -472,7 +469,7 @@ const Game = () => {
                 <Box
                   sx={{
                     width: "100%",
-                    height: { xs: 18, sm: 22, md: 26, lg: 30 },
+                    padding: { sx: 0.5, sm: 0.75, md: 1, lg: 1.25 },
                     backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
                     display: "flex",
                     justifyContent: "center",
@@ -511,8 +508,8 @@ const Game = () => {
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(10, 1fr)",
-            gap: { xs: 0.5, sm: 1, md: 2, lg: 3 },
             width: "100%",
+            border: "1px solid lightgrey",
           }}
         >
           {insideOutsideRow?.map((number) => (
@@ -520,28 +517,19 @@ const Game = () => {
               key={number}
               sx={{
                 display: "flex",
-                // flexDirection: "column",
                 alignItems: "center",
-                border: "1px solid #ddd",
+                border: "1px solid lightgrey",
                 cursor: "not-allowed",
                 borderRadius: 1,
-                backgroundColor:
-                  formik.values.bidNumber.number === "00" && number === 0
-                    ? "green"
-                    : "#f0f0f0",
                 boxShadow:
                   formik.values.insideBidNumber.number === number
                     ? "0px 4px 10px rgba(0, 0, 0, 1)"
                     : "none",
-                width: { xs: 28, sm: 36, md: 48, lg: 60 },
-                minWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
-                maxWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
               }}
             >
               <Box
                 sx={{
-                  width: "100%",
-                  padding: 0.5,
+                  padding: { sx: 0.5, sm: 0.75, md: 1, lg: 1.25 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : insideBidMap[number] === minInsideBidAmount
@@ -557,17 +545,14 @@ const Game = () => {
                   borderTopRightRadius: "4px",
                 }}
               >
-                <Typography
-                  variant="body2"
-                  fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}
-                >
+                <Typography variant="body2" fontSize={{ xs: 8, sm: 10, lg: 10 }}>
                   {number}
                 </Typography>
               </Box>
               <Box
                 sx={{
                   width: "100%",
-                  height: { xs: 18, sm: 22, md: 26, lg: 30 },
+                  padding: { sx: 0.5, sm: 0.75, md: 1, lg: 1.25 },
                   backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
                   display: "flex",
                   color: "black",
@@ -603,8 +588,8 @@ const Game = () => {
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(10, 1fr)",
-            gap: { xs: 0.5, sm: 1, md: 2, lg: 3 },
             width: "100%",
+            border: "1px solid lightgrey",
           }}
         >
           {insideOutsideRow.map((number) => (
@@ -612,9 +597,8 @@ const Game = () => {
               key={number}
               sx={{
                 display: "flex",
-                // flexDirection: "column   ",
                 alignItems: "center",
-                border: "1px solid #ddd",
+                border: "1px solid lightgrey",
                 cursor: "not-allowed",
                 borderRadius: 1,
                 backgroundColor: bidDeclared
@@ -631,15 +615,11 @@ const Game = () => {
                   (formik.values.bidNumber.number === "00" && number === 0)
                     ? "0px 4px 10px rgba(0, 0, 0, 1)"
                     : "none",
-                width: { xs: 28, sm: 36, md: 48, lg: 60 },
-                minWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
-                maxWidth: { xs: 28, sm: 36, md: 48, lg: 60 },
               }}
             >
               <Box
                 sx={{
-                  width: "100%",
-                  padding: 0.5,
+                  padding: { sx: 0.5, sm: 0.75, md: 1, lg: 1.25 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : formik.values.bidNumber.number === "00" && number === 0
@@ -657,17 +637,14 @@ const Game = () => {
                   borderTopRightRadius: "4px",
                 }}
               >
-                <Typography
-                  variant="body2"
-                  fontSize={{ xs: 10, sm: 12, md: 14, lg: 16 }}
-                >
+                <Typography variant="body2" fontSize={{ xs: 8, sm: 10, lg: 10 }}>
                   {number}
                 </Typography>
               </Box>
               <Box
                 sx={{
                   width: "100%",
-                  height: { xs: 18, sm: 22, md: 26, lg: 30 },
+                  padding: { sx: 0.5, sm: 0.75, md: 1, lg: 1.25 },
                   backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
                   display: "flex",
                   justifyContent: "center",
@@ -693,6 +670,7 @@ const Game = () => {
           ))}
         </Box>
       </Box>
+
       <Box
         sx={{
           position: "fixed",
@@ -817,5 +795,3 @@ const Game = () => {
 };
 
 export default Game;
-
-
