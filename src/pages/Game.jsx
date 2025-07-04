@@ -331,7 +331,7 @@ const Game = () => {
             >
               Top 10 Maximum Bid Amount
             </Typography>
-            <Select sx={{ mt: 1, minWidth: 150 }} displayEmpty defaultValue="">
+            <Select sx={{ mt: 1, minWidth: 150, height: 32, fontSize: 12, '.MuiSelect-select': { padding: '4px 8px', fontSize: 12 }}} displayEmpty defaultValue="">
               <MenuItem value="" disabled>
                 Select a maximum bid
               </MenuItem>
@@ -351,7 +351,7 @@ const Game = () => {
             >
               Top 10 Minimum Bid Amounts
             </Typography>
-            <Select sx={{ mt: 1, minWidth: 150 }} displayEmpty defaultValue="">
+            <Select sx={{ mt: 1, minWidth: 150, height: 32, fontSize: 12, '.MuiSelect-select': { padding: '4px 8px', fontSize: 12 }}} displayEmpty defaultValue="" >
               <MenuItem value="" disabled>
                 Select a minimum bid
               </MenuItem>
@@ -414,7 +414,7 @@ const Game = () => {
           display: "grid",
           gridTemplateColumns: "repeat(10, 1fr)",
           width: "100%",
-          border: "1px solid black",
+          // border: "1px solid black",
         }}
       >
         {Array.from({ length: 10 }).map((_, rowIdx) =>
@@ -433,7 +433,7 @@ const Game = () => {
               >
                 <Box
                   sx={{
-                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 1 },
+                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 0.5 },
                     backgroundColor: bidDeclared
                       ? "grey"
                       : bidMap
@@ -463,7 +463,7 @@ const Game = () => {
                 <Box
                   sx={{
                     width: "100%",
-                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 1 },
+                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 0.5 },
                     backgroundColor: bidDeclared ? "#BEB8D1" : "#eceaf6",
                     display: "flex",
                     justifyContent: "center",
@@ -481,7 +481,7 @@ const Game = () => {
                       ? bidMap[number] !== undefined
                         ? `₹${bidMap[number]}`
                         : ""
-                      : ""}
+                      : ""}100000
                   </Typography>
                 </Box>
               </Box>
@@ -504,7 +504,7 @@ const Game = () => {
             display: "grid",
             gridTemplateColumns: "repeat(10, 1fr)",
             width: "100%",
-            border: "1px solid black",
+            // border: "1px solid black",
           }}
         >
           {insideOutsideRow?.map((number) => (
@@ -519,7 +519,7 @@ const Game = () => {
             >
               <Box
                 sx={{
-                  padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 1 },
+                  padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 0.5 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : insideBidMap[number] === minInsideBidAmount
@@ -544,7 +544,7 @@ const Game = () => {
               <Box>
                 <Box
                   sx={{
-                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 1 },
+                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 0.5 },
                     width: "100%",
                     display: "flex",
                     color: "black",
@@ -560,7 +560,7 @@ const Game = () => {
                       ? insideBidMap[number] !== undefined
                         ? `₹${insideBidMap[number]}`
                         : ""
-                      : ""}
+                      : ""}100000
                   </Typography>
                 </Box>
               </Box>
@@ -583,7 +583,7 @@ const Game = () => {
             display: "grid",
             gridTemplateColumns: "repeat(10, 1fr)",
             width: "100%",
-            border: "1px solid black",
+            // border: "1px solid black",
           }}
         >
           {insideOutsideRow.map((number) => (
@@ -598,7 +598,7 @@ const Game = () => {
             >
               <Box
                 sx={{
-                  padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 1 },
+                  padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 0.5 },
                   backgroundColor: bidDeclared
                     ? "gray"
                     : formik.values.bidNumber.number === "00" && number === 0
@@ -625,7 +625,7 @@ const Game = () => {
                 <Box
                   sx={{
                     width: "100%",
-                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 1 },
+                    padding: { xs: 0.1, sm: 0.2, md: 0.2, lg: 0.5 },
                     display: "flex",
                     color: "black",
                   }}
@@ -640,7 +640,7 @@ const Game = () => {
                       ? outsideBidMap[number] !== undefined
                         ? outsideBidMap[number]
                         : ""
-                      : ""}
+                      : ""}100000
                   </Typography>
                 </Box>
               </Box>
