@@ -229,13 +229,12 @@ const FinalJantri = () => {
         <Grid item>
           <Box mt={2}>
             <Typography
-              variant="h6"
               fontFamily={"Alegreya Sans SC, sans-serif"}
               fontWeight={500}
             >
               Top 10 Maximum Bid Amounts
             </Typography>
-            <Select sx={{ mt: 2, minWidth: 300 }} displayEmpty defaultValue="">
+            <Select sx={{ mt: 1, minWidth: 150, height: 32, fontSize: 12, '.MuiSelect-select': { padding: '4px 8px', fontSize: 12 }}}  displayEmpty defaultValue="">
               <MenuItem value="" disabled>
                 Select a maximum bid
               </MenuItem>
@@ -250,13 +249,12 @@ const FinalJantri = () => {
         <Grid item>
           <Box mt={2}>
             <Typography
-              variant="h6"
               fontFamily={"Alegreya Sans SC, sans-serif"}
               fontWeight={500}
             >
               Top 10 Minimum Bid Amounts
             </Typography>
-            <Select sx={{ mt: 2, minWidth: 300 }} displayEmpty defaultValue="">
+            <Select sx={{ mt: 1, minWidth: 150, height: 32, fontSize: 12, '.MuiSelect-select': { padding: '4px 8px', fontSize: 12 }}}  displayEmpty defaultValue="">
               <MenuItem value="" disabled>
                 Select a minimum bid
               </MenuItem>
@@ -306,7 +304,7 @@ const FinalJantri = () => {
               >
                 <Box
                   sx={{
-                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 1 },
+                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 0.5 },
                     backgroundColor: "#6f6bb7",
                     color: "white",
                   }}
@@ -319,7 +317,7 @@ const FinalJantri = () => {
                   sx={{
                     width: "100%",
                     backgroundColor: "#eceaf6",
-                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 1 },
+                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 0.5 },
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
