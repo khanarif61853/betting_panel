@@ -372,7 +372,6 @@ const Game = () => {
         mb={2}
       >
         <Typography
-          variant="h5"
           fontFamily={"Alegreya Sans SC, sans-serif"}
           fontWeight={500}
         >
@@ -381,7 +380,6 @@ const Game = () => {
         <Box display="flex" gap={2}>
           {savedBid && (
             <Typography
-              variant="h4"
               fontFamily={"Alegreya Sans SC, sans-serif"}
               backgroundColor="#4CAF50"
               borderRadius={"10px"}
@@ -481,7 +479,7 @@ const Game = () => {
                       ? bidMap[number] !== undefined
                         ? `₹${bidMap[number]}`
                         : ""
-                      : ""}100000
+                      : ""}
                   </Typography>
                 </Box>
               </Box>
@@ -493,7 +491,6 @@ const Game = () => {
       {/* Display Inside Numbers */}
       <Box mt={4}>
         <Typography
-          variant="h5"
           fontFamily={"Alegreya Sans SC, sans-serif"}
           fontWeight={500}
         >
@@ -560,7 +557,7 @@ const Game = () => {
                       ? insideBidMap[number] !== undefined
                         ? `₹${insideBidMap[number]}`
                         : ""
-                      : ""}100000
+                      : ""}
                   </Typography>
                 </Box>
               </Box>
@@ -572,7 +569,6 @@ const Game = () => {
       {/* Display Outside Numbers */}
       <Box mt={4}>
         <Typography
-          variant="h5"
           fontFamily={"Alegreya Sans SC, sans-serif"}
           fontWeight={500}
         >
@@ -640,7 +636,7 @@ const Game = () => {
                       ? outsideBidMap[number] !== undefined
                         ? outsideBidMap[number]
                         : ""
-                      : ""}100000
+                      : ""}
                   </Typography>
                 </Box>
               </Box>
