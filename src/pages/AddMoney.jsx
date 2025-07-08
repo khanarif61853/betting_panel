@@ -24,6 +24,8 @@ import {
   MenuItem,
   Select,
   Tooltip,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -234,13 +236,17 @@ const AddMoney = () => {
     setApprovedPage(0);
   };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Box
       sx={{
         display: "flex",
+        flexDirection: isMobile ? "column" : "row",
         gap: 2,
         width: "100%",
-        height: 500,
+        height: isMobile ? "auto" : 500,
         mt: 2,
         px: 2,
         background: "#fff",
@@ -249,15 +255,16 @@ const AddMoney = () => {
       {/* Left: Add Money Requests */}
       <Box
         sx={{
-          width: "60%",
-          minWidth: 350,
-          height: 450,
+          width: isMobile ? "100%" : "60%",
+          minWidth: 200,
+          height: 550,
           display: "flex",
           flexDirection: "column",
           p: 2,
           background: "#fff",
           borderRadius: 2,
           boxShadow: 2,
+          mb: isMobile ? 2 : 0, // add margin between stacked tables
         }}
       >
         {/* Search Bar */}
@@ -453,9 +460,9 @@ const AddMoney = () => {
       {/* Right: Approved/Rejected List */}
       <Box
         sx={{
-          width: "40%",
-          minWidth: 300,
-          height: 450,
+          width: isMobile ? "100%" : "40%",
+          minWidth: 200,
+          height: 550,
           display: "flex",
           flexDirection: "column",
           p: 2,
