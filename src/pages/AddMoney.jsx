@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
   Button,
@@ -10,58 +11,126 @@ import {
   DialogContentText,
   DialogTitle,
   Typography,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  InputBase,
-  IconButton,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import moment from "moment";
 import CustomSnackbar from "../component/CustomSnackbar";
 import { BASE_URL } from "../costants";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+
+const theme = createTheme({
+  palette: {
+    primary: { main: "#5a508b" },
+    secondary: { main: "#d32f2f" },
+    success: { main: "#2e7d32" },
+  },
+  typography: { fontFamily: "Arial, sans-serif" },
+  components: {
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#f4f6f8",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#1976d2",
+            fontSize: "1.1rem",
+          },
+          "& .MuiDataGrid-cell": {
+            display: "flex",
+            alignItems: "center",
+            whiteSpace: "pre-line",
+          },
+        },
+      },
+    },
+  },
+});
 
 const AddMoney = () => {
-  const [requests, setRequests] = useState([]);
+  // Left Table: Add Money Requests
+  const [addMoneyRequests, setAddMoneyRequests] = useState([]);
+  const [addMoneyPage, setAddMoneyPage] = useState(0);
+  const [addMoneyLimit, setAddMoneyLimit] = useState(5);
+  const [addMoneyTotal, setAddMoneyTotal] = useState(0);
+  const [addMoneyLoading, setAddMoneyLoading] = useState(true);
+
+  // Right Table: Approved/Rejected List
+  const [approvedRequests, setApprovedRequests] = useState([]);
+  const [approvedPage, setApprovedPage] = useState(0);
+  const [approvedLimit, setApprovedLimit] = useState(5);
+  const [approvedTotal, setApprovedTotal] = useState(0);
+  const [approvedLoading, setApprovedLoading] = useState(true);
+  const [type, setType] = useState("Approved");
+  const [gamesDate, setGamesDate] = useState(dayjs());
+
+  // Dialog state
   const [open, setOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [values, setValues] = useState({ bankDetails: "" });
-  const [errors, setErrors] = useState({});
-  const [search, setSearch] = useState("");
+
+  // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  // Fetch Add Money Requests (left)
   useEffect(() => {
-    fetchRequests();
-  }, []);
+    fetchAddMoneyRequests();
+  }, [addMoneyPage, addMoneyLimit]);
 
-  const fetchRequests = async () => {
-    setLoading(true);
+  // Fetch Approved/Rejected List (right)
+  useEffect(() => {
+    fetchApprovedRequests();
+  }, [approvedPage, approvedLimit, type, gamesDate]);
+
+  const fetchAddMoneyRequests = async () => {
+    setAddMoneyLoading(true);
     try {
       const response = await axios.get(
         `${BASE_URL}/api/web/retrieve/add-money`,
         {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
+          params: { limit: addMoneyLimit, page: addMoneyPage },
+          headers: { Authorization: localStorage.getItem("token") },
         }
       );
-      setRequests(response.data.data.payment);
-      setSnackbarSeverity("success");
-      setSnackbarMessage(`Retrieved successfully`);
-      setSnackbarOpen(true);
+      setAddMoneyRequests(response.data.data.payment);
+      setAddMoneyTotal(response.data.data.count);
     } catch (error) {
       setSnackbarSeverity("error");
       setSnackbarMessage("Error fetching requests");
       setSnackbarOpen(true);
     } finally {
-      setLoading(false);
+      setAddMoneyLoading(false);
+    }
+  };
+
+  const fetchApprovedRequests = async () => {
+    setApprovedLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/web/retrieve/add-money`,
+        {
+          params: {
+            limit: approvedLimit,
+            page: approvedPage,
+            type,
+            date: gamesDate,
+          },
+          headers: { Authorization: localStorage.getItem("token") },
+        }
+      );
+      setApprovedRequests(response.data.data.payment);
+      setApprovedTotal(response.data.data.count);
+    } catch (error) {
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Error fetching approved requests");
+      setSnackbarOpen(true);
+    } finally {
+      setApprovedLoading(false);
     }
   };
 
@@ -73,7 +142,8 @@ const AddMoney = () => {
         bankDetails: values.bankDetails,
       });
       setOpen(false);
-      fetchRequests();
+      fetchAddMoneyRequests();
+      fetchApprovedRequests();
       setSnackbarSeverity("success");
       setSnackbarMessage(`Request ${action}ed successfully`);
       setSnackbarOpen(true);
@@ -86,208 +156,268 @@ const AddMoney = () => {
 
   const handleClickOpen = (request) => {
     setSelectedRequest(request);
-    setValues((value) => {
-      return { ...value, bankDetails: request.accountDetails };
-    });
+    setValues((value) => ({
+      ...value,
+      bankDetails: request.accountDetails,
+    }));
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
-  const handleBlur = () => {
-    const newErrors = {};
-    if (!values.bankDetails) {
-      newErrors.bankDetails = "Required";
+  // Columns for both tables
+  const addMoneyColumns = [
+    { field: "customerName", headerName: "Customer Name", width: 150 },
+    { field: "mobile", headerName: "Mobile", width: 110 },
+    { field: "amount", headerName: "Amount", width: 120 },
+    {
+      field: "amount_screenshot",
+      headerName: "Screenshot",
+      width: 200,
+      renderCell: ({ value }) => (
+        <img
+          style={{ width: 100, height: 100, objectFit: "contain" }}
+          src={value}
+          alt="screenshot"
+        />
+      ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      renderCell: (params) =>
+        params.row.status === "Pending" ? (
+          <Chip label="Pending" sx={{ background: "#d9512c", color: "white" }} />
+        ) : (
+          <Chip
+            label={params.row.status}
+            sx={{ background: "#2e7d32", color: "white" }}
+          />
+        ),
+    },
+    {
+      field: "accountDetails",
+      headerName: "Account details",
+      width: 300,
+      renderCell: (params) => (
+        <div style={{ whiteSpace: "pre-line" }}>{params.value}</div>
+      ),
+    },
+    { field: "createdAt", headerName: "Created At", width: 200 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 120,
+      renderCell: (params) =>
+        params.row.status === "Pending" && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClickOpen(params.row);
+            }}
+          >
+            Approve
+          </Button>
+        ),
+    },
+  ];
+
+  const approvedColumns = [
+    { field: "customerName", headerName: "Customer Name", width: 150 },
+    { field: "mobile", headerName: "Mobile", width: 110 },
+    { field: "amount", headerName: "Amount", width: 120 },
+    {
+      field: "amount_screenshot",
+      headerName: "Screenshot",
+      width: 200,
+      renderCell: ({ value }) => (
+        <img
+          style={{ width: 100, height: 100, objectFit: "contain" }}
+          src={value}
+          alt="screenshot"
+        />
+      ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      renderCell: (params) => (
+        <Chip
+          label={params.row.status}
+          sx={{
+            background: params.row.status === "Approved" ? "green" : "#d9512c",
+            color: "white",
+          }}
+        />
+      ),
+    },
+    {
+      field: "accountDetails",
+      headerName: "Account details",
+      width: 200,
+      renderCell: (params) => (
+        <div style={{ whiteSpace: "pre-line" }}>{params.value}</div>
+      ),
+    },
+    { field: "createdAt", headerName: "Created At", width: 200 },
+  ];
+
+  // Map data for both tables
+  const addMoneyRows = addMoneyRequests?.map((request) => {
+    let accountDetails = "";
+    if (request.accountDetails) {
+      try {
+        const parsedDetails = JSON.parse(request.accountDetails);
+        accountDetails = `Account Holder Name: ${
+          parsedDetails.accountHolderName || ""
+        }\nAccount Number: ${parsedDetails.accountNumber || ""}\nIFSC Code: ${
+          parsedDetails.ifscCode || ""
+        }`;
+      } catch (error) {
+        accountDetails = "Invalid account details";
+      }
+    } else if (request.upiId) {
+      accountDetails = `UPI ID: ${request.upiId}`;
     }
-    setErrors(newErrors);
-  };
+    return {
+      id: request.id,
+      customerName: request.Customer?.name || "N/A",
+      mobile: request.Customer?.mobile || "N/A",
+      amount: request.amount,
+      amount_screenshot: `${BASE_URL}/img/payments/${request.screenshot}`,
+      status: request.status,
+      accountDetails: request.upi,
+      createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+    };
+  });
 
-  // Filter requests by search
-  const filteredRequests = requests.filter((req) =>
-    (req.Customer?.name || "")
-      .toLowerCase()
-      .includes(search.trim().toLowerCase())
-  );
+  const approvedRows = approvedRequests?.map((request) => {
+    let accountDetails = "";
+    if (request.accountDetails) {
+      try {
+        const parsedDetails = JSON.parse(request.accountDetails);
+        accountDetails = `Account Holder Name: ${
+          parsedDetails.accountHolderName || ""
+        }\nAccount Number: ${parsedDetails.accountNumber || ""}\nIFSC Code: ${
+          parsedDetails.ifscCode || ""
+        }`;
+      } catch (error) {
+        accountDetails = "Invalid account details";
+      }
+    } else if (request.upiId) {
+      accountDetails = `UPI ID: ${request.upiId}`;
+    }
+    return {
+      id: request.id,
+      customerName: request.Customer?.name || "N/A",
+      mobile: request.Customer?.mobile || "N/A",
+      amount: request.amount,
+      amount_screenshot: `${BASE_URL}/img/payments/${request.screenshot}`,
+      status: request.status,
+      accountDetails: request.upi,
+      createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+    };
+  });
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 3 }, bgcolor: "#f7f8fa", minHeight: "100vh" }}>
-      <Paper
-        elevation={3}
-        sx={{
-          maxWidth: "1200px",
-          margin: "auto",
-          p: { xs: 1, sm: 3 },
-          borderRadius: 3,
-        }}
+    <ThemeProvider theme={theme}>
+      <Typography
+        variant={"h4"}
+        my={2}
+        textAlign={"center"}
+        fontWeight={"bold"}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: { xs: "flex-start", sm: "center" },
-            flexDirection: { xs: "column", sm: "row" },
-            mb: 2,
-          }}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ mb: { xs: 2, sm: 0 } }}
-          >
-            Add Money
+        Add Money
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+        {/* Left: Add Money Requests (60%) */}
+        <Box sx={{ width: "60%" }}>
+          <Typography variant="h6" fontWeight="bold" mb={2}>
+            Add Money Requests
           </Typography>
-          <Paper
-            elevation={0}
+          <DataGrid
+            rows={addMoneyRows}
+            columns={addMoneyColumns}
+            pagination
+            paginationMode="server"
+            rowCount={addMoneyTotal}
+            page={addMoneyPage}
+            pageSize={addMoneyLimit}
+            onPageChange={(newPage) => setAddMoneyPage(newPage)}
+            onPageSizeChange={(newPageSize) => {
+              setAddMoneyLimit(newPageSize);
+              setAddMoneyPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            loading={addMoneyLoading}
+            autoHeight
+            disableSelectionOnClick
+            getRowHeight={() => "auto"}
+          />
+        </Box>
+        {/* Right: Approved List (40%) */}
+        <Box sx={{ width: "40%" }}>
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              px: 1,
-              py: 0.5,
-              bgcolor: "#f5f5f5",
-              borderRadius: 2,
-              width: { xs: "100%", sm: 250 },
+              gap: 2,
+              mb: 2,
+              justifyContent: "space-between",
             }}
           >
-            <SearchIcon sx={{ color: "#888" }} />
-            <InputBase
-              placeholder="Search User"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              sx={{ ml: 1, flex: 1, fontSize: 15 }}
-            />
-          </Paper>
-        </Box>
-        <Typography
-          variant="subtitle1"
-          fontWeight="bold"
-          sx={{ mb: 1, color: "#555" }}
-        >
-          Recent Transaction
-        </Typography>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  background: "#f3f6fa",
-                  "& th": { fontWeight: "bold", color: "#333" },
+            <Typography variant="h6" fontWeight="bold">
+              Approved/Rejected List
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <DatePicker
+                slotProps={{
+                  textField: { size: "small" },
                 }}
-              >
-                <TableCell>Name</TableCell>
-                <TableCell>Mobile</TableCell>
-                <TableCell>Amount</TableCell>
-                {/* <TableCell>Screenshot</TableCell> */}
-                {/* <TableCell>Status</TableCell> */}
-                {/* <TableCell>Account Details</TableCell> */}
-                <TableCell>Time</TableCell>
-                <TableCell align="center">Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRequests.map((request) => {
-                let accountDetails = "";
-                if (request.accountDetails) {
-                  try {
-                    const parsedDetails = JSON.parse(request.accountDetails);
-                    accountDetails = `Account Holder Name: ${
-                      parsedDetails.accountHolderName || ""
-                    }\nAccount Number: ${parsedDetails.accountNumber || ""}\nIFSC Code: ${
-                      parsedDetails.ifscCode || ""
-                    }`;
-                  } catch (error) {
-                    accountDetails = "Invalid account details";
-                  }
-                } else if (request.upiId) {
-                  accountDetails = `UPI ID: ${request.upiId}`;
-                }
-                return (
-                  <TableRow
-                    key={request.id}
-                    hover
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      transition: "background 0.2s",
-                    }}
-                  >
-                    <TableCell>{request.Customer?.name || "N/A"}</TableCell>
-                    <TableCell>{request.Customer?.mobile || "N/A"}</TableCell>
-                    <TableCell>{request.amount}</TableCell>
-                    {/* <TableCell>
-                      <img
-                        src={`${BASE_URL}/img/payments/${request.screenshot}`}
-                        alt="screenshot"
-                        style={{
-                          width: 60,
-                          height: 60,
-                          objectFit: "contain",
-                          borderRadius: 6,
-                          border: "1px solid #eee",
-                        }}
-                      />
-                    </TableCell> */}
-                    {/* <TableCell>
-                      {request.status === "Pending" ? (
-                        <Chip
-                          label="Pending"
-                          sx={{
-                            background: "#d9512c",
-                            color: "white",
-                            fontWeight: "bold",
-                          }}
-                        />
-                      ) : (
-                        <Chip
-                          label={request.status}
-                          sx={{
-                            background: "#2e7d32",
-                            color: "white",
-                            fontWeight: "bold",
-                          }}
-                        />
-                      )}
-                    </TableCell> */}
-                    {/* <TableCell>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          whiteSpace: "pre-line",
-                          fontSize: 13,
-                          color: "#444",
-                        }}
-                      >
-                        {accountDetails}
-                      </Typography>
-                    </TableCell> */}
-                    <TableCell>
-                      {moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss")}
-                    </TableCell>
-                    <TableCell align="center">
-                      {request.status === "Pending" && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleClickOpen(request)}
-                          sx={{
-                            minWidth: 32,
-                            minHeight: 32,
-                            borderRadius: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Approve
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+                label="Date picker"
+                value={gamesDate}
+                onChange={(newDate) => setGamesDate(newDate)}
+              />
+              <FormControl sx={{ minWidth: 120 }}>
+                <InputLabel id="type-select-label">Select</InputLabel>
+                <Select
+                  labelId="type-select-label"
+                  id="type-select"
+                  value={type}
+                  label="Type"
+                  onChange={(e) => setType(e.target.value)}
+                >
+                  <MenuItem value={"Approved"}>Approved</MenuItem>
+                  <MenuItem value={"Rejected"}>Rejected</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+          <DataGrid
+            rows={approvedRows}
+            columns={approvedColumns}
+            pagination
+            paginationMode="server"
+            rowCount={approvedTotal}
+            page={approvedPage}
+            pageSize={approvedLimit}
+            onPageChange={(newPage) => setApprovedPage(newPage)}
+            onPageSizeChange={(newPageSize) => {
+              setApprovedLimit(newPageSize);
+              setApprovedPage(0);
+            }}
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            loading={approvedLoading}
+            autoHeight
+            disableSelectionOnClick
+            getRowHeight={() => "auto"}
+          />
+        </Box>
+      </Box>
 
       {/* Dialog */}
       <Dialog open={open} onClose={handleClose}>
@@ -327,7 +457,7 @@ const AddMoney = () => {
         severity={snackbarSeverity}
         onClose={() => setSnackbarOpen(false)}
       />
-    </Box>
+    </ThemeProvider>
   );
 };
 
@@ -335,334 +465,4 @@ export default AddMoney;
 
 
 
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { DataGrid } from "@mui/x-data-grid";
-// import {
-//   Box,
-//   Button,
-//   Chip,
-//   Dialog,
-//   DialogActions,
-//   DialogContent,
-//   DialogContentText,
-//   DialogTitle,
-//   Typography, 
-// } from "@mui/material";
-// import { usePagination } from "../hooks/usePagination";
-// import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-// import moment from "moment";
-// import CustomSnackbar from "../component/CustomSnackbar"; 
-// import { BASE_URL } from "../costants";
-
-// const theme = createTheme({
-//   palette: {
-//     primary: {
-//       main: "#5a508b",
-//     },
-//     secondary: {
-//       main: "#d32f2f",
-//     },
-//     success: {
-//       main: "#2e7d32",
-//     },
-//   },
-//   typography: {
-//     fontFamily: "Arial, sans-serif",
-//   },
-//   components: {
-//     MuiDataGrid: {
-//       styleOverrides: {
-//         root: {
-//           backgroundColor: "#f4f6f8",
-//           "& .MuiDataGrid-columnHeaders": {
-//             backgroundColor: "#1976d2",
-//             fontSize: "1.1rem",
-//           },
-//           "& .MuiDataGrid-cell": {
-//             display: "flex",
-//             alignItems: "center",
-//             whiteSpace: "pre-line", 
-//           },
-//         },
-//       },
-//     },
-//   },
-// });
-
-// const AddMoney = () => {
-//   const [requests, setRequests] = useState([]);
-//   const [open, setOpen] = useState(false);
-//   const [selectedRequest, setSelectedRequest] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [values, setValues] = useState({ bankDetails: "" });
-//   const [errors, setErrors] = useState({});
-//   const { page, limit, total, changePage, changeLimit, changeTotal } =
-//     usePagination();
-
-//   // Snackbar state
-//   const [snackbarOpen, setSnackbarOpen] = useState(false);
-//   const [snackbarMessage, setSnackbarMessage] = useState("");
-//   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
-//   useEffect(() => {
-//     fetchRequests();
-//   }, [page, limit]);
-
-//   const fetchRequests = async () => {
-//     setLoading(true);
-//     try {
-//       const response = await axios.get(
-//         `${BASE_URL}/api/web/retrieve/add-money`,
-//         {
-//           params: { limit, page },
-//           headers: {
-//             Authorization: localStorage.getItem("token"),
-//           },
-//         }
-//       );
-//       // console.log(response.data.data);
-//       setRequests(response.data.data.payment);
-//       changeTotal(response.data.data.count);
-//       setSnackbarSeverity("success");
-//       setSnackbarMessage(`Retrieved successfully`);
-//       setSnackbarOpen(true);
-//     } catch (error) {
-//       console.error("Error fetching requests:", error);
-//       setSnackbarSeverity("error");
-//       setSnackbarMessage("Error fetching requests");
-//       setSnackbarOpen(true);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleAction = async (action) => {
-//     try {
-//       await axios.post(`${BASE_URL}/api/web/create/add-money-action`, {
-//         requestId: selectedRequest.id,
-//         action,
-//         bankDetails: values.bankDetails,
-//       });
-//       setOpen(false);
-//       fetchRequests();
-
-//       // Show Snackbar
-//       setSnackbarSeverity("success");
-//       setSnackbarMessage(`Request ${action}ed successfully`);
-//       setSnackbarOpen(true);
-//     } catch (error) {
-//       console.error(`Error ${action} request:`, error);
-
-//       // Show Snackbar
-//       setSnackbarSeverity("error");
-//       setSnackbarMessage(`Failed to ${action} request`);
-//       setSnackbarOpen(true);
-//     }
-//   };
-
-//   const handleClickOpen = (request) => {
-//     setSelectedRequest(request);
-//     console.log(selectedRequest);
-//     setValues((value) => {
-//       return { ...value, bankDetails: request.accountDetails };
-//     });
-//     setOpen(true);
-//   };
-
-//   const handleClose = () => {
-//     setOpen(false);
-//   };
-
-
-
-//   const handleBlur = () => {
-//     const newErrors = {};
-//     if (!values.bankDetails) {
-//       newErrors.bankDetails = "Required";
-//     }
-//     setErrors(newErrors);
-//   };
-
-//   const handleSubmit = (event) => {
-//     event.preventDefault();
-//     handleBlur(); // Validate fields
-//     if (Object.keys(errors).length === 0) {
-//       handleAction("approve");
-//     }
-//   };
-
-//   const columns = [
-//     { field: "customerName", headerName: "Customer Name", width: 150 },
-//     { field: "mobile", headerName: "Mobile", width: 110 },
-//     { field: "amount", headerName: "Amount", width: 120 },
-//     {
-//       field: "amount_screenshot",
-//       headerName: "Screenshot",
-//       width: 200,
-//       renderCell: ({value}) => {
-//         return(
-//         <img
-//         style={{
-//           width:100,
-//           height:100,
-//           objectFit:'contain'
-//         }}
-//         src={value}
-//         />
-//       )},
-//     },
-//     {
-//       field: "status",
-//       headerName: "Status",
-//       width: 120,
-//       renderCell: (params) =>
-//         params.row.status === "Pending" && (
-//           <Chip
-//             label="Pending"
-//             sx={{ background: "#d9512c", color: "white" }}
-//           />
-//         ),
-//     },
-//     {
-//       field: "accountDetails",
-//       headerName: "Account details",
-//       width: 300,
-//       renderCell: (params) => (
-//         <div style={{ whiteSpace: "pre-line" }}>{params.value}</div>
-//       ),
-//     },
-//     { field: "createdAt", headerName: "Created At", width: 200 },
-//     {
-//       field: "actions",
-//       headerName: "Actions",
-//       width: 120,
-//       renderCell: (params) =>
-//         params.row.status === "Pending" && (
-//           <Button
-//             variant="contained"
-//             color="primary"
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               handleClickOpen(params.row);
-//             }}
-//           >
-//             Approve
-//           </Button>
-//         ),
-//     },
-//   ];
-
-//   const rows = requests?.map((request) => {
-//     let accountDetails = "";
-//     if (request.accountDetails) {
-//       try {
-//         const parsedDetails = JSON.parse(request.accountDetails);
-//         accountDetails = `Account Holder Name: ${
-//           parsedDetails.accountHolderName || ""
-//         }\nAccount Number: ${parsedDetails.accountNumber || ""}\nIFSC Code: ${
-//           parsedDetails.ifscCode || ""
-//         }`;
-//       } catch (error) {
-//         console.error("Error parsing account details:", error);
-//         accountDetails = "Invalid account details";
-//       }
-//     } else if (request.upiId) {
-//       accountDetails = `UPI ID: ${request.upiId}`;
-//     }
-//     return {
-//       id: request.id,
-//       customerName: request.Customer?.name || 'N/A',
-//       mobile: request.Customer?.mobile || 'N/A',
-//       amount: request.amount,
-//       amount_screenshot:`${BASE_URL}/img/payments/${request.screenshot}`,
-//       status: request.status,
-//       // accountDetails,
-//       accountDetails:request.upi,
-//       createdAt: moment(request.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-//     };
-//   });
-
-//   return (
-//     <ThemeProvider theme={theme}>
-//       <Typography
-//         variant={"h4"}
-//         my={2}
-//         textAlign={"center"}
-//         fontWeight={"bold"}
-//       >
-//         Add Money
-//       </Typography>
-//       <Box style={{ height: 450, width: "100%" }} p={2}>
-//         <DataGrid
-//           rows={rows}
-//           columns={columns}
-//           initialState={{
-//             pagination: {
-//               paginationModel: { pageSize: limit, page },
-//             },
-//           }}
-//           paginationMode="server"
-//           rowCount={total}
-//           pageSize={limit}
-//           checkboxSelection
-//           disableSelectionOnClick
-//           onRowSelectionModelChange={() => {}} // No-op to prevent default selection behavior
-//           onPaginationModelChange={(value) => {
-//             if (value.pageSize !== limit) {
-//               changeLimit(value.pageSize);
-//               return changePage(0);
-//             }
-//             changePage(value.page);
-//             changeLimit(value.pageSize);
-//           }}
-//           loading={loading}
-//           getRowHeight={() => "auto"} // Adjust row height based on content
-//         />
-//       </Box>
-
-//       <Dialog open={open} onClose={handleClose}>
-//         <DialogTitle>Approve Withdrawal Request</DialogTitle>
-//         <DialogContent>
-//           <DialogContentText>
-//             Please review the details before approving this request.
-//           </DialogContentText>
-//           <form onSubmit={handleSubmit}>
-//             <div>
-//               <Typography
-//                 variant="body1"
-//                 style={{ whiteSpace: "pre-line", marginTop: "16px" }}
-//               >
-//                 {values.bankDetails}
-//               </Typography>
-//             </div>
-//           </form>
-//         </DialogContent>
-//         <DialogActions>
-//           <Button onClick={handleClose} color="secondary">
-//             Cancel
-//           </Button>
-//           <Button onClick={() => handleAction("approve")} color="primary">
-//             Approve
-//           </Button>
-//           <Button onClick={() => handleAction("reject")} color="primary">
-//             Reject
-//           </Button>
-//         </DialogActions>
-//       </Dialog>
-
-//       {/* Render Snackbar */}
-//       <CustomSnackbar
-//         open={snackbarOpen}
-//         message={snackbarMessage}
-//         severity={snackbarSeverity}
-//         onClose={() => setSnackbarOpen(false)}
-//       />
-//     </ThemeProvider>
-//   );
-// };
-
-// export default AddMoney;
-
-  
