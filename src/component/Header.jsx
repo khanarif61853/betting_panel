@@ -339,7 +339,7 @@ export default function Header() {
     navigate("sign-in");
   };
 
-  const menuId = "primary-search-account-menu";
+  const menuId = "primary-search-account-menu"; 
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -352,6 +352,14 @@ export default function Header() {
     >
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
       <MenuItem onClick={handleSettingsMenuOpen}>Settings</MenuItem>
+      <MenuItem
+        onClick={() => {
+          navigate("admin-chat")
+          handleMenuClose()
+        }}
+      >
+        Help Us
+      </MenuItem>
     </Menu>
   );
 

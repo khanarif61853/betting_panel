@@ -20,6 +20,7 @@ import LastGameWinner from "../pages/LastGameWinner.jsx";
 import Allgames from "../pages/Allgames.jsx";
 import AddMoneyApprovedList from "../pages/AddMoneyApprovedList.jsx";
 import LastGameResult from "../pages/LastGameResult.jsx";
+import AdminChat from "../pages/AdminChat.jsx";
 
 const Routing = () => {
   return (
@@ -59,6 +60,7 @@ const Routing = () => {
             {/* dashboard cards routes ------------------ */}
             <Route path="/winning-users" element={<WinningUsers />} />
             <Route path="/totalbid" element={<TotalBid />} />
+            <Route path="/admin-chat" element={<AdminChat />} />
           </Route>
         </Route>
       </Routes>

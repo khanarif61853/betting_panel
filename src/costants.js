@@ -1,4 +1,4 @@
-const BASE_URL = "https://blacksattaapi.indutechit.com";
-// const BASE_URL = "http://192.168.1.2:3002";
+const BASE_URL = "https://api.delhistarclub.club/";
+// const BASE_URL = "http://192.168.1.18:3003";
 
 export { BASE_URL };
