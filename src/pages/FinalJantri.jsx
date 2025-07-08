@@ -281,57 +281,177 @@ const FinalJantri = () => {
         >
           Bid Numbers
         </Typography>
+        <Typography
+          fontFamily={"Alegreya Sans SC, sans-serif"}
+          fontWeight={700}
+          color="#604586"
+          sx={{ fontSize: { xs: 15, sm: 18 } }}
+        >
+          Total: ₹{totalAmount}
+        </Typography>
       </Box>
+      {/* Responsive Bid Grid like Game.jsx */}
       <Box
+        mt={2}
         sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(10, 1fr)",
-          border: "1px solid black",
+          overflowX: "auto",
           width: "100%",
+          pb: 2,
         }}
       >
-        {Array.from({ length: 10 }).map((_, rowIdx) =>
-          bidColumns.map((column) => {
-            const number = column[rowIdx];
+        <Box
+          sx={{
+            display: "flex",
+            gap: { xs: 1, sm: 2 },
+            minWidth: 0,
+            width: "100%",
+            background: "#faf7fa",
+            borderRadius: 2,
+            px: { xs: 0.5, sm: 2 },
+            py: { xs: 0.5, sm: 1 },
+            overflowX: "auto",
+          }}
+        >
+          {Array.from({ length: 10 }).map((_, colIdx) => {
+            const colStart = colIdx * 10 + 1;
+            const colHeader = colStart.toString().padStart(2, "0");
             return (
               <Box
-                key={number}
+                key={colHeader}
                 sx={{
                   display: "flex",
-                  border: "1px solid lightgray",
-                  borderRadius: 1,
+                  flexDirection: "column",
+                  alignItems: "center",
+                  flex: 1,
+                  minWidth: { xs: 60, sm: 0 },
+                  maxWidth: { xs: 80, sm: 'none' },
                 }}
               >
-                <Box
+                {/* Column Header */}
+                <Typography
+                  variant="subtitle2"
                   sx={{
-                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 0.5 },
-                    backgroundColor: "#6f6bb7",
-                    color: "white",
-                  }}
-                >
-                  <Typography variant="body2" fontSize={{ xs: 8, sm: 8, lg: 10 }}>
-                    {number === "00" ? "00" : number < 10 ? `0${number}` : number}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
+                    fontWeight: 700,
+                    color: "#604586",
+                    mb: { xs: 0.5, sm: 1 },
+                    fontSize: { xs: 12, sm: 14 },
+                    letterSpacing: 1,
                     width: "100%",
-                    backgroundColor: "#eceaf6",
-                    padding: {xs:0.1, sm:0.2,md:0.2, lg: 0.5 },
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "black",
+                    textAlign: "center",
                   }}
                 >
-                  <Typography variant="body2" fontWeight={"bold"} fontSize={{ xs: 8, sm: 8, lg: 10 }}>
-                    {bidMap[number] ? `₹${bidMap[number]}` : ""}
-                  </Typography>
-                </Box>
+                  {colHeader}
+                </Typography>
+                {/* Column Cells */}
+                {Array.from({ length: 10 }).map((_, rowIdx) => {
+                  let number = colIdx * 10 + rowIdx + 1;
+                  if (number > 99) number = "00";
+                  const numberStr = number === "00" ? "00" : number.toString().padStart(2, "0");
+                  const amount = bidMap[numberStr] || 0;
+                  return (
+                    <Box key={numberStr} sx={{ display: "flex", alignItems: "center", mb: { xs: 0.2, sm: 0.5 }, width: "100%" }}>
+                      {/* Row label only for first column, but hide for first row */}
+                      {colIdx === 0 && (
+                        rowIdx === 0 ? (
+                          // For the first cell (01), show empty space
+                          <Box sx={{ width: { xs: 16, sm: 22 }, mr: 1 }} />
+                        ) : (
+                          // For other rows, show the row label
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              width: { xs: 16, sm: 22 },
+                              textAlign: "right",
+                              mr: 1,
+                              color: "#888",
+                              fontWeight: 500,
+                              fontSize: { xs: 11, sm: 13 },
+                            }}
+                          >
+                            {numberStr}
+                          </Typography>
+                        )
+                      )}
+                      <Box
+                        sx={{
+                          border: "1px solid #eee",
+                          background: "#f8f6f8",
+                          borderRadius: 1,
+                          minWidth: { xs: 28, sm: 38 },
+                          minHeight: { xs: 24, sm: 32 },
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: { xs: 11, sm: 13 },
+                          fontWeight: 500,
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 600,
+                            color: "#604586",
+                            fontSize: { xs: 11, sm: 13 },
+                            lineHeight: 1.1,
+                          }}
+                        >
+                          {/* {numberStr} */}
+                        </Typography>
+                        <Box
+                          sx={{
+                            borderRadius: 1,
+                            px: 1,
+                            py: 0.2,
+                            mt: 0.2,
+                            minWidth: { xs: 20, sm: 28 },
+                            fontWeight: 700,
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "#333",
+                              fontSize: { xs: 12, sm: 14 },
+                              fontWeight: "bold",
+                              lineHeight: 1.1,
+                              textAlign: "center",
+                            }}
+                          >
+                            {amount}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  );
+                })}
+                {/* Column Total */}
+                <Typography
+                  variant="caption"
+                  sx={{
+                    mt: { xs: 0.5, sm: 1 },
+                    color: "#604586",
+                    fontWeight: 700,
+                    fontSize: { xs: 11, sm: 13 },
+                    borderTop: "1px solid #eee",
+                    pt: 0.5,
+                    width: "100%",
+                    textAlign: "center",
+                    boxShadow: "0 1px 3px 0 #e0d7f7",
+                  }}
+                >
+                  ₹{Array.from({ length: 10 }).reduce((sum, _, rowIdx) => {
+                    let number = colIdx * 10 + rowIdx + 1;
+                    if (number > 99) number = "00";
+                    const numberStr = number === "00" ? "00" : number.toString().padStart(2, "0");
+                    return sum + (Number(bidMap[numberStr]) || 0);
+                  }, 0)}
+                </Typography>
               </Box>
             );
-          })
-        )}
+          })}
+        </Box>
       </Box>
       <CustomSnackbar
         open={!!error || !!success}
