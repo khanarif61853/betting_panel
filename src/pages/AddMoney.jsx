@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Typography,
+  Typography, 
   Paper,
   Table,
   TableBody,
@@ -30,7 +30,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import moment from "moment";
-import CustomSnackbar from "../component/CustomSnackbar";
+import CustomSnackbar from "../component/CustomSnackbar"; 
 import { BASE_URL } from "../costants";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -286,8 +286,8 @@ const AddMoney = () => {
         </Box>
         {/* Table */}
         <Typography variant="h6" fontWeight="bold" mb={1}>
-          Add Money
-        </Typography>
+        Add Money
+      </Typography>
         <TableContainer sx={{ flex: 1, maxHeight: 340 }}>
           <Table stickyHeader>
             <TableHead>
