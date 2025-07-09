@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
-  Drawer,
   IconButton,
   InputBase,
   List,
@@ -13,13 +12,11 @@ import {
   Typography,
   useMediaQuery,
   Divider,
-  Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MicIcon from "@mui/icons-material/Mic";
 import SendIcon from "@mui/icons-material/Send";
-import CloseIcon from "@mui/icons-material/Close";
 
 const mockUsers = [
   {
@@ -88,13 +85,13 @@ const initialMessages = {
 };
 
 const AdminChat = () => {
-  const [users, setUsers] = useState(mockUsers);
+  const [users] = useState(mockUsers);
   const [selectedUserId, setSelectedUserId] = useState(users[0].id);
   const [messages, setMessages] = useState(initialMessages);
   const [msg, setMsg] = useState("");
   const [file, setFile] = useState();
   const [isRecording, setIsRecording] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showUserListMobile, setShowUserListMobile] = useState(true);
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -106,9 +103,17 @@ const AdminChat = () => {
     }
   }, [messages, selectedUserId]);
 
+  useEffect(() => {
+    if (isMobile) {
+      setShowUserListMobile(true);
+    }
+  }, [isMobile]);
+
   const handleUserClick = (userId) => {
     setSelectedUserId(userId);
-    setDrawerOpen(false);
+    if (isMobile) {
+      setShowUserListMobile(false);
+    }
   };
 
   const handleFileButtonClick = () => {
@@ -195,44 +200,35 @@ const AdminChat = () => {
   // Responsive layout
   return (
     <Box sx={{ display: "flex", bgcolor: "#f9f9f9" }}>
-      {/* Sidebar/User List */}
       {isMobile ? (
-        <>
-          <IconButton
-            onClick={() => setDrawerOpen(true)}
+        showUserListMobile ? (
+          // MOBILE: Show only user list
+          <Box
             sx={{
-              position: "fixed",
-              top: 16,
-              left: 16,
-              zIndex: 1201,
+              width: "100vw",
+              minHeight: "100vh",
               bgcolor: "#fff",
-              boxShadow: 1,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Drawer
-            anchor="left"
-            open={drawerOpen}
-            onClose={() => setDrawerOpen(false)}
-            PaperProps={{ sx: { width: 260 } }}
-          >
-            <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
-              <Typography variant="h6" sx={{ flex: 1 }}>
-                Users
-              </Typography>
-              <IconButton onClick={() => setDrawerOpen(false)}>
-                <CloseIcon />
-              </IconButton>
+            <Box sx={{ p: 2 }}>
+              <Typography variant="h6">Users</Typography>
             </Box>
             <Divider />
-            <List>
+            <List sx={{ flex: 1, overflowY: "auto" }}>
               {users.map((user) => (
                 <ListItem
                   button
                   key={user.id}
                   selected={user.id === selectedUserId}
                   onClick={() => handleUserClick(user.id)}
+                  sx={{
+                    alignItems: "flex-start",
+                    px: 2,
+                    py: 2,
+                    borderBottom: "1px solid #f0f0f0",
+                  }}
                 >
                   <ListItemAvatar>
                     <Avatar>{user.name[0]}</Avatar>
@@ -244,252 +240,468 @@ const AdminChat = () => {
                 </ListItem>
               ))}
             </List>
-          </Drawer>
-        </>
-      ) : (
-        <Box
-          sx={{
-            width: 260,
-            borderRight: "1px solid #eee",
-            bgcolor: "#fff",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box sx={{ p: 2 }}>
-            <Typography variant="h6">Users</Typography>
           </Box>
-          <Divider />
-          <List sx={{ flex: 1, overflowY: "auto" }}>
-            {users.map((user) => (
-              <ListItem
-                button
-                key={user.id}
-                selected={user.id === selectedUserId}
-                onClick={() => handleUserClick(user.id)}
-              >
-                <ListItemAvatar>
-                  <Avatar>{user.name[0]}</Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={user.name}
-                  secondary={user.lastMessage}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-
-      {/* Chat Area */}
-      <Box
-        sx={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          height: "80vh",
-          maxWidth: "100vw",
-        }}
-      >
-        {/* Chat Header */}
-        <Box
-          sx={{
-            p: 2,
-            borderBottom: "1px solid #eee",
-            bgcolor: "#fff",
-            display: "flex",
-            alignItems: "center",
-            minHeight: 64,
-          }}
-        >
-          <Avatar sx={{ mr: 2 }}>
-            {users.find((u) => u.id === selectedUserId)?.name[0]}
-          </Avatar>
-          <Typography variant="h6">
-            {users.find((u) => u.id === selectedUserId)?.name}
-          </Typography>
-        </Box>
-
-        {/* Messages */}
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: "auto",
-            p: { xs: 1, sm: 2 },
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            minHeight: 0,
-            bgcolor: "#f9f9f9",
-          }}
-        >
-          {(messages[selectedUserId] || []).map((message) => (
+        ) : (
+          // MOBILE: Show only chat area with back button
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              height: "100vh",
+              maxWidth: "100vw",
+              bgcolor: "#f9f9f9",
+            }}
+          >
+            {/* Chat Header with Back Button */}
             <Box
-              key={message.id}
               sx={{
+                p: 2,
+                borderBottom: "1px solid #eee",
+                bgcolor: "#fff",
                 display: "flex",
-                justifyContent:
-                  message.user === "admin" ? "flex-end" : "flex-start",
-                mb: 1,
+                alignItems: "center",
+                minHeight: 64,
+              }}
+            >
+              <IconButton onClick={() => setShowUserListMobile(true)} sx={{ mr: 1 }}>
+                <MenuIcon />
+              </IconButton>
+              <Avatar sx={{ mr: 2 }}>
+                {users.find((u) => u.id === selectedUserId)?.name[0]}
+              </Avatar>
+              <Typography variant="h6">
+                {users.find((u) => u.id === selectedUserId)?.name}
+              </Typography>
+            </Box>
+            {/* Messages */}
+            <Box
+              sx={{
+                flex: 1,
+                overflowY: "auto",
+                p: { xs: 1, sm: 2 },
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minHeight: 0,
+                bgcolor: "#f9f9f9",
+              }}
+            >
+              {(messages[selectedUserId] || []).map((message) => (
+                <Box
+                  key={message.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent:
+                      message.user === "admin" ? "flex-end" : "flex-start",
+                    mb: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      maxWidth: { xs: "90%", sm: "70%" },
+                      background:
+                        message.user === "admin" ? "#1976d2" : "#f5f5f5",
+                      color: message.user === "admin" ? "white" : "black",
+                      padding: { xs: 1, sm: 2 },
+                      borderRadius: 2,
+                      wordWrap: "break-word",
+                      fontSize: { xs: 14, sm: 16 },
+                    }}
+                  >
+                    {/* Show image if file is image */}
+                    {message.file &&
+                      message.file.type &&
+                      message.file.type.startsWith("image/") && (
+                        <Box sx={{ mb: 1 }}>
+                          <img
+                            src={URL.createObjectURL(message.file)}
+                            alt={message.file.name}
+                            style={{
+                              maxWidth: "100%",
+                              height: "auto",
+                              borderRadius: 8,
+                              display: "block",
+                            }}
+                          />
+                        </Box>
+                      )}
+                    {/* Show file name if not image */}
+                    {message.file &&
+                      (!message.file.type ||
+                        !message.file.type.startsWith("image/")) && (
+                        <Box sx={{ mb: 1 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "12px", opacity: 0.8 }}
+                          >
+                            📎 {message.file.name}
+                          </Typography>
+                        </Box>
+                      )}
+                    {message.audio && (
+                      <Box sx={{ mb: 1 }}>
+                        <IconButton
+                          onClick={() => playAudio(message.audio)}
+                          sx={{
+                            background:
+                              message.user === "admin"
+                                ? "rgba(255,255,255,0.2)"
+                                : "rgba(0,0,0,0.1)",
+                            color: message.user === "admin" ? "white" : "black",
+                          }}
+                        >
+                          ▶️
+                        </IconButton>
+                      </Box>
+                    )}
+                    <Typography variant="body1">{message.message}</Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ opacity: 0.7, fontSize: "10px" }}
+                    >
+                      {message.timestamp}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+              <div ref={messagesEndRef} />
+            </Box>
+            {/* Input field */}
+            <Box
+              sx={{
+                width: "100%",
+                py: { xs: 1, sm: 2 },
+                background: { xs: "#fff", sm: "transparent" },
+                position: "sticky",
+                bottom: 0,
+                zIndex: 2,
               }}
             >
               <Box
                 sx={{
-                  maxWidth: { xs: "90%", sm: "70%" },
-                  background:
-                    message.user === "admin" ? "#1976d2" : "#f5f5f5",
-                  color: message.user === "admin" ? "white" : "black",
-                  padding: { xs: 1, sm: 2 },
-                  borderRadius: 2,
-                  wordWrap: "break-word",
-                  fontSize: { xs: 14, sm: 16 },
-                }}
-              >
-                {/* Show image if file is image */}
-                {message.file &&
-                  message.file.type &&
-                  message.file.type.startsWith("image/") && (
-                    <Box sx={{ mb: 1 }}>
-                      <img
-                        src={URL.createObjectURL(message.file)}
-                        alt={message.file.name}
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto",
-                          borderRadius: 8,
-                          display: "block",
-                        }}
-                      />
-                    </Box>
-                  )}
-                {/* Show file name if not image */}
-                {message.file &&
-                  (!message.file.type ||
-                    !message.file.type.startsWith("image/")) && (
-                    <Box sx={{ mb: 1 }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontSize: "12px", opacity: 0.8 }}
-                      >
-                        📎 {message.file.name}
-                      </Typography>
-                    </Box>
-                  )}
-                {message.audio && (
-                  <Box sx={{ mb: 1 }}>
-                    <IconButton
-                      onClick={() => playAudio(message.audio)}
-                      sx={{
-                        background:
-                          message.user === "admin"
-                            ? "rgba(255,255,255,0.2)"
-                            : "rgba(0,0,0,0.1)",
-                        color: message.user === "admin" ? "white" : "black",
-                      }}
-                    >
-                      ▶️
-                    </IconButton>
-                  </Box>
-                )}
-                <Typography variant="body1">{message.message}</Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ opacity: 0.7, fontSize: "10px" }}
-                >
-                  {message.timestamp}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
-          <div ref={messagesEndRef} />
-        </Box>
-
-        {/* Input field */}
-        <Box
-          sx={{
-            width: "100%",
-            py: { xs: 1, sm: 2 },
-            background: { xs: "#fff", sm: "transparent" },
-            position: "sticky",
-            bottom: 0,
-            zIndex: 2,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
-            <Box
-              sx={{
-                width: { xs: "98%", sm: "80%", md: "60%", lg: "40%" },
-              }}
-            >
-              <Paper
-                elevation={3}
-                component="form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  sendMsg();
-                }}
-                sx={{
                   display: "flex",
-                  alignItems: "center",
-                  p: { xs: 0.5, sm: 1 },
-                  borderRadius: 10,
-                  backgroundColor: "#f0f0f0",
+                  justifyContent: "center",
                   width: "100%",
                 }}
               >
-                <IconButton onClick={handleFileButtonClick}>
-                  <AttachFileIcon />
-                </IconButton>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                  accept="image/*,.pdf,.doc,.docx,.txt"
-                />
-                <InputBase
-                  inputRef={inputRef}
+                <Box
                   sx={{
-                    ml: 1,
-                    flex: 1,
-                    bgcolor: "#fff",
-                    borderRadius: 20,
-                    px: 2,
-                    py: 1,
-                    fontSize: { xs: 14, sm: 16 },
+                    width: { xs: "98%", sm: "80%", md: "60%", lg: "40%" },
                   }}
-                  placeholder="Type a message"
-                  value={msg}
-                  onChange={(e) => setMsg(e.target.value)}
-                />
-                {msg.trim() || file ? (
-                  <IconButton color="primary" type="submit">
-                    <SendIcon />
-                  </IconButton>
-                ) : (
-                  <IconButton
-                    onClick={openMic}
+                >
+                  <Paper
+                    elevation={3}
+                    component="form"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      sendMsg();
+                    }}
                     sx={{
-                      color: isRecording ? "red" : "inherit",
-                      animation: isRecording ? "pulse 1s infinite" : "none",
+                      display: "flex",
+                      alignItems: "center",
+                      p: { xs: 0.5, sm: 1 },
+                      borderRadius: 10,
+                      backgroundColor: "#f0f0f0",
+                      width: "100%",
                     }}
                   >
-                    <MicIcon />
-                  </IconButton>
-                )}
-              </Paper>
+                    <IconButton onClick={handleFileButtonClick}>
+                      <AttachFileIcon />
+                    </IconButton>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      style={{ display: "none" }}
+                      accept="image/*,.pdf,.doc,.docx,.txt"
+                    />
+                    <InputBase
+                      inputRef={inputRef}
+                      sx={{
+                        ml: 1,
+                        flex: 1,
+                        bgcolor: "#fff",
+                        borderRadius: 20,
+                        px: 2,
+                        py: 1,
+                        fontSize: { xs: 14, sm: 16 },
+                      }}
+                      placeholder="Type a message"
+                      value={msg}
+                      onChange={(e) => setMsg(e.target.value)}
+                    />
+                    {msg.trim() || file ? (
+                      <IconButton color="primary" type="submit">
+                        <SendIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        onClick={openMic}
+                        sx={{
+                          color: isRecording ? "red" : "inherit",
+                          animation: isRecording ? "pulse 1s infinite" : "none",
+                        }}
+                      >
+                        <MicIcon />
+                      </IconButton>
+                    )}
+                  </Paper>
+                </Box>
+              </Box>
             </Box>
           </Box>
-        </Box>
-      </Box>
+        )
+      ) : (
+        // DESKTOP: Show both user list and chat area
+        <>
+          <Box
+            sx={{
+              width: 260,
+              borderRight: "1px solid #eee",
+              bgcolor: "#fff",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box sx={{ p: 2 }}>
+              <Typography variant="h6">Users</Typography>
+            </Box>
+            <Divider />
+            <List sx={{ flex: 1, overflowY: "auto" }}>
+              {users.map((user) => (
+                <ListItem
+                  button
+                  key={user.id}
+                  selected={user.id === selectedUserId}
+                  onClick={() => handleUserClick(user.id)}
+                  sx={{
+                    alignItems: "flex-start",
+                    px: 2,
+                    py: 2,
+                    borderBottom: "1px solid #f0f0f0",
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar>{user.name[0]}</Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={user.name}
+                    secondary={user.lastMessage}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              height: "80vh",
+              maxWidth: "100vw",
+            }}
+          >
+            {/* Chat Header */}
+            <Box
+              sx={{
+                p: 2,
+                borderBottom: "1px solid #eee",
+                bgcolor: "#fff",
+                display: "flex",
+                alignItems: "center",
+                minHeight: 64,
+              }}
+            >
+              <Avatar sx={{ mr: 2 }}>
+                {users.find((u) => u.id === selectedUserId)?.name[0]}
+              </Avatar>
+              <Typography variant="h6">
+                {users.find((u) => u.id === selectedUserId)?.name}
+              </Typography>
+            </Box>
+            {/* Messages */}
+            <Box
+              sx={{
+                flex: 1,
+                overflowY: "auto",
+                p: { xs: 1, sm: 2 },
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minHeight: 0,
+                bgcolor: "#f9f9f9",
+              }}
+            >
+              {(messages[selectedUserId] || []).map((message) => (
+                <Box
+                  key={message.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent:
+                      message.user === "admin" ? "flex-end" : "flex-start",
+                    mb: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      maxWidth: { xs: "90%", sm: "70%" },
+                      background:
+                        message.user === "admin" ? "#1976d2" : "#f5f5f5",
+                      color: message.user === "admin" ? "white" : "black",
+                      padding: { xs: 1, sm: 2 },
+                      borderRadius: 2,
+                      wordWrap: "break-word",
+                      fontSize: { xs: 14, sm: 16 },
+                    }}
+                  >
+                    {/* Show image if file is image */}
+                    {message.file &&
+                      message.file.type &&
+                      message.file.type.startsWith("image/") && (
+                        <Box sx={{ mb: 1 }}>
+                          <img
+                            src={URL.createObjectURL(message.file)}
+                            alt={message.file.name}
+                            style={{
+                              maxWidth: "100%",
+                              height: "auto",
+                              borderRadius: 8,
+                              display: "block",
+                            }}
+                          />
+                        </Box>
+                      )}
+                    {/* Show file name if not image */}
+                    {message.file &&
+                      (!message.file.type ||
+                        !message.file.type.startsWith("image/")) && (
+                        <Box sx={{ mb: 1 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: "12px", opacity: 0.8 }}
+                          >
+                            📎 {message.file.name}
+                          </Typography>
+                        </Box>
+                      )}
+                    {message.audio && (
+                      <Box sx={{ mb: 1 }}>
+                        <IconButton
+                          onClick={() => playAudio(message.audio)}
+                          sx={{
+                            background:
+                              message.user === "admin"
+                                ? "rgba(255,255,255,0.2)"
+                                : "rgba(0,0,0,0.1)",
+                            color: message.user === "admin" ? "white" : "black",
+                          }}
+                        >
+                          ▶️
+                        </IconButton>
+                      </Box>
+                    )}
+                    <Typography variant="body1">{message.message}</Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{ opacity: 0.7, fontSize: "10px" }}
+                    >
+                      {message.timestamp}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+              <div ref={messagesEndRef} />
+            </Box>
+            {/* Input field */}
+            <Box
+              sx={{
+                width: "100%",
+                py: { xs: 1, sm: 2 },
+                background: { xs: "#fff", sm: "transparent" },
+                position: "sticky",
+                bottom: 0,
+                zIndex: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: { xs: "98%", sm: "80%", md: "60%", lg: "40%" },
+                  }}
+                >
+                  <Paper
+                    elevation={3}
+                    component="form"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      sendMsg();
+                    }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      p: { xs: 0.5, sm: 1 },
+                      borderRadius: 10,
+                      backgroundColor: "#f0f0f0",
+                      width: "100%",
+                    }}
+                  >
+                    <IconButton onClick={handleFileButtonClick}>
+                      <AttachFileIcon />
+                    </IconButton>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      style={{ display: "none" }}
+                      accept="image/*,.pdf,.doc,.docx,.txt"
+                    />
+                    <InputBase
+                      inputRef={inputRef}
+                      sx={{
+                        ml: 1,
+                        flex: 1,
+                        bgcolor: "#fff",
+                        borderRadius: 20,
+                        px: 2,
+                        py: 1,
+                        fontSize: { xs: 14, sm: 16 },
+                      }}
+                      placeholder="Type a message"
+                      value={msg}
+                      onChange={(e) => setMsg(e.target.value)}
+                    />
+                    {msg.trim() || file ? (
+                      <IconButton color="primary" type="submit">
+                        <SendIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        onClick={openMic}
+                        sx={{
+                          color: isRecording ? "red" : "inherit",
+                          animation: isRecording ? "pulse 1s infinite" : "none",
+                        }}
+                      >
+                        <MicIcon />
+                      </IconButton>
+                    )}
+                  </Paper>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };
 
 export default AdminChat;
+
