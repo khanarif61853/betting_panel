@@ -13,10 +13,11 @@ import {
   useMediaQuery,
   Divider,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MicIcon from "@mui/icons-material/Mic";
 import SendIcon from "@mui/icons-material/Send";
+import SearchIcon from '@mui/icons-material/Search';
 
 const mockUsers = [
   {
@@ -92,6 +93,7 @@ const AdminChat = () => {
   const [file, setFile] = useState();
   const [isRecording, setIsRecording] = useState(false);
   const [showUserListMobile, setShowUserListMobile] = useState(true);
+  const [userSearch, setUserSearch] = useState("");
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -115,6 +117,9 @@ const AdminChat = () => {
       setShowUserListMobile(false);
     }
   };
+
+  // Filter users by search
+  const filteredUsers = users.filter(u => u.name.toLowerCase().includes(userSearch.toLowerCase()));
 
   const handleFileButtonClick = () => {
     fileInputRef.current.click();
@@ -206,18 +211,41 @@ const AdminChat = () => {
           <Box
             sx={{
               width: "100vw",
-              minHeight: "100vh",
+              minHeight: "80vh",
               bgcolor: "#fff",
               display: "flex",
               flexDirection: "column",
+              overflow: "scroll",
+              scrollbarWidth: "none"
             }}
           >
-            <Box sx={{ p: 2 }}>
-              <Typography variant="h6">Users</Typography>
+            <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography variant="h6" sx={{ flex: 1 }}>
+                Users
+              </Typography>
+              <Box sx={{ position: "relative", maxWidth: 200, width: "100%" }}>
+                <InputBase
+                  placeholder="Search users..."
+                  value={userSearch}
+                  onChange={e => setUserSearch(e.target.value)}
+                  sx={{
+                    width: "100%",
+                    borderRadius: 20,
+                    background: "#f5f5f5",
+                    px: 2,
+                    py: 0.5,
+                    boxShadow: 1,
+                    fontSize: 15,
+                    pl: 4,
+                  }}
+                  inputProps={{ style: { paddingLeft: 24 } }}
+                />
+                <SearchIcon sx={{ position: "absolute", left: 10, top: 10, color: '#888', fontSize: 20, pointerEvents: 'none' }} />
+              </Box>
             </Box>
             <Divider />
             <List sx={{ flex: 1, overflowY: "auto" }}>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <ListItem
                   button
                   key={user.id}
@@ -248,7 +276,7 @@ const AdminChat = () => {
               flex: 1,
               display: "flex",
               flexDirection: "column",
-              height: "100vh",
+              height: "80vh",
               maxWidth: "100vw",
               bgcolor: "#f9f9f9",
             }}
@@ -265,7 +293,8 @@ const AdminChat = () => {
               }}
             >
               <IconButton onClick={() => setShowUserListMobile(true)} sx={{ mr: 1 }}>
-                <MenuIcon />
+                <ArrowBackIcon />
+              
               </IconButton>
               <Avatar sx={{ mr: 2 }}>
                 {users.find((u) => u.id === selectedUserId)?.name[0]}
