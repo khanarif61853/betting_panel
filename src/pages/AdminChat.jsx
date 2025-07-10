@@ -46,42 +46,55 @@ const initialMessages = {
       id: 1,
       message: "Can you help me?",
       user: "user",
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: new Date().toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      }),
     },
     {
       id: 2,
       message: "Hello Alice! How can I help you?",
       user: "admin",
-      timestamp: new Date().toLocaleTimeString(),
-    },
+      timestamp: new Date().toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      }),    },
   ],
   u2: [
     {
       id: 1,
       message: "Thanks for your support!",
       user: "user",
-      timestamp: new Date().toLocaleTimeString(),
-    },
+      timestamp: new Date().toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      }),    },
     {
       id: 2,
       message: "You're welcome, Bob!",
       user: "admin",
-      timestamp: new Date().toLocaleTimeString(),
-    },
+      timestamp: new Date().toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      }),    },
   ],
   u3: [
     {
       id: 1,
       message: "I have a problem.",
       user: "user",
-      timestamp: new Date().toLocaleTimeString(),
-    },
+      timestamp: new Date().toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      }),    },
     {
       id: 2,
       message: "Hi Charlie, please describe your problem.",
       user: "admin",
-      timestamp: new Date().toLocaleTimeString(),
-    },
+      timestamp: new Date().toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      }),    },
   ],
 };
 
@@ -132,20 +145,24 @@ const AdminChat = () => {
     }
   };
 
+
   const sendMsg = () => {
     if (msg.trim() || file) {
       const newMessage = {
         id: Date.now(),
         message: msg.trim(),
         user: "admin",
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: new Date().toLocaleTimeString([],{
+          hour:"2-digit",
+          minute:"2-digit"
+        }),
         file: file,
       };
       setMessages((prev) => ({
         ...prev,
         [selectedUserId]: [...(prev[selectedUserId] || []), newMessage],
       }));
-      setMsg(""); 
+      setMsg("");
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       if (inputRef.current) inputRef.current.focus();
@@ -180,7 +197,10 @@ const AdminChat = () => {
           id: Date.now(),
           message: "Voice Message",
           user: "admin",
-          timestamp: new Date().toLocaleTimeString(),
+          timestamp: new Date().toLocaleTimeString([],{
+            hour:"2-digit",
+            minute:"2-digit"
+          }),
           audio: blob,
         };
         setMessages((prev) => ({
