@@ -145,7 +145,7 @@ const AdminChat = () => {
         ...prev,
         [selectedUserId]: [...(prev[selectedUserId] || []), newMessage],
       }));
-      setMsg("");
+      setMsg(""); 
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       if (inputRef.current) inputRef.current.focus();
