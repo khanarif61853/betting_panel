@@ -18,6 +18,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MicIcon from "@mui/icons-material/Mic";
 import SendIcon from "@mui/icons-material/Send";
 import SearchIcon from '@mui/icons-material/Search';
+import {io} from 'socket.io-client'
 
 const mockUsers = [
   {
@@ -99,6 +100,7 @@ const initialMessages = {
 };
 
 const AdminChat = () => {
+  const socket = io("http://192.168.1.15:3003")
   const [users] = useState(mockUsers);
   const [selectedUserId, setSelectedUserId] = useState(users[0].id);
   const [messages, setMessages] = useState(initialMessages);
@@ -113,6 +115,7 @@ const AdminChat = () => {
   const isMobile = useMediaQuery("(max-width:900px)");
 
   useEffect(() => {
+
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
