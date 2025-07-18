@@ -8,86 +8,140 @@ import {
   Avatar,
   useMediaQuery,
 } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MicIcon from "@mui/icons-material/Mic";
 import SendIcon from "@mui/icons-material/Send";
-import { io } from 'socket.io-client';
-
-const USER_ID = "user1";
+import {BASE_URL} from '../costants'
+import { io } from "socket.io-client";
 
 const AdminChat = () => {
-  const socket = useMemo(() => io("http://192.168.1.15:3003"), []);
+  const socket = useMemo(() => io(`${BASE_URL}`), []);
   const [messages, setMessages] = useState([]);
   const [msg, setMsg] = useState("");
-  const [file, setFile] = useState();
+  const [file, setFile] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const [adminId, setAdminId] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(29);
   const isMobile = useMediaQuery("(max-width:900px)");
 
   useEffect(() => {
-    socket.on("connect", () => {
-      socket.emit("register", "admin");
-    });
-    socket.on("newMessage", (message) => {
-      setMessages((prev) => [...prev, { id: Date.now(), ...message }]);
-    });
+    const storedAdminId = parseInt(localStorage.getItem("id"));
+    if (!storedAdminId) return;
+    setAdminId(storedAdminId);
+
+    const fetchUserList = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/web/chat/userList`);
+        const data = await res.json();
+        console.log('User List:', data.message);
+      } catch (err) {
+        console.error('User list fetch error:', err);
+      }
+    };
+    fetchUserList();
+
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/web/chat/adminChat?userId=${selectedUserId}`
+        );
+        const json = await res.json();
+
+        if (json?.message) {
+          const formattedMessages = json.message.map((msg) => ({
+            id: msg.id,
+            senderId: msg.senderId,
+            receiverId: msg.receiverId,
+            message: msg.message,
+            file: msg.file,
+            audio: msg.audio,
+            timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          }));
+          setMessages(formattedMessages);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    };
+
+    fetchMessages();
+
+    socket.emit("register", storedAdminId);
+
+    const handleNewMessage = (message) => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          ...message,
+          timestamp: message.createdAt
+            ? new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
     return () => {
+      socket.off("newMessage", handleNewMessage);
       socket.disconnect();
     };
-  }, [socket]);
+  }, [selectedUserId]);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleFileButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
     }
   };
 
-  const sendMsg = async () => {
-    if (msg.trim() || file) {
-      let fileData = null;
-      if (file) {
-        fileData = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve({
-            name: file.name,
-            type: file.type,
-            data: reader.result
-          });
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-      }
-      socket.emit("sendMessage", {
-        senderId: "admin",
-        receiverId: USER_ID,
-        message: msg.trim(),
-        file: fileData,
-      });
-      setMsg("");
-      setFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      if (inputRef.current) inputRef.current.focus();
-    }
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
   };
 
-  const playAudio = (audioBlob) => {
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.play();
+  const sendMsg = async () => {
+    if (!adminId || (!msg.trim() && !file)) return;
+
+    let fileData = null;
+    if (file) {
+      fileData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () =>
+          resolve({
+            name: file.name,
+            type: file.type,
+            data: reader.result,
+          });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    const payload = {
+      senderId: adminId,
+      receiverId: selectedUserId,
+      senderType: "admin",
+      message: msg.trim() || "📎 File Sent",
+      file: fileData,
+    };
+
+    socket.emit("sendMessage", payload);
+
+    setMsg("");
+    setFile(null);
+    fileInputRef.current.value = "";
+    inputRef.current?.focus();
   };
 
   const openMic = async () => {
@@ -95,125 +149,119 @@ const AdminChat = () => {
       setIsRecording(false);
       return;
     }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-      const mediaRecorder = new window.MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
       const chunks = [];
-      mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data);
-      };
+
+      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: "audio/wav" });
-        setIsRecording(false);
-        const audioData = await new Promise((resolve, reject) => {
+        const base64 = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result);
           reader.onerror = reject;
           reader.readAsDataURL(blob);
         });
+
         socket.emit("sendMessage", {
-          senderId: "admin",
-          receiverId: USER_ID,
-          message: "Voice Message",
-          audio: audioData,
+          senderId: adminId,
+          receiverId: selectedUserId,
+          senderType: "admin",
+          message: "🎤 Voice Message",
+          audio: base64,
         });
+
         stream.getTracks().forEach((track) => track.stop());
+        setIsRecording(false);
       };
+
       mediaRecorder.start();
       setIsRecording(true);
+
       setTimeout(() => {
         if (mediaRecorder.state === "recording") {
           mediaRecorder.stop();
         }
       }, 5000);
-    } catch (error) {
+    } catch (err) {
+      console.error("Mic error:", err);
       setIsRecording(false);
-      alert("Microphone access error.");
     }
+  };
+
+  const playAudio = (base64) => {
+    const audio = new Audio(base64);
+    audio.play();
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "80vh", bgcolor: "#f9f9f9" }}>
-      {/* Chat Header */}
-      <Box sx={{ p: 2, borderBottom: "1px solid #eee", bgcolor: "#fff", display: "flex", alignItems: "center", minHeight: 64 }}>
+      {/* Header */}
+      <Box sx={{ p: 2, borderBottom: "1px solid #eee", bgcolor: "#fff", display: "flex", alignItems: "center" }}>
         {isMobile && (
           <IconButton sx={{ mr: 1, visibility: "hidden" }}>
             <ArrowBackIcon />
           </IconButton>
         )}
         <Avatar sx={{ mr: 2 }} />
-        <Typography variant="h6">Chat</Typography>
+        <Typography variant="h6">Admin Chat</Typography>
       </Box>
-      {/* Messages */}
+
+      {/* Chat messages */}
       <Box
         sx={{
           flex: 1,
           overflowY: "auto",
-          p: { xs: 1, sm: 2 },
+          px: 2,
+          pt: 2,
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          minHeight: 0,
-          bgcolor: "#f9f9f9",
-          scrollbarWidth: "none", // Firefox
-          '&::-webkit-scrollbar': { display: 'none' }, // Chrome/Safari
         }}
       >
-        {messages.map((message) => (
+        {messages.map((message, i) => (
           <Box
-            key={message.id}
+            key={message.id || `${message.senderId}-${message.createdAt}-${i}`}
             sx={{
               display: "flex",
-              justifyContent: message.user === "admin" ? "flex-end" : "flex-start",
-              mb: 1,
+              justifyContent: message.senderId === adminId ? "flex-end" : "flex-start",
             }}
           >
             <Box
               sx={{
-                maxWidth: { xs: "90%", sm: "70%" },
-                background: message.user === "admin" ? "#1976d2" : "#f5f5f5",
-                color: message.user === "admin" ? "white" : "black",
-                padding: { xs: 1, sm: 2 },
+                maxWidth: "75%",
+                bgcolor: message.senderId === adminId ? "#1976d2" : "#e0e0e0",
+                color: message.senderId === adminId ? "white" : "black",
                 borderRadius: 2,
-                wordWrap: "break-word",
-                fontSize: { xs: 14, sm: 16 },
+                p: 1,
+                wordBreak: "break-word",
               }}
             >
-              {/* Show image if file is image */}
-              {message.file && message.file.type && message.file.type.startsWith("image/") && (
-                <Box sx={{ mb: 1 }}>
-                  <img
-                    src={URL.createObjectURL(message.file)}
-                    alt={message.file.name}
-                    style={{ maxWidth: "100%", height: "auto", borderRadius: 8, display: "block" }}
-                  />
-                </Box>
+              {/* Show image if applicable */}
+              {message.file?.type?.startsWith("image/") && (
+                <img
+                  src={message.file.data}
+                  alt={message.file.name}
+                  style={{ maxWidth: "100%", borderRadius: 8, marginBottom: 8 }}
+                />  
               )}
+
               {/* Show file name if not image */}
-              {message.file && (!message.file.type || !message.file.type.startsWith("image/")) && (
-                <Box sx={{ mb: 1 }}>
-                  <Typography variant="body2" sx={{ fontSize: "12px", opacity: 0.8 }}>
-                    📎 {message.file.name}
-                  </Typography>
-                </Box>
+              {message.file && !message.file.type?.startsWith("image/") && (
+                <Typography variant="body2">📎 {message.file.name}</Typography>
               )}
+
+              {/* Audio */}
               {message.audio && (
-                <Box sx={{ mb: 1 }}>
-                  <IconButton
-                    onClick={() => playAudio(message.audio)}
-                    sx={{
-                      background: message.user === "admin" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)",
-                      color: message.user === "admin" ? "white" : "black",
-                    }}
-                  >
-                    ▶️
-                  </IconButton>
-                </Box>
+                <IconButton onClick={() => playAudio(message.audio)}>▶️</IconButton>
               )}
+
+              {/* Message text */}
               <Typography variant="body1">{message.message}</Typography>
-              <Typography variant="caption" sx={{ opacity: 0.7, fontSize: "10px" }}>
+              <Typography variant="caption" sx={{ fontSize: 10, opacity: 0.6 }}>
                 {message.timestamp}
               </Typography>
             </Box>
@@ -221,73 +269,52 @@ const AdminChat = () => {
         ))}
         <div ref={messagesEndRef} />
       </Box>
-      {/* Input field */}
-      <Box sx={{ width: "100%", position: "sticky", bottom: 0, zIndex: 2, background: "#fff", py: 1 }}>
-        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-          <Box sx={{ width: { xs: "98%", sm: "80%", md: "60%", lg: "40%" } }}>
-            <Paper
-              elevation={3}
-              component="form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendMsg();
-              }}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                p: { xs: 0.5, sm: 1 },
-                borderRadius: 10,
-                backgroundColor: "#f0f0f0",
-                width: "100%",
-              }}
-            >
-              <IconButton onClick={handleFileButtonClick}>
-                <AttachFileIcon />
-              </IconButton>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-                accept="image/*,.pdf,.doc,.docx,.txt"
-              />
-              <InputBase
-                inputRef={inputRef}
-                sx={{
-                  ml: 1,
-                  flex: 1,
-                  bgcolor: "#fff",
-                  borderRadius: 20,
-                  px: 2,
-                  py: 1,
-                  fontSize: { xs: 14, sm: 16 },
-                }}
-                placeholder="Type a message"
-                value={msg}
-                onChange={(e) => setMsg(e.target.value)}
-              />
-              {msg.trim() || file ? (
-                <IconButton color="primary" type="submit">
-                  <SendIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  onClick={openMic}
-                  sx={{
-                    color: isRecording ? "red" : "inherit",
-                    animation: isRecording ? "pulse 1s infinite" : "none",
-                  }}
-                >
-                  <MicIcon />
-                </IconButton>
-              )}
-            </Paper>
-          </Box>
-        </Box>
+
+      {/* Input */}
+      <Box sx={{ p: 2, bgcolor: "#fff" }}>
+        <Paper
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMsg();
+          }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            borderRadius: 20,
+            p: 1,
+          }}
+        >
+          <IconButton onClick={handleFileButtonClick}>
+            <AttachFileIcon />
+          </IconButton>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            accept="image/*,.pdf,.doc,.docx,.txt"
+          />
+          <InputBase
+            inputRef={inputRef}
+            placeholder="Type a message"
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
+            sx={{ flex: 1, px: 2 }}
+          />
+          {msg.trim() || file ? (
+            <IconButton type="submit" color="primary">
+              <SendIcon />
+            </IconButton>
+          ) : (
+            <IconButton onClick={openMic} color={isRecording ? "error" : "default"}>
+              <MicIcon />
+            </IconButton>
+          )}
+        </Paper>
       </Box>
     </Box>
   );
 };
 
 export default AdminChat;
-

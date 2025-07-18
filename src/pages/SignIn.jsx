@@ -91,13 +91,13 @@ export default function SignIn() {
       try {
         const response = await axios.post(`${BASE_URL}/api/web/auth/login`, values);
         const { message, type } = response.data;
-
         setSnackbarSeverity(type === 'success' ? 'success' : 'error');
         setSnackbarMessage(message);
         setSnackbarOpen(true);
         if (type === 'success') {
           const { data: { data: { token } } } = response;
           localStorage.setItem('token', token);
+          localStorage.setItem('id',response?.data?.data?.user?.id)
           triggerDataFetch();
           navigate("/home");
         }
